@@ -1,0 +1,206 @@
+Progetto Backend - App di Dating stile Tinder
+Obiettivo del progetto: Realizzare un backend in Java per un'applicazione di dating simile a
+Tinder. L'app permette la registrazione degli utenti, l'impostazione di preferenze, lo swipe tra
+profili, la gestione dei match reciproci e lo scambio di messaggi in chat.
+
+Tecnologie richieste:
+• Java 17+
+• Spring Boot
+• Spring Data JPA
+• REST API (Spring Web)
+• MySQL o PostgreSQL
+• Spring Security (per gestione autenticazione)
+• JWT (per autenticazione token-based)
+• Maven o Gradle
+• Swagger/OpenAPI (per documentazione API)
+• Firebase (per notifiche push)
+
+Entità principali del dominio:
+1. Utente
+o id (Long)
+o nome
+o email
+o password (hashed)
+o genere
+o data di nascita
+o bio
+o interessi
+o posizione (es. città, coordinate GPS se previsto)
+o foto profilo (URL o gestione file)
+o tipo account (STANDARD, PREMIUM)
+o data registrazione
+2. Preferenze
+o utenteId (OneToOne)
+o genere preferito
+o età minima / massima
+o distanza massima
+3. Swipe
+o id
+o utenteId (colui che fa swipe)
+o utenteTargetId (profilo visualizzato)
+o tipo (LIKE, PASS, SUPER_LIKE)
+o timestamp
+4. Match
+o id
+o utente1Id
+o utente2Id
+o timestamp
+5. Messaggio
+o id
+o matchId
+o mittenteId
+o contenuto
+o timestamp
+o stato (inviato, letto)
+6. Notifica
+o id
+o utenteId
+o tipo (nuovo match, nuovo messaggio, super like ricevuto)
+o contenuto
+o timestamp
+o letta (boolean)
+7. Report
+o id
+o segnalatoId (utente segnalato)
+o segnalanteId (utente che segnala)
+o motivo (testo)
+o timestamp
+
+Funzionalità richieste (API REST):
+1. Registrazione e autenticazione
+o POST /api/auth/register → crea utente
+o POST /api/auth/login → restituisce JWT
+2. Gestione profilo utente
+o GET /api/utenti/me → profilo personale
+o PUT /api/utenti/me → modifica profilo
+o GET /api/utenti/{id} → profilo pubblico di un altro utente
+3. Impostazione preferenze
+o GET /api/preferenze/me
+o PUT /api/preferenze/me
+4. Swipe
+o POST /api/swipe → invia uno swipe (LIKE, PASS, SUPER_LIKE)
+o logica backend: se esiste swipe reciproco → crea Match + invia notifica push
+5. Match
+o GET /api/match → lista match attivi per utente loggato
+o GET /api/match/{id} → dettaglio match
+6. Chat / Messaggi
+o GET /api/match/{id}/messaggi → chat con un match
+o POST /api/match/{id}/messaggi → invia messaggio
+o invio notifica push a utente ricevente
+7. Gestione notifiche
+o GET /api/notifiche → lista notifiche
+o POST /api/notifiche/lettura → segna come lette
+8. Report utenti
+o POST /api/report → segnala utente con motivo
+o GET /api/admin/report → endpoint admin per visualizzare segnalazioni
+9. Gestione account premium
+o POST /api/premium/upgrade → upgrade account
+o GET /api/premium/status → verifica stato premium
+10. Caricamento foto
+• POST /api/utenti/me/foto → carica immagine profilo
+
+Step di sviluppo suggeriti:
+1. Setup progetto Spring Boot con dipendenze base
+2. Creazione delle entità e repository
+3. Implementazione autenticazione JWT con Spring Security
+4. CRUD profilo, preferenze e gestione foto
+5. Logica swipe + match + super like
+6. Sistema di messaggistica e notifiche push (Firebase)
+7. Gestione report utenti e amministrazione
+8. Account premium: gestione abbonamenti (simulati)
+9. Test delle API con Postman
+10. Documentazione API con Swagger/OpenAPI
+
+Deliverables richiesti:
+• Codice completo su GitHub
+• README con istruzioni per setup locale e test
+• Script SQL per creazione DB (se non si usa ddl-auto=create)
+• Documentazione API REST (Swagger)
+• File Postman con mock API per test
+• Diagramma ER del database (schema relazioni tra entità)
+• Diagramma delle classi principali (con relazioni tra oggetti)
+• Mappa visiva delle API (flow di interazioni tra endpoint)
+Note: Questo progetto consente di esplorare funzionalità avanzate di backend moderno, con
+sicurezza, notifiche in tempo reale, livelli di accesso, reportistica, e una base per feature premium. È
+perfetto per la formazione su un'app reale e altamente interattiva.
+
+Durata stimata: 4-5 settimane
+
+Gestione Abbonamenti - Backend App di Dating
+Obiettivo Gestire la logica di abbonamento premium lato backend, offrendo funzionalità extra agli
+utenti paganti rispetto agli utenti standard.
+
+Modello Entità
+Abbonamento
+• id (Long)
+• utenteId (FK -> Utente)
+• tipo (PREMIUM, GOLD, PLATINUM)
+• dataInizio
+• dataFine
+• attivo (boolean)
+• metodoPagamento (es. carta, PayPal, ApplePay, Stripe)
+• stripeSubscriptionId (String)
+
+Funzionalità previste
+1. Endpoint per attivazione abbonamento
+o POST /api/premium/upgrade
+o Input: tipo abbonamento, metodo pagamento
+o Output: conferma attivazione e date inizio/fine
+o In caso di metodo Stripe:
+§ Creazione di sessione di pagamento tramite Stripe API
+§ Salvataggio dello stripeSubscriptionId associato
+2. Verifica stato abbonamento
+o GET /api/premium/status
+o Restituisce: tipo, stato (attivo/scaduto), data scadenza
+3. Middleware di autorizzazione premium
+o Permette accesso a funzionalità esclusive (super like, boost visibilità, ecc.)
+o Esempio: @PreAuthorize("hasRole('PREMIUM')")
+4. Scheduler per scadenza abbonamenti
+o Esecuzione giornaliera con @Scheduled
+o Disattiva abbonamenti scaduti aggiornando attivo = false
+o Per Stripe: interrogare Stripe per stato abbonamento e sincronizzare
+5. Simulazione pagamento (dev only)
+o Nessuna vera transazione: generazione token fittizio
+o Logica di validazione nel backend (mock)
+
+Estensione funzionalità utente premium
+Utenti premium possono:
+• Inviare SUPER LIKE (fino a 5 al giorno)
+• Accedere a boost profilo (priorità visibilità)
+• Vedere chi li ha "likati"
+• Swipe illimitati
+
+Logiche da integrare nel codice
+• Metodo isPremium() nel service utente
+• Decoratori di autorizzazione sugli endpoint riservati
+• Controllo limiti: es. numero di super like giornalieri
+• Task scheduler per gestione automatica scadenze
+• Webhook Stripe per ricevere aggiornamenti su pagamenti e rinnovi
+
+Integrazione Stripe (produzione)
+• Creazione chiavi API (public & secret)
+• Endpoint di creazione sessione pagamento:
+o POST /api/premium/create-checkout-session
+o Usa SDK Stripe per creare una sessione
+o Redirige utente a pagamento su Stripe
+• Webhook:
+o Endpoint POST /api/stripe/webhook
+o Riceve eventi di pagamento, rinnovo, cancellazione
+o Aggiorna stato abbonamento nel database
+• Salvataggio stripeSubscriptionId per sincronizzazione futura
+
+Extra opzionali
+• Storico abbonamenti (per tracciamento rinnovi)
+• Email automatica di scadenza prossima
+• Rinnovo automatico con flag autoRenew
+• Notifiche in-app post acquisto premium
+
+Note per lo sviluppo
+• Utilizzare date timezone-aware (LocalDateTime con fuso)
+• Validare che un solo abbonamento attivo esista per utente
+• Per estensione reale: gestire eccezioni Stripe e logica di fallback
+• Usare ambiente sandbox per test in fase di sviluppo
+
+Questo modulo è fondamentale per monetizzare l'applicazione e per segmentare l'accesso a
+funzionalità avanzate. L'integrazione con Stripe consente una gestione automatica e sicura dei
+pagamenti ricorrenti.
