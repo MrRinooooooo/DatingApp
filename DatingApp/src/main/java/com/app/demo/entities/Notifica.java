@@ -21,7 +21,7 @@ public class Notifica {
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "utenteId", referencedColumnName = "id")
+	@JoinColumn(name = "utenteId", referencedColumnName = "bigint")
 	private Long utenteId;
 	
 	@Column(name = "tipo", columnDefinition="varchar(100)") // nuovo match, nuovo messaggio, super_like ricevuto
@@ -31,7 +31,7 @@ public class Notifica {
 	private String contenuto;
 	
 	@Column(name = "timestamp", columnDefinition="datetime")
-	private LocalDateTime data;
+	private LocalDateTime timestamp;
 	
 	@Column(name = "letta", columnDefinition="boolean")
 	private boolean letta;
@@ -40,11 +40,11 @@ public class Notifica {
 		// Default constructor
 	}
 	
-	public Notifica(Long utenteId, String tipo, String contenuto, LocalDateTime data, boolean letta) {
+	public Notifica(Long utenteId, String tipo, String contenuto, LocalDateTime timestamp, boolean letta) {
 		this.utenteId = utenteId;
 		this.tipo = tipo;
 		this.contenuto = contenuto;
-		this.data = data;
+		this.timestamp = timestamp;
 		this.letta = letta;
 	}
 	
@@ -72,12 +72,12 @@ public class Notifica {
 		this.contenuto = contenuto;
 	}
 
-	public LocalDateTime getData() {
-		return data;
+	public LocalDateTime getDataTimestamp() {
+		return timestamp;
 	}
 
-	public void setData(LocalDateTime data) {
-		this.data = data;
+	public void setData(LocalDateTime timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public boolean isLetta() {
@@ -90,14 +90,8 @@ public class Notifica {
 
 	@Override
 	public String toString() {
-		return "Notifica [utenteId=" + utenteId + ", tipo=" + tipo + ", contenuto=" + contenuto + ", data=" + data
+		return "Notifica [utenteId=" + utenteId + ", tipo=" + tipo + ", contenuto=" + contenuto + ", data=" + timestamp
 				+ ", letta=" + letta + "]";
-	}
-	
-	
-	
-	
-	
-	
+	}	
 
 }
