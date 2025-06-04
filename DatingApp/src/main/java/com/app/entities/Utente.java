@@ -1,4 +1,4 @@
-package com.app.demo.entities;
+package com.app.entities;
 
 import java.time.LocalDate;
 import java.util.List;
