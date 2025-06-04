@@ -3,6 +3,7 @@ package com.app.demo.entities;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,19 +22,38 @@ public class Utente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name = "nome", nullable = false, columnDefinition = "varchar(255)")
 	private String nome;
+	
+	@Column(name = "email", nullable = false, columnDefinition = "varchar(255)")
 	private String email;
+	
+	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
 	private String password;
+	
+	@Column(name = "genere", nullable = false, columnDefinition = "varchar(255)")
 	private String genere;
+	
+	@Column(name = "data_nascita", nullable = false)
 	private LocalDate dataNascita;
+	
+	@Column(name = "bio", nullable = false, columnDefinition = "TEXT")
 	private String bio;
+	
+	@Column(name = "interessi", nullable = false, columnDefinition = "TEXT")
 	private String interessi;
 	
 	@Embedded
 	private Posizione posizione;
 	
+	@Column(name = "foto_profilo", nullable = false, columnDefinition = "varchar(255)")
 	private String fotoProfilo;
+	
+	@Column(name = "tipo_account", nullable = false, columnDefinition = "varchar(255)")
 	private String tipoAccount;
+	
+	@Column(name = "data_registrazione", nullable = false)
 	private LocalDate dataRegistrazione;
 	
 	 @OneToOne(mappedBy = "utente")
@@ -51,16 +71,16 @@ public class Utente {
 	 @OneToMany(mappedBy = "utente2")
 	 private List<Match> matchUtente2;
 	 
-	 @OneToMany(mappedBy = "mittenteId")
+	 @OneToMany(mappedBy = "mittente")
 	 private List<Messaggio> mittente;
 	 
-	 @OneToMany(mappedBy = "utenteId")
+	 @OneToMany(mappedBy = "utente")
 	 private List<Notifica> notificaUtente;
 	 
-	 @OneToMany(mappedBy = "segnalanteId")
+	 @OneToMany(mappedBy = "segnalante")
 	 private List<Report> Segnalante;
 	 
-	 @OneToMany(mappedBy = "segnalatoId")
+	 @OneToMany(mappedBy = "segnalato")
 	 private List<Report> Segnalato;
 	
 	public Utente() {
@@ -248,6 +268,24 @@ public class Utente {
 
 	public void setDataRegistrazione(LocalDate dataRegistrazione) {
 		this.dataRegistrazione = dataRegistrazione;
+	}
+	
+	@Override
+	public String toString() {
+	    return "Utente{" +
+	            "id=" + id +
+	            ", nome='" + nome + '\'' +
+	            ", email='" + email + '\'' +
+	            ", password='[PROTETTA]'" +
+	            ", genere='" + genere + '\'' +
+	            ", dataNascita=" + dataNascita +
+	            ", bio='" + bio + '\'' +
+	            ", interessi='" + interessi + '\'' +
+	            ", posizione=" + posizione +
+	            ", fotoProfilo='" + fotoProfilo + '\'' +
+	            ", tipoAccount='" + tipoAccount + '\'' +
+	            ", dataRegistrazione=" + dataRegistrazione +
+	            '}';
 	}
 	
 	
