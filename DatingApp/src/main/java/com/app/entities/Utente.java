@@ -65,14 +65,14 @@ public class Utente {
 	 @OneToMany(mappedBy = "utenteTargetSwipe")
 	 private List<Swipe> swipeRicevuti;
 	 
-	 @OneToMany(mappedBy = "utente1")
-	 private List<Match> matchUtente1;
+	 @OneToMany(mappedBy = "utente1Id")
+	 private List<Match> utente1Id;
 	 
-	 @OneToMany(mappedBy = "utente2")
-	 private List<Match> matchUtente2;
+	 @OneToMany(mappedBy = "utente2Id")
+	 private List<Match> utente2Id;
 	 
-	 @OneToMany(mappedBy = "mittente")
-	 private List<Messaggio> mittente;
+	 @OneToMany(mappedBy = "mittenteId")
+	 private List<Messaggio> mittenteId;
 	 
 	 @OneToMany(mappedBy = "utente")
 	 private List<Notifica> notificaUtente;
@@ -163,27 +163,27 @@ public class Utente {
 	}
 
 	public List<Match> getMatchUtente1() {
-		return matchUtente1;
+		return utente1Id;
 	}
 
 	public void setMatchUtente1(List<Match> matchUtente1) {
-		this.matchUtente1 = matchUtente1;
+		this.utente1Id = matchUtente1;
 	}
 
 	public List<Match> getMatchUtente2() {
-		return matchUtente2;
+		return utente2Id;
 	}
 
 	public void setMatchUtente2(List<Match> matchUtente2) {
-		this.matchUtente2 = matchUtente2;
+		this.utente2Id = matchUtente2;
 	}
 
-	public List<Messaggio> getMittente() {
-		return mittente;
+	public List<Messaggio> getMittenteId() {
+		return mittenteId;
 	}
 
-	public void setMittente(List<Messaggio> mittente) {
-		this.mittente = mittente;
+	public void setMittenteId(List<Messaggio> mittente) {
+		this.mittenteId = mittente;
 	}
 
 	public List<Notifica> getNotificaUtente() {
