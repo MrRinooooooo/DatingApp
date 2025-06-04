@@ -1,5 +1,5 @@
 package com.app.repostitories;
 
-public class MatchRepository {
+public interface MatchRepository {
 
 }
