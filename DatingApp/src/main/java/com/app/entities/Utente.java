@@ -23,7 +23,7 @@ public class Utente {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "nome", nullable = false, columnDefinition = "varchar(255)")
+	@Column(name = "nome", columnDefinition = "varchar(255)")
 	private String nome;
 	
 	@Column(name = "email", nullable = false, columnDefinition = "varchar(255)")
@@ -32,28 +32,28 @@ public class Utente {
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
 	private String password;
 	
-	@Column(name = "genere", nullable = false, columnDefinition = "varchar(255)")
+	@Column(name = "genere", columnDefinition = "varchar(255)")
 	private String genere;
 	
-	@Column(name = "data_nascita", nullable = false)
+	@Column(name = "data_nascita")
 	private LocalDate dataNascita;
 	
-	@Column(name = "bio", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "bio", columnDefinition = "TEXT")
 	private String bio;
 	
-	@Column(name = "interessi", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "interessi", columnDefinition = "TEXT")
 	private String interessi;
 	
 	@Embedded
 	private Posizione posizione;
 	
-	@Column(name = "foto_profilo", nullable = false, columnDefinition = "varchar(255)")
+	@Column(name = "foto_profilo", columnDefinition = "varchar(255)")
 	private String fotoProfilo;
 	
-	@Column(name = "tipo_account", nullable = false, columnDefinition = "varchar(255)")
+	@Column(name = "tipo_account", columnDefinition = "varchar(255)")
 	private String tipoAccount;
 	
-	@Column(name = "data_registrazione", nullable = false)
+	@Column(name = "data_registrazione")
 	private LocalDate dataRegistrazione;
 	
 	 @OneToOne(mappedBy = "utente")
@@ -85,6 +85,11 @@ public class Utente {
 	
 	public Utente() {
 		
+	}
+	
+	public Utente(String email, String password) {
+		this.email = email;
+		this.password = password;
 	}
 	
 	//includiamo anche Posizione
