@@ -90,6 +90,8 @@ public class Utente {
 	public Utente(String email, String password) {
 		this.email = email;
 		this.password = password;
+		this.tipoAccount = "STANDARD";
+		this.dataRegistrazione = LocalDate.now();
 	}
 	
 	//includiamo anche Posizione

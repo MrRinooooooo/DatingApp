@@ -49,6 +49,10 @@ public class ProvaUtentiController {
      * Accessibile solo agli utenti autenticati.
      * PUT /api/utenti/me
      */
+    
+    
+    
+    /*
     @PutMapping("/me")
     public ResponseEntity<?> updateMyProfile(@RequestBody Utente utenteAggiornato) {
         try {
@@ -67,12 +71,16 @@ public class ProvaUtentiController {
             return ResponseEntity.badRequest().body("Errore nell'aggiornamento del profilo: " + e.getMessage());
         }
     }
+ 	*/
+ 
  
     /**
      * Endpoint per visualizzare il profilo pubblico di un altro utente.
      * Accessibile solo agli utenti autenticati.
      * GET /api/utenti/{id}
      */
+    
+    /*
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserProfile(@PathVariable Long id) {
         try {
@@ -90,6 +98,7 @@ public class ProvaUtentiController {
             return ResponseEntity.badRequest().body("Errore nel recupero del profilo: " + e.getMessage());
         }
     }
+    */
  
     /**
      * Endpoint per funzionalità premium.
