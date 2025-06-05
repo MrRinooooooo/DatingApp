@@ -2,7 +2,7 @@ package com.app.controllers;
 
 import com.app.dto.LoginRequest;
 import com.app.dto.LoginResponse;
-import com.app.dto.RegisterRequest;
+import com.app.dto.RegistrazioneDto;
 import com.app.entities.Utente;
 import com.app.security.JwtUtil;
 import com.app.services.UtenteService;
@@ -37,32 +37,25 @@ public class AuthController {
  
     @Autowired
     private UtenteService utenteService;
- 
+    
     /**
      * Endpoint per la registrazione di un nuovo utente.
      * POST /api/auth/register
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrazioneDto registrazioneDto) {
         try {
             // Verifica se l'email è già in uso
-            if (utenteService.existsByEmail(registerRequest.getEmail())) {
+            if (utenteService.existsByEmail(registrazioneDto.getEmail())) {
                 return ResponseEntity.badRequest()
                     .body(new LoginResponse(null, "Email già in uso", null, null));
             }
  
-            // Crea il nuovo utente
-            Utente nuovoUtente = utenteService.createUtente(registerRequest);
- 
-            // Genera il token JWT per il nuovo utente
-            String token = jwtUtil.generateToken(
-                nuovoUtente.getId(), 
-                nuovoUtente.getEmail(), 
-                nuovoUtente.getTipoAccount()
-            );
- 
+            // Crea il nuovo utente "STANDARD" da email e password e data registrazione
+            Utente nuovoUtente = utenteService.createUtente(registrazioneDto);
+            
             return ResponseEntity.ok(new LoginResponse(
-                token, 
+                "",												// Token vuoto volendo da implementare nuovo modello
                 "Registrazione completata con successo", 
                 nuovoUtente.getId(),
                 nuovoUtente.getTipoAccount()
@@ -78,6 +71,7 @@ public class AuthController {
      * Endpoint per il login degli utenti.
      * POST /api/auth/login
      */
+    
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {

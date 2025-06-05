@@ -1,45 +1,45 @@
 package com.app.services;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.RegistrazioneDto;
-import com.app.entities.Posizione;
 import com.app.entities.Utente;
-import com.app.repositories.MessaggioRepository;
 import com.app.repositories.UtenteRepository;
-import com.app.dto.*;
 
 @Service
 public class UtenteService {
 
-    private final MessaggioRepository messaggioRepository;
-
 	@Autowired
 	private UtenteRepository utenteRepository;
-
-    UtenteService(MessaggioRepository messaggioRepository) {
-        this.messaggioRepository = messaggioRepository;
-    }
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-    
-	//REGISTRAZIONE
-	public RestRegistrazioneDto aggiungiUtente(RegistrazioneDto registrazioneDto) {
-		Optional<Utente> utenteEsistente = utenteRepository.findByEmail(registrazioneDto.getEmail());
-		if (utenteEsistente.isPresent()) {
-			return new RestRegistrazioneDto(false, "Username gia esistente");
-		} 
-			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
-			
-			 utenteRepository.save(new Utente(registrazioneDto.getEmail(), encodedPassword));
-			 return new RestRegistrazioneDto(true, "Registrazione effettuata con successo");
-			 
-	}	
 	
+	//REGISTRAZIONE
+	public Utente createUtente(RegistrazioneDto registrazioneDto) {
+
+			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
+			Utente utenteRegistrato = utenteRepository.save(new Utente(registrazioneDto.getEmail(), encodedPassword));
+			return utenteRegistrato;
+	}
+	
+	//CONTROLLO EMAIL ESISTENTE
+	public boolean existsByEmail(String email)
+	{
+		return utenteRepository.existsByEmail(email);
+	}
+	
+	//RITORNA UTENTE SE TROVATO PER EMAIL
+	public Utente findByEmail(String email)
+	{
+		Utente utente = new Utente();
+		if(utenteRepository.existsByEmail(email))
+		{
+			utente = utenteRepository.findByEmail(email).get();
+			return utente;
+		}
+		return null;
+	}
 }
