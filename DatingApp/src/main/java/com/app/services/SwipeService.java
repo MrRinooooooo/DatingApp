@@ -38,7 +38,7 @@ public class SwipeService {
         
         try {
             // Trova l'utente che sta cercando profili
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             System.out.println("Utente ID: " + utente.getId());
@@ -80,7 +80,7 @@ public class SwipeService {
         
         try {
             // Trova l'utente che sta facendo swipe
-            Utente utenteSwipe = utenteRepository.findByEmail(emailUtente)
+            Utente utenteSwipe = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             // Trova l'utente target
@@ -161,7 +161,7 @@ public class SwipeService {
      */
     public List<Match> getMatchUtente(String emailUtente) {
         try {
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             return matchRepository.findMatchesByUtenteId(utente.getId());
@@ -176,7 +176,7 @@ public class SwipeService {
      */
     public List<Swipe> getUtentiCheMiHannoLikato(String emailUtente) {
         try {
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             return swipeRepository.findLikesByUtenteTargetId(utente.getId());

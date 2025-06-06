@@ -36,7 +36,7 @@ public class MessaggioService {
         
         try {
             // Trova l'utente che sta facendo la richiesta
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             // Trova il match
@@ -75,7 +75,7 @@ public class MessaggioService {
         
         try {
             // Trova il mittente
-            Utente mittente = utenteRepository.findByEmail(emailMittente)
+            Utente mittente = utenteRepository.findByUsername(emailMittente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente mittente non trovato"));
             
             // Trova il match

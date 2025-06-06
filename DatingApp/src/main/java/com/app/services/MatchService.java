@@ -33,7 +33,7 @@ public class MatchService {
         
         try {
             // Trova l'utente che richiede i match
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             System.out.println("Utente ID: " + utente.getId());
@@ -70,7 +70,7 @@ public class MatchService {
         
         try {
             // Trova l'utente
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             // Trova il match specifico
@@ -163,7 +163,7 @@ public class MatchService {
         
         try {
             // Trova l'utente
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             // Trova il match
@@ -201,7 +201,7 @@ public class MatchService {
         System.out.println("Email utente: " + emailUtente);
         
         try {
-            Utente utente = utenteRepository.findByEmail(emailUtente)
+            Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
             Long count = matchRepository.countMatchesByUtenteId(utente.getId());
@@ -229,14 +229,14 @@ public class MatchService {
         if (match.getUtente1Id() != null) {
             dto.setUtente1Id(match.getUtente1Id().getId());
             dto.setUtente1Nome(match.getUtente1Id().getNome());
-            dto.setUtente1Email(match.getUtente1Id().getEmail());
+            dto.setUtente1Email(match.getUtente1Id().getUsername());
         }
         
         // Dati utente 2
         if (match.getUtente2Id() != null) {
             dto.setUtente2Id(match.getUtente2Id().getId());
             dto.setUtente2Nome(match.getUtente2Id().getNome());
-            dto.setUtente2Email(match.getUtente2Id().getEmail());
+            dto.setUtente2Email(match.getUtente2Id().getUsername());
         }
         
         return dto;

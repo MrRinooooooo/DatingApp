@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface UtenteRepository extends JpaRepository<Utente, Long> {
     
     // Metodo esistente
-    Optional<Utente> findByEmail(String email);
+    Optional<Utente> findByUsername(String email);
     
     // Verifica se esiste un utente con questa email
-    boolean existsByEmail(String email);
+    boolean existsByUsername(String email);
     
     // NUOVO: Trova utenti disponibili per swipe (esclusi se stesso + già swipati)
     @Query("SELECT u FROM Utente u WHERE u.id != :utenteId " +

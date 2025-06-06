@@ -34,7 +34,7 @@ public class ReportService {
         
         try {
             // Ottengo utente che fa la segnalazione
-            Utente segnalante = utenteRepository.findByEmail(emailSegnalante)
+            Utente segnalante = utenteRepository.findByUsername(emailSegnalante)
                 .orElseThrow(() -> new EntityNotFoundException("Utente segnalante non trovato con email: " + emailSegnalante));
             
             System.out.println("Segnalante trovato: ID=" + segnalante.getId());
