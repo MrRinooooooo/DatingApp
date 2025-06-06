@@ -84,7 +84,7 @@ public class AuthController {
             );
  
             // Se l'autenticazione ha successo, carica i dettagli dell'utente
-            UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+            //UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
  
             // Ottiene i dati dell'utente dal database
             Utente utente = utenteService.findByEmail(loginRequest.getEmail());
