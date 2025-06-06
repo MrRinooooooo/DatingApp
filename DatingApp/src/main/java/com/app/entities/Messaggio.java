@@ -12,10 +12,10 @@ public class Messaggio {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long  id;
 	
-	@Column(name = "matchId", columnDefinition="bigint")
+	@Column(name = "match_Id", columnDefinition="bigint")
 	private Long matchId;
 	
-	@Column(name = "mittenteId", columnDefinition = "bigint")
+	@Column(name = "mittente_Id", columnDefinition = "bigint")
 	private Long mittenteId;
 	
 	@Column(name = "contenuto", columnDefinition = "varchar(255)")

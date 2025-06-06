@@ -36,11 +36,12 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
  
+    
     /**
      * Bean per l'encoder delle password.
      * BCrypt è un algoritmo di hashing sicuro per le password.
      */
-    @Bean
+   @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -49,7 +50,7 @@ public class SecurityConfig {
      * Bean per l'AuthenticationManager.
      * Gestisce il processo di autenticazione.
      */
-    @Bean
+   @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
@@ -59,7 +60,7 @@ public class SecurityConfig {
      * Provider di autenticazione che usa il nostro CustomUserDetailsService
      * e l'encoder delle password.
      */
-    @Bean
+   @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(customUserDetailsService);
@@ -78,14 +79,15 @@ public class SecurityConfig {
             .csrf().disable()
  
             // Configura le regole di autorizzazione
-            .authorizeHttpRequests(authz -> authz
+            .authorizeHttpRequests(authz -> authz.requestMatchers("/api/report/**").permitAll()
                 // Permette l'accesso senza autenticazione a questi endpoint
                 .requestMatchers(
                     "/api/auth/**",           // Registrazione e login
                     "/swagger-ui/**",         // Documentazione Swagger
                     "/v3/api-docs/**",        // OpenAPI docs
                     "/swagger-resources/**",   // Risorse Swagger
-                    "/webjars/**"             // Dipendenze web
+                    "/webjars/**"  ,           // Dipendenze web
+                    "/api/report/**"
                 ).permitAll()
  
                 // Endpoint che richiedono ruolo PREMIUM
