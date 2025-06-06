@@ -32,24 +32,24 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
  
-        // Cerca l'utente nel database usando l'email
-        Utente utente = utenteRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato con email: " + email));
- 
-        // Definisce i ruoli dell'utente basati sul tipo di account
-        List<SimpleGrantedAuthority> authorities = getAuthorities(utente);
- 
-        // Restituisce un oggetto User di Spring Security con:
-        // - email come username, password hash, e lista di autorizzazioni
-        return new User(
-            utente.getEmail(),           // username (useremo l'email)
-            utente.getPassword(),        // password hashata
-            true,                        // account abilitato
-            true,                        // account non scaduto
-            true,                        // credenziali non scadute
-            true,                        // account non bloccato
-            authorities                  // lista delle autorizzazioni/ruoli
-        );
+	// Cerca l'utente nel database usando l'email
+    	Utente utente = utenteRepository.findByUsername(email)
+    			.orElseThrow(() -> new UsernameNotFoundException("Utente non trovato con email: " + email));
+
+	// Definisce i ruoli dell'utente basati sul tipo di account
+		List<SimpleGrantedAuthority> authorities = getAuthorities(utente);
+
+	// Restituisce un oggetto User di Spring Security con:
+	// - email come username, password hash, e lista di autorizzazioni
+		return new User(
+		    utente.getUsername(),           // username (useremo l'email)
+		    utente.getPassword(),        // password hashata
+		    true,                        // account abilitato
+		    true,                        // account non scaduto
+		    true,                        // credenziali non scadute
+		    true,                        // account non bloccato
+		    authorities                  // lista delle autorizzazioni/ruoli
+		);
     }
  
     /**

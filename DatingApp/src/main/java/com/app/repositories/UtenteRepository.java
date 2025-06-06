@@ -8,8 +8,8 @@ import com.app.entities.Utente;
 
 public interface UtenteRepository extends JpaRepository<Utente, Long>{
 
-	Optional<Utente> findByEmail(String email); // restituisce un utente con quell'email, se esiste
+	Optional<Utente> findByUsername(String email); // restituisce un utente con quell'email, se esiste
 	
-	boolean existsByEmail(String email); // true se esiste un utente con quell'email
+	boolean existsByUsername(String email); // true se esiste un utente con quell'email
 	
 }
