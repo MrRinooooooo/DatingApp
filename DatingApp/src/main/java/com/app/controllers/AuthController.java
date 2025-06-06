@@ -42,7 +42,7 @@ public class AuthController {
      * Endpoint per la registrazione di un nuovo utente.
      * POST /api/auth/register
      */
-    @PostMapping("/register")
+   @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegistrazioneDto registrazioneDto) {
         try {
             // Verifica se l'email è già in uso
@@ -72,7 +72,7 @@ public class AuthController {
      * POST /api/auth/login
      */
     
-    @PostMapping("/login")
+   @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             // Autentica l'utente usando email e password
@@ -116,7 +116,7 @@ public class AuthController {
      * Endpoint per validare un token JWT.
      * GET /api/auth/validate
      */
-    @GetMapping("/validate")
+   @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         try {
             if (token != null && token.startsWith("Bearer ")) {
