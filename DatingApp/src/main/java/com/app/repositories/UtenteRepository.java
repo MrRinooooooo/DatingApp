@@ -17,9 +17,10 @@ public interface UtenteRepository extends JpaRepository<Utente, Long> {
     // Verifica se esiste un utente con questa email
     boolean existsByEmail(String email);
     
-    // NUOVO: Trova utenti disponibili per swipe (esclusi se stesso e già swipati)
+    // NUOVO: Trova utenti disponibili per swipe (esclusi se stesso + già swipati)
     @Query("SELECT u FROM Utente u WHERE u.id != :utenteId " +
            "AND (:utentiEsclusi IS NULL OR u.id NOT IN :utentiEsclusi)")
-    List<Utente> findUtentiDaSwipare(@Param("utenteId") Long utenteId, 
-                                   @Param("utentiEsclusi") List<Long> utentiEsclusi);
+    List<Utente> findUtentiDaSwipare(@Param("utenteId") Long utenteId,
+                                    @Param("utentiEsclusi") List<Long> utentiEsclusi);
+    
 }
