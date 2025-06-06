@@ -46,12 +46,8 @@ public class PreferenzeDto {
 		return distanzaMax;
 	}
 
-	public void setDistanzaMax(double distanzaMax) {
+	public void setDistanzaMax(Double distanzaMax) {
 		this.distanzaMax = distanzaMax;
 	}
-	
-	
-	
-	
 	
 }

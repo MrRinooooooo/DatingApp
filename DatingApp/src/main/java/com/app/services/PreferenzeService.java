@@ -53,8 +53,30 @@ public class PreferenzeService {
 		preferenze.setMaxEta(preferenzeDto.getEtaMassima());
 		preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
 		
+		System.out.println("DistanzaMax: " + preferenzeDto.getDistanzaMax());
+
 		return preferenceRepository.save(preferenze);
 		
+	}
+	
+	public PreferenzeDto modificaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
+		Preferenze modificaPreferenze = preferenceRepository.findById(utenteId)
+				.orElseThrow(() -> new RuntimeException("Utente non trovato con id" + utenteId));
+				modificaPreferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
+				modificaPreferenze.setMinEta(preferenzeDto.getEtaMinima());
+				modificaPreferenze.setMaxEta(preferenzeDto.getEtaMassima());
+				modificaPreferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
+				
+				Preferenze nuovaPreferenza = preferenceRepository.save(modificaPreferenze);
+				
+				//conversione
+				
+				return new PreferenzeDto(
+						nuovaPreferenza.getGenerePreferito(),
+						nuovaPreferenza.getMinEta(),
+						nuovaPreferenza.getMaxEta(),
+						nuovaPreferenza.getDistanzaMax()
+						);
 	}
 
 }

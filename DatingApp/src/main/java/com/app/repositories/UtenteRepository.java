@@ -13,6 +13,7 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 
 	Optional<Utente> findByEmail(String email); // restituisce un utente con quell'email, se esiste
 	
+
 	@Query("SELECT u FROM Utente u JOIN u.preferenze p WHERE " +
 		       "(:genere_preferito IS NULL OR u.genere = :genere_preferito) AND " +
 		       "(:eta_minima IS NULL OR p.minEta <= :eta_minima) AND " +
@@ -22,5 +23,9 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 		                              @Param("eta_minima") Integer etaMinima,
 		                              @Param("eta_massima") Integer etaMassima,
 		                              @Param("distanza_massima") Double distanzaMax);
+
+
+	boolean existsByEmail(String email); // true se esiste un utente con quell'email
+	
 
 }
