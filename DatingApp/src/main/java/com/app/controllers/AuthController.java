@@ -92,7 +92,7 @@ public class AuthController {
             // Genera il token JWT
             String token = jwtUtil.generateToken(
                 utente.getId(), 
-                utente.getEmail(), 
+                utente.getUsername(), 
                 utente.getTipoAccount()
             );
  

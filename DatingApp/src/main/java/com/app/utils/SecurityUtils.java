@@ -63,6 +63,6 @@ public class SecurityUtils {
      * @return true se premium, false altrimenti
      */
     public static boolean isPremiumUser() {
-        return hasRole("ROLE_PREMIUM");
+        return hasRole("ROLE_PREMIUM");					// Forse da cancellare "ROLE_"
     }
 }
