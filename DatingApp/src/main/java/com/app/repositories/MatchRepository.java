@@ -1,5 +1,9 @@
 package com.app.repositories;
 
-public interface MatchRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.app.entities.Match;
+
+public interface MatchRepository extends JpaRepository<Match, Long>{
 
 }
