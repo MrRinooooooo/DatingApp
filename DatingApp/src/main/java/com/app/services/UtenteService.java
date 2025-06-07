@@ -19,10 +19,9 @@ public class UtenteService {
 	
 	//REGISTRAZIONE
 	public Utente createUtente(RegistrazioneDto registrazioneDto) {
-
 			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
-			Utente utenteRegistrato = utenteRepository.save(new Utente(registrazioneDto.getEmail(), encodedPassword));
-			return utenteRegistrato;
+			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);			
+			return utenteRepository.save(nuovoUtente);
 	}
 	
 	//CONTROLLO EMAIL ESISTENTE
@@ -58,12 +57,16 @@ public class UtenteService {
 	        utenteEsistente.setBio(datiAggiornati.getBio().trim());
 	    }
 	    
+	    if (datiAggiornati.getGenere() != null) {
+	        utenteEsistente.setGenere(datiAggiornati.getGenere().trim());
+	    }
+	    
 	    if (datiAggiornati.getInteressi() != null) {
 	        utenteEsistente.setInteressi(datiAggiornati.getInteressi().trim());
 	    }
 	    
 	    if (datiAggiornati.getPosizione() != null) {
-	        utenteEsistente.setPosizione(datiAggiornati.getPosizione());
+	       utenteEsistente.setPosizione(datiAggiornati.getPosizione());
 	    }
 	    
 	    // NON permettere la modifica di: email, password, id, dataRegistrazione, tipoAccount

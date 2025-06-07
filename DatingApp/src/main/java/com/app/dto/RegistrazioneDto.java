@@ -14,11 +14,10 @@ public class RegistrazioneDto {
     @Size(min = 6, message = "Password deve essere di almeno 6 caratteri")
 	private String password;
 	
-	private String tipoAccount;
+	//private String tipoAccount;
 
 	public RegistrazioneDto() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public RegistrazioneDto(
@@ -27,7 +26,6 @@ public class RegistrazioneDto {
 		super();
 		this.email = email;
 		this.password = password;
-		this.tipoAccount = "Standard";
 	}
 
 	public String getEmail() {
@@ -44,14 +42,6 @@ public class RegistrazioneDto {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getTipoAccount() {
-		return tipoAccount;
-	}
-
-	public void setTipoAccount(String tipoAccount) {
-		this.tipoAccount = tipoAccount;
-	}
+	}	
 	
 }
