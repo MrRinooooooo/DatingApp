@@ -4,9 +4,9 @@ public class RegistrazioneDto {
 
 	private String email;
 	private String password;
-	
-	public RegistrazioneDto() {
-		
+
+  public RegistrazioneDto() {
+
 	}
 	
 	public RegistrazioneDto(String email, String password) {
