@@ -34,13 +34,13 @@ public class Preferenze {
 	private Integer maxEta;
 
 	@Column(name = "distanza_massima", nullable = false)
-	private Integer distanzaMax;
+	private Double distanzaMax;
 	
 	public Preferenze() {
 		
 	}
 	
-	public Preferenze(Utente utente, String generePreferito, Integer minEta, Integer maxEta, Integer distanzaMax) {
+	public Preferenze(Utente utente, String generePreferito, Integer minEta, Integer maxEta, Double distanzaMax) {
 		this.utente = utente;
 		this.generePreferito = generePreferito;
 		this.minEta = minEta;
@@ -88,11 +88,11 @@ public class Preferenze {
 		this.maxEta = maxEta;
 	}
 
-	public Integer getDistanzaMax() {
+	public Double getDistanzaMax() {
 		return distanzaMax;
 	}
 
-	public void setDistanzaMax(Integer distanzaMax) {
+	public void setDistanzaMax(Double distanzaMax) {
 		this.distanzaMax = distanzaMax;
 	}
 

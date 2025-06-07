@@ -2,6 +2,7 @@ package com.app.controllers;
 
 import com.app.dto.LoginRequest;
 import com.app.dto.LoginResponse;
+import com.app.dto.RegisterRequest;
 import com.app.dto.RegistrazioneDto;
 import com.app.entities.Utente;
 import com.app.security.JwtUtil;
@@ -37,11 +38,12 @@ public class AuthController {
  
     @Autowired
     private UtenteService utenteService;
-    
+ 
     /**
      * Endpoint per la registrazione di un nuovo utente.
      * POST /api/auth/register
      */
+
     
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegistrazioneDto registrazioneDto) {
@@ -52,11 +54,19 @@ public class AuthController {
                     .body(new LoginResponse(null, "Email già in uso", null, null));
             }
  
-            // Crea il nuovo utente "STANDARD" da email e password e data registrazione
+            // Crea il nuovo utente
             Utente nuovoUtente = utenteService.createUtente(registrazioneDto);
-            
+ 
+            // Genera il token JWT per il nuovo utente
+            String token = jwtUtil.generateToken(
+                nuovoUtente.getId(), 
+                nuovoUtente.getUsername(), 
+                nuovoUtente.getTipoAccount()
+            );
+ 
             return ResponseEntity.ok(new LoginResponse(
                 "Disponibile dopo il login",												// Token vuoto volendo da implementare nuovo modello
+                token, 
                 "Registrazione completata con successo", 
                 nuovoUtente.getId(),
                 nuovoUtente.getTipoAccount()
