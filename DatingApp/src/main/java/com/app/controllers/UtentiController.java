@@ -74,15 +74,13 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
             return ResponseEntity.badRequest().body("Errore nell'aggiornamento del profilo: " + e.getMessage());
         }
     }
-
- 
  
     /**
      * Endpoint per visualizzare il profilo pubblico di un altro utente.
      * Accessibile solo agli utenti autenticati.
      * GET /api/utenti/{id}
      */
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserProfile(@PathVariable Long id) {
         try {
