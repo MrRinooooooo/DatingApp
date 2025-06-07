@@ -65,11 +65,12 @@ public class SwipeService {
     }
     
     // ========== ESEGUI SWIPE ==========
-    @Transactional
-    public String eseguiSwipe(SwipeDTO dto, String emailUtente) {
+    @Transactional 	// Esegue il salvataggio su database solo se va tutto bene altrimenti
+    				// la transazione viene annullata ed il database ripristinato allo stato precedente
+    public String eseguiSwipe(SwipeDTO dto, Long senderId) {
         
         System.out.println("=== SWIPE SERVICE ESEGUI DEBUG ===");
-        System.out.println("Email utente: " + emailUtente);
+        System.out.println("Mittente ID: " + senderId);        
         System.out.println("Target ID: " + dto.getUtenteTargetId());
         System.out.println("Tipo swipe: " + dto.getTipo());
         
@@ -79,20 +80,21 @@ public class SwipeService {
         }
         
         try {
-            // Trova l'utente che sta facendo swipe
-            Utente utenteSwipe = utenteRepository.findByUsername(emailUtente)
+            // Verifica che esiste l'utente che sta facendo swipe
+            Utente utenteSwipe = utenteRepository.findById(senderId)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
-            // Trova l'utente target
+            // Verifica che esiste l'utente target
             Utente utenteTarget = utenteRepository.findById(dto.getUtenteTargetId())
                 .orElseThrow(() -> new EntityNotFoundException("Utente target non trovato"));
             
             // ✅ CORRETTO: Usa il metodo aggiornato del SwipeRepository
+            // Verifica se esiste già uno swipe tra mittente e target
             boolean giaSwipato = swipeRepository.existsByUtenteSwipeIdAndUtenteTargetSwipeId(
-                utenteSwipe.getId(), utenteTarget.getId());
+                senderId, utenteTarget.getId());
                 
             if (giaSwipato) {
-                throw new IllegalArgumentException("Hai già swipato questo utente");
+                return "Hai già uno swipe con questo utente";
             }
             
             // Crea il nuovo swipe

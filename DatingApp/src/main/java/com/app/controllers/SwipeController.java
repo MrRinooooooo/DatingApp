@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.dto.CustomUserDto;
 import com.app.dto.SwipeDTO;
 import com.app.dto.UtenteDiscoverDTO;
 import com.app.services.SwipeService;
@@ -40,24 +41,24 @@ public class SwipeController {
     }
 
     // POST /api/swipe → Esegui swipe
+    
     @PostMapping("/swipe")
     public ResponseEntity<String> eseguiSwipe(@RequestBody SwipeDTO swipeDTO,
-                                            @AuthenticationPrincipal UserDetails userDetails) {
+                                            @AuthenticationPrincipal CustomUserDto userPrincipal) {
         
-        System.out.println("=== SWIPE DEBUG ===");
-        System.out.println("User: " + userDetails.getUsername());
-        //System.out.println("Id:" + userDetails.getId());
+        System.out.println("=== SWIPE DEBUG ===");        
+        System.out.println("UserId: " + userPrincipal.getUserId());
+        System.out.println("User: " + userPrincipal.getUsername());
         System.out.println("Target: " + swipeDTO.getUtenteTargetId());
         System.out.println("Tipo: " + swipeDTO.getTipo());
         
         try {
-            String risultato = swipeService.eseguiSwipe(swipeDTO, userDetails.getUsername());
+            String risultato = swipeService.eseguiSwipe(swipeDTO, userPrincipal.getUserId());
             return ResponseEntity.ok(risultato);
         } catch (Exception e) {
             System.err.println("Errore swipe: " + e.getMessage());
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
         }
     }
-
     
 }
