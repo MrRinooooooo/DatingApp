@@ -3,6 +3,7 @@ package com.app.controllers;
 import com.app.dto.LoginRequest;
 import com.app.dto.LoginResponse;
 import com.app.dto.RegisterRequest;
+import com.app.dto.RegistrazioneDto;
 import com.app.entities.Utente;
 import com.app.security.JwtUtil;
 import com.app.services.UtenteService;
@@ -42,22 +43,23 @@ public class AuthController {
      * Endpoint per la registrazione di un nuovo utente.
      * POST /api/auth/register
      */
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+
+   @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrazioneDto registrazioneDto) {
         try {
             // Verifica se l'email è già in uso
-            if (utenteService.existsByEmail(registerRequest.getEmail())) {
+            if (utenteService.existsByEmail(registrazioneDto.getEmail())) {
                 return ResponseEntity.badRequest()
                     .body(new LoginResponse(null, "Email già in uso", null, null));
             }
  
             // Crea il nuovo utente
-            Utente nuovoUtente = utenteService.createUtente(registerRequest);
+            Utente nuovoUtente = utenteService.createUtente(registrazioneDto);
  
             // Genera il token JWT per il nuovo utente
             String token = jwtUtil.generateToken(
                 nuovoUtente.getId(), 
-                nuovoUtente.getEmail(), 
+                nuovoUtente.getUsername(), 
                 nuovoUtente.getTipoAccount()
             );
  
@@ -78,7 +80,8 @@ public class AuthController {
      * Endpoint per il login degli utenti.
      * POST /api/auth/login
      */
-    @PostMapping("/login")
+    
+   @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             // Autentica l'utente usando email e password
@@ -90,7 +93,7 @@ public class AuthController {
             );
  
             // Se l'autenticazione ha successo, carica i dettagli dell'utente
-            UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+            //UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
  
             // Ottiene i dati dell'utente dal database
             Utente utente = utenteService.findByEmail(loginRequest.getEmail());
@@ -98,7 +101,7 @@ public class AuthController {
             // Genera il token JWT
             String token = jwtUtil.generateToken(
                 utente.getId(), 
-                utente.getEmail(), 
+                utente.getUsername(), 
                 utente.getTipoAccount()
             );
  
@@ -122,7 +125,7 @@ public class AuthController {
      * Endpoint per validare un token JWT.
      * GET /api/auth/validate
      */
-    @GetMapping("/validate")
+   @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         try {
             if (token != null && token.startsWith("Bearer ")) {

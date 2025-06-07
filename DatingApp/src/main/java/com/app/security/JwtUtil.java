@@ -70,7 +70,7 @@ public class JwtUtil {
      * @param token il token JWT
      * @return oggetto Claims contenente tutti i dati del token
      */
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {															//-----------------private - public per prova
         try {
             return Jwts.parserBuilder()  // Crea un parser JWT
                     .setSigningKey(getSigningKey())  // Imposta la chiave per verificare la firma
@@ -116,7 +116,7 @@ public class JwtUtil {
         claims.put("accountType", accountType);  // Aggiungiamo il tipo di account
         return createToken(claims, username);
     }
- 
+    
     /**
      * Crea effettivamente il token JWT
      * @param claims i claims da includere nel token
@@ -163,5 +163,9 @@ public class JwtUtil {
     public String extractAccountType(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("accountType", String.class);
+    }
+    
+    public String extractEmail(String token) {
+    	return extractAllClaims(token).getSubject();
     }
 }

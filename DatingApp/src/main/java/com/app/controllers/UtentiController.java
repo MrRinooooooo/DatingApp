@@ -6,6 +6,8 @@ import com.app.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
  
 /**
@@ -13,12 +15,14 @@ import org.springframework.web.bind.annotation.*;
  * Esempi di utilizzo dell'autenticazione JWT.
  */
 @RestController
-@RequestMapping("/prova/utenti")
-public class ProvaUtentiController {
+@RequestMapping("/api/utenti")
+public class UtentiController {
  
     @Autowired
     private UtenteService utenteService;
  
+Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    
     /**
      * Endpoint per ottenere il profilo dell'utente corrente.
      * Accessibile solo agli utenti autenticati.
@@ -26,6 +30,9 @@ public class ProvaUtentiController {
      */
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile() {
+																					//System.out.println("=== CONTROLLER /me CHIAMATO ===");
+																					//System.out.println("Authentication: " + authentication);
+																					//System.out.println("Principal: " + authentication.getPrincipal());	
         try {
             // Ottiene l'email dell'utente corrente dal SecurityContext
             String currentUserEmail = SecurityUtils.getCurrentUserEmail();
@@ -43,7 +50,7 @@ public class ProvaUtentiController {
             return ResponseEntity.badRequest().body("Errore nel recupero del profilo: " + e.getMessage());
         }
     }
- 
+    
     /**
      * Endpoint per aggiornare il profilo dell'utente corrente.
      * Accessibile solo agli utenti autenticati.
@@ -73,6 +80,7 @@ public class ProvaUtentiController {
      * Accessibile solo agli utenti autenticati.
      * GET /api/utenti/{id}
      */
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserProfile(@PathVariable Long id) {
         try {
@@ -100,13 +108,12 @@ public class ProvaUtentiController {
     @PreAuthorize("hasRole('PREMIUM')") // Annotation per verificare il ruolo
     public ResponseEntity<?> whoLikedMe() {
         try {
-            String currentUserEmail = SecurityUtils.getCurrentUserEmail();
- 
+        																				//   String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+																						//System.out.println(currentUserEmail);
             // Questa funzionalità è disponibile solo per utenti premium
             // L'annotation @PreAuthorize si occupa già del controllo
  
-            // Logica per ottenere gli utenti che hanno messo "like"
-            // (questa sarà implementata negli step successivi)
+            // Logica per ottenere gli utenti che hanno messo "like" - Da implementare
  
             return ResponseEntity.ok("Lista degli utenti che ti hanno messo like - Funzionalità Premium");
  
@@ -127,10 +134,10 @@ public class ProvaUtentiController {
                 return ResponseEntity.status(403).body("Funzionalità disponibile solo per utenti Premium");
             }
  
-            String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+            																			// String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+            																			//System.out.println(currentUserEmail);
  
-            // Logica per il boost del profilo
-            // (questa sarà implementata negli step successivi)
+            // Logica per il boost del profilo - Da implementare
  
             return ResponseEntity.ok("Profilo boostato con successo - Funzionalità Premium");
  

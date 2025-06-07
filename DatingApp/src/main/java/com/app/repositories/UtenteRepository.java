@@ -11,7 +11,17 @@ import com.app.entities.Utente;
 
 public interface UtenteRepository extends JpaRepository<Utente, Long>{
 
-	Optional<Utente> findByEmail(String email); // restituisce un utente con quell'email, se esiste
+    // Metodo esistente
+    Optional<Utente> findByUsername(String email);
+    
+    // Verifica se esiste un utente con questa email
+    boolean existsByUsername(String email);
+    
+    // NUOVO: Trova utenti disponibili per swipe (esclusi se stesso + già swipati)
+    @Query("SELECT u FROM Utente u WHERE u.id != :utenteId " +
+           "AND (:utentiEsclusi IS NULL OR u.id NOT IN :utentiEsclusi)")
+    List<Utente> findUtentiDaSwipare(@Param("utenteId") Long utenteId,
+                                    @Param("utentiEsclusi") List<Long> utentiEsclusi);
 	
 
 	@Query("SELECT u FROM Utente u JOIN u.preferenze p WHERE " +
@@ -23,9 +33,5 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 		                              @Param("eta_minima") Integer etaMinima,
 		                              @Param("eta_massima") Integer etaMassima,
 		                              @Param("distanza_massima") Double distanzaMax);
-
-
-	boolean existsByEmail(String email); // true se esiste un utente con quell'email
-	
-
 }
+

@@ -26,8 +26,8 @@ public class Utente {
 	@Column(name = "nome", columnDefinition = "varchar(255)")
 	private String nome;
 	
-	@Column(name = "email", nullable = false, columnDefinition = "varchar(255)")
-	private String email;
+	@Column(name = "username", nullable = false, columnDefinition = "varchar(255)")
+	private String username;
 	
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
 	private String password;
@@ -88,7 +88,7 @@ public class Utente {
 	}
 	
 	public Utente(String email, String password) {
-		this.email = email;
+		this.username = email;
 		this.password = password;
 		this.tipoAccount = "STANDARD";
 		this.dataRegistrazione = LocalDate.now();
@@ -97,7 +97,7 @@ public class Utente {
 	//includiamo anche Posizione
 	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione) {
 		this.nome = nome;
-		this.email = email;
+		this.username = email;
 		this.password = password;
 		this.genere = genere;
 		this.dataNascita = dataNascita;
@@ -125,12 +125,12 @@ public class Utente {
 		this.nome = nome;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		this.username = email;
 	}
 
 	public String getPassword() {
@@ -282,7 +282,7 @@ public class Utente {
 	    return "Utente{" +
 	            "id=" + id +
 	            ", nome='" + nome + '\'' +
-	            ", email='" + email + '\'' +
+	            ", email='" + username + '\'' +
 	            ", password='[PROTETTA]'" +
 	            ", genere='" + genere + '\'' +
 	            ", dataNascita=" + dataNascita +
