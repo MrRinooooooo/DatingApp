@@ -46,6 +46,7 @@ public class SwipeController {
         
         System.out.println("=== SWIPE DEBUG ===");
         System.out.println("User: " + userDetails.getUsername());
+        //System.out.println("Id:" + userDetails.getId());
         System.out.println("Target: " + swipeDTO.getUtenteTargetId());
         System.out.println("Tipo: " + swipeDTO.getTipo());
         

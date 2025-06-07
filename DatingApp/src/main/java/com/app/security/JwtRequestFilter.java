@@ -63,14 +63,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             	
             																		// Prima verifica: proviamo a estrarre tutti i claims per vedere se il token è ben formato
  																					//System.out.println("--- Tentativo estrazione claims ---");
- Claims claims = jwtUtil.extractAllClaims(jwtToken);
- System.out.println("Claims estratti con successo: " + claims);          	
+				 Claims claims = jwtUtil.extractAllClaims(jwtToken);
+				 System.out.println("Claims estratti con successo: " + claims);          	
             	
             	
             	
                 // Estrae lo username dal token
  																					//System.out.println("--- Tentativo estrazione username ---");
-            	username = jwtUtil.extractUsername(jwtToken);
+				 username = jwtUtil.extractUsername(jwtToken);
  																					//System.out.println("Username estratto" + username);
  
             } catch (ExpiredJwtException e) {
@@ -87,7 +87,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 e.printStackTrace();
             }
         } else {
+        	
             logger.warn("JWT Token non inizia con Bearer String");
+            
         }
  
         // Se abbiamo uno username e non c'è già un'autenticazione nel context

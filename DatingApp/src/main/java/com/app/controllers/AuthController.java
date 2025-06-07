@@ -65,8 +65,7 @@ public class AuthController {
             );
  
             return ResponseEntity.ok(new LoginResponse(
-                "Disponibile dopo il login",												// Token vuoto volendo da implementare nuovo modello
-                token, 
+                "Disponibile dopo il login",												// Token vuoto volendo da implementare nuovo modello 
                 "Registrazione completata con successo", 
                 nuovoUtente.getId(),
                 nuovoUtente.getTipoAccount()
