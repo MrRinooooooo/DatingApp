@@ -1,10 +1,10 @@
 package com.app.services;
 
+import com.app.dto.CustomUserDto;
 import com.app.entities.Utente;
 import com.app.repositories.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,27 +29,30 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @return UserDetails oggetto che contiene le informazioni dell'utente
      * @throws UsernameNotFoundException se l'utente non viene trovato
      */
+    
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
  
-	// Cerca l'utente nel database usando l'email
-    	Utente utente = utenteRepository.findByUsername(email)
-    			.orElseThrow(() -> new UsernameNotFoundException("Utente non trovato con email: " + email));
+		// Cerca l'utente nel database usando l'email
+		Utente utente = utenteRepository.findByUsername(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Utente non trovato con email: " + email));
 
-	// Definisce i ruoli dell'utente basati sul tipo di account
+		// Definisce i ruoli dell'utente basati sul tipo di account
 		List<SimpleGrantedAuthority> authorities = getAuthorities(utente);
-
-	// Restituisce un oggetto User di Spring Security con:
-	// - email come username, password hash, e lista di autorizzazioni
-		return new User(
-		    utente.getUsername(),           // username (useremo l'email)
-		    utente.getPassword(),        // password hashata
-		    true,                        // account abilitato
-		    true,                        // account non scaduto
-		    true,                        // credenziali non scadute
-		    true,                        // account non bloccato
-		    authorities                  // lista delle autorizzazioni/ruoli
-		);
+	
+		// Restituisce un oggetto User di Spring Security con:
+		// - email come username, password hash, e lista di autorizzazioni
+			return new CustomUserDto(
+				utente.getId(),				// id
+			    utente.getUsername(),       // username (useremo l'email)
+			    utente.getPassword(),       // password hashata
+			    true,                       // account abilitato
+			    true,                       // account non scaduto
+			    true,                       // credenziali non scadute
+			    true,                       // account non bloccato
+			    authorities                 // lista delle autorizzazioni/ruoli
+			);
+			
     }
  
     /**
@@ -57,8 +60,10 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param utente l'entità utente
      * @return lista delle autorizzazioni
      */
+    
     private List<SimpleGrantedAuthority> getAuthorities(Utente utente) {
-        // Tutti gli utenti hanno il ruolo USER
+    	
+        // Tutti gli utenti hanno il ruolo USER    	
         if ("PREMIUM".equals(utente.getTipoAccount())) {
             // Gli utenti premium hanno entrambi i ruoli
             return Arrays.asList(
@@ -69,5 +74,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             // Gli utenti standard hanno solo il ruolo USER
             return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
         }
+        
     }
+	    
 }

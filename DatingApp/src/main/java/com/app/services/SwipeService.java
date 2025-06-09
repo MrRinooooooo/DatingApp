@@ -112,6 +112,10 @@ public class SwipeService {
                 return controllaMatch(utenteSwipe, utenteTarget);
             }
             
+            // Se lo swipe di tipo LIKE/SUPER_LIKE è reciproco creo un MATCH
+            
+            // Invio una notifica push ai due utenti coinvolti che è stao creato il Match
+            
             return "Swipe salvato: " + dto.getTipo();
             
         } catch (DataAccessException e) {
