@@ -4,12 +4,9 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,8 +17,7 @@ public class Abbonamento {
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
 		private Long id;
 		
-		@ManyToOne(fetch = FetchType.EAGER)
-		@JoinColumn(name = "utente_id", referencedColumnName = "id")
+		@Column(name = "utente_id", columnDefinition = "bigint(11)")
 		private Long utenteID;
 		
 		@Column(name = "tipo", columnDefinition = "varchar(255)")
@@ -48,7 +44,7 @@ public class Abbonamento {
 			this.attivo = true;
 		}
 
-	public Abbonamento(Long utenteID, String tipo, boolean attivo, String metodoPagamento, Long stripeSubscriptionId) {
+	public Abbonamento(Long utenteID, String tipo, String metodoPagamento, Long stripeSubscriptionId) {
 			super();
 			this.utenteID = utenteID;
 			this.tipo = tipo;

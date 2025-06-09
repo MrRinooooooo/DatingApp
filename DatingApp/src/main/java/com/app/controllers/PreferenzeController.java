@@ -33,30 +33,30 @@ public class PreferenzeController {
 	//unico metodo per verificare se l'utente è autenticato 
 	//lo chiameremo poi in ogni metodo
 
-	private Utente getCurrentUser() {
+	/*private Utente getCurrentUser() {
 		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
 		if (currentUserEmail == null) {
 			throw new RuntimeException("Utente non autenticato");
 		}
 		return utenteService.findByEmail(currentUserEmail);
-	}
+	}*/
 
 	@PostMapping("/me")
 	public ResponseEntity<?> creaPreferenze( @RequestBody PreferenzeDto preferenzeDto) {
 		try {
-			Utente utente = getCurrentUser();
+			Utente utente = utenteService.getCurrentUser();
 			return ResponseEntity.ok(preferenzeService.salvaPreferenze(utente.getId(), preferenzeDto));
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(400).body(e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body("Errore durante la creazione:" + e.getMessage());
+			return ResponseEntity.badRequest().body("Errore durante la creazione preferenze:" + e.getMessage());
 		}
 	}
 
 	@GetMapping("/me")
 	public ResponseEntity<?> getPreferenze() {
 		try {
-			Utente utente = getCurrentUser();
+			Utente utente = utenteService.getCurrentUser();
 			Optional<PreferenzeDto> preferenze = preferenzeService.getPreferenzeByUtenteId(utente.getId());
 			return ResponseEntity.ok(preferenze);
 
