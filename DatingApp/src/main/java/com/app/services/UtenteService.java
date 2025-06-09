@@ -108,4 +108,15 @@ public class UtenteService {
 	    return profiloPubblico;
 	}
 	
+	public Utente addPhoto(String email, UtenteDiscoverDTO utentediscoverDTO) {
+		Utente utente = utenteRepository.findByUsername(email)
+				.orElseThrow(() -> new RuntimeException("utente non trovato"));
+		
+		//impostiamo la nuova foto
+		
+		utente.setFotoProfilo(utentediscoverDTO.getFotoProfilo());
+		
+		return utenteRepository.save(utente);
+	}
+	
 }

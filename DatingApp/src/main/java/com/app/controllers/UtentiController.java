@@ -1,5 +1,6 @@
 package com.app.controllers;
 
+import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
@@ -136,7 +137,6 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
  
             																			// String currentUserEmail = SecurityUtils.getCurrentUserEmail();
             																			//System.out.println(currentUserEmail);
- 
             // Logica per il boost del profilo - Da implementare
  
             return ResponseEntity.ok("Profilo boostato con successo - Funzionalità Premium");
@@ -145,4 +145,26 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
         }
     }
-}
+    
+    /**
+     * Endpoint per aggiungere una foto profilo dell'utente
+     * Accessibile solo agli utenti autenticati.
+     */
+    
+    @PostMapping("/me/foto") 
+    public ResponseEntity<?> uploadPhoto(@RequestBody UtenteDiscoverDTO fotoAggiunta) {
+    	try {
+    		// verifica se l'utente è autenticato
+    		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+    		if (currentUserEmail == null) {
+    			return ResponseEntity.badRequest().body("Utente non autenticato");
+    		}
+    		//aggiungi foto
+    		Utente utente = utenteService.addPhoto(currentUserEmail, fotoAggiunta);
+    		return ResponseEntity.ok("foto aggiunta con successo " + fotoAggiunta + " " + utente);
+    	} catch (Exception e) {
+    		return ResponseEntity.badRequest().body("Errore durante l'aggiunta dell'immagine profilo");
+    	}
+    }
+    
+    }
