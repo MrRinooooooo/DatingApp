@@ -81,6 +81,9 @@ public class Utente {
 	 
 	 @OneToMany(mappedBy = "segnalato")
 	 private List<Report> Segnalato;
+	 
+	 @OneToMany(mappedBy = "utente")
+	 private List<Abbonamento> abbonamentoUtente;
 	
 	public Utente() {
 		
