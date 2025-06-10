@@ -18,7 +18,7 @@ public class Abbonamento {
 		private Long id;
 		
 		@Column(name = "utente_id", columnDefinition = "bigint(11)")
-		private Long utenteID;
+		private Long utenteId;
 		
 		@Column(name = "tipo", columnDefinition = "varchar(255)")
 		private String tipo;
@@ -46,7 +46,7 @@ public class Abbonamento {
 
 	public Abbonamento(Long utenteID, String tipo, String metodoPagamento, Long stripeSubscriptionId) {
 			super();
-			this.utenteID = utenteID;
+			this.utenteId = utenteID;
 			this.tipo = tipo;
 			this.dataInizio = LocalDate.now();
 			this.dataFine = dataInizio.plusDays(30);
@@ -63,12 +63,12 @@ public class Abbonamento {
 			this.id = id;
 		}
 
-		public Long getUtenteID() {
-			return utenteID;
+		public Long getUtenteId() {
+			return utenteId;
 		}
 
-		public void setUtenteID(Long utenteID) {
-			this.utenteID = utenteID;
+		public void setUtenteId(Long utenteID) {
+			this.utenteId = utenteID;
 		}
 
 		public String getTipo() {
