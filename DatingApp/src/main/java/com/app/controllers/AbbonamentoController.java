@@ -93,5 +93,4 @@ public class AbbonamentoController {
 		}
 	}
 	
-	//---------------- per domani 10/06 implementazione modelli da restituire come da documento
 }
