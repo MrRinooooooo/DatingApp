@@ -25,7 +25,7 @@ public class Utente {
 	@Column(name = "nome", columnDefinition = "varchar(255)")
 	private String nome;
 	
-	@Column(name = "username", nullable = false, columnDefinition = "varchar(255)")
+	@Column(name = "username", nullable = false, unique = true, columnDefinition = "varchar(255)")
 	private String username;
 	
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")

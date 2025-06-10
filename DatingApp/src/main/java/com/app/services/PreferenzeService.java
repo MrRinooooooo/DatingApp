@@ -53,7 +53,6 @@ public class PreferenzeService {
 	        Utente utente = utenteRepository.findByUsername(springUser.getUsername())
 	                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-	        
 	        Preferenze preferenze = new Preferenze();
 	        preferenze.setUtente(utente);
 	        preferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
