@@ -2,6 +2,7 @@ package com.app.controllers;
 
 import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
+import com.app.services.PhotoService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class UtentiController {
  
     @Autowired
     private UtenteService utenteService;
+    
+    @Autowired
+    private PhotoService photoService;
  
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
@@ -160,11 +164,24 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     			return ResponseEntity.badRequest().body("Utente non autenticato");
     		}
     		//aggiungi foto
-    		Utente utente = utenteService.addPhoto(currentUserEmail, fotoAggiunta);
+    		Utente utente = photoService.addPhoto(currentUserEmail, fotoAggiunta);
     		return ResponseEntity.ok("foto aggiunta con successo " + fotoAggiunta + " " + utente);
     	} catch (Exception e) {
     		return ResponseEntity.badRequest().body("Errore durante l'aggiunta dell'immagine profilo");
     	}
     }
     
-    }
+    @DeleteMapping("/me/foto")
+    public ResponseEntity<?> deletePhoto() {
+        try {
+            String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+            if (currentUserEmail == null) {
+                return ResponseEntity.badRequest().body("Utente non autenticato");    
+            }
+            photoService.deletePhoto(currentUserEmail );
+            return ResponseEntity.ok("Foto eliminata con successo");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Errore durante l'eliminazione");
+        }
+    } 
+}
