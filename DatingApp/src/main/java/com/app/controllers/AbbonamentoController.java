@@ -12,14 +12,17 @@ import com.app.dto.AbbonamentoDto;
 import com.app.entities.Abbonamento;
 import com.app.entities.Utente;
 import com.app.repositories.AbbonamentoRepository;
+import com.app.repositories.UtenteRepository;
 import com.app.services.AbbonamentoService;
 import com.app.services.UtenteService;
-
 
 
 @RestController
 @RequestMapping("/api/premium")
 public class AbbonamentoController {
+
+	@Autowired
+    UtenteRepository utenteRepository;
 	
 	@Autowired
 	UtenteService utenteService;
@@ -29,6 +32,10 @@ public class AbbonamentoController {
 	
 	@Autowired
 	AbbonamentoService abbonamentoService;
+
+    AbbonamentoController(UtenteRepository utenteRepository) {
+        this.utenteRepository = utenteRepository;
+    }
 	
 	// --------------- UPGRADE ACCOUNT A PREMIUM
 	@PostMapping("/upgrade")
@@ -43,6 +50,8 @@ public class AbbonamentoController {
 					//IMPLEMENTAZIONE    stripeSubscriptionId = .getStripeSubscriptionId();
 				}
 			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), abbonamentoDto.getTipoAbbonamento().toUpperCase(), abbonamentoDto.getMetodoPagamento().toUpperCase(), stripeSubscriptionId);
+			utente.setTipoAccount("PREMIUM");
+			utenteRepository.save(utente);
 			return ResponseEntity.ok(abbonamentoRepository.save(nuovoAbbonamento));
 			
 		} catch (RuntimeException e) {

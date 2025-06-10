@@ -111,12 +111,26 @@ public class UtenteService {
 	    return profiloPubblico;
 	}
 	
+	// Prende dati utente loggato (se loggato)
 	public Utente getCurrentUser() {
 		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
 		if (currentUserEmail == null) {
 			throw new RuntimeException("Utente non autenticato");
 		}
 		return findByEmail(currentUserEmail);
+	}
+	
+	// Restituisce true se il tipoAccount dell'utente loggato è "PREMIUM"
+	public boolean isPremium() {
+		Utente utente = getCurrentUser();
+		boolean isPremium;
+		
+		if(utente.getTipoAccount()=="PREMIUM") {
+			isPremium=true;
+			}else {
+				isPremium=false;
+			}
+		return isPremium;
 	}
 	
 }
