@@ -12,6 +12,7 @@ import com.app.entities.Posizione;
 import com.app.entities.Utente;
 import com.app.repositories.MessaggioRepository;
 import com.app.repositories.UtenteRepository;
+import com.app.utils.SecurityUtils;
 import com.app.dto.*;
 
 @Service
@@ -31,12 +32,10 @@ public class UtenteService {
     
 	//REGISTRAZIONE
 	public Utente createUtente(RegistrazioneDto registrazioneDto) {
-
-		String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
-		Utente utenteRegistrato = utenteRepository.save(new Utente(registrazioneDto.getEmail(), encodedPassword));
-		return utenteRegistrato;
-}
-	
+			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
+			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);			
+			return utenteRepository.save(nuovoUtente);
+	}
 	
 	//CONTROLLO EMAIL ESISTENTE
 	public boolean existsByEmail(String email)
@@ -71,12 +70,16 @@ public class UtenteService {
 	        utenteEsistente.setBio(datiAggiornati.getBio().trim());
 	    }
 	    
+	    if (datiAggiornati.getGenere() != null) {
+	        utenteEsistente.setGenere(datiAggiornati.getGenere().trim());
+	    }
+	    
 	    if (datiAggiornati.getInteressi() != null) {
 	        utenteEsistente.setInteressi(datiAggiornati.getInteressi().trim());
 	    }
 	    
 	    if (datiAggiornati.getPosizione() != null) {
-	        utenteEsistente.setPosizione(datiAggiornati.getPosizione());
+	       utenteEsistente.setPosizione(datiAggiornati.getPosizione());
 	    }
 	    
 	    if (datiAggiornati.getFotoProfilo() != null) {
@@ -113,4 +116,25 @@ public class UtenteService {
 	    return profiloPubblico;
 	}
 
+	// Prende dati utente loggato (se loggato)
+	public Utente getCurrentUser() {
+		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+		if (currentUserEmail == null) {
+			throw new RuntimeException("Utente non autenticato");
+		}
+		return findByEmail(currentUserEmail);
+	}
+	
+	// Restituisce true se il tipoAccount dell'utente loggato è "PREMIUM"
+	public boolean isPremium() {
+		Utente utente = getCurrentUser();
+		boolean isPremium;
+		
+		if(utente.getTipoAccount()=="PREMIUM") {
+			isPremium=true;
+			}else {
+				isPremium=false;
+			}
+		return isPremium;
+	}
 }

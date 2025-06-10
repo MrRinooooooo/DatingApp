@@ -33,11 +33,10 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      * Accessibile solo agli utenti autenticati.
      * GET /api/utenti/me
      */
+
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile() {
-																					//System.out.println("=== CONTROLLER /me CHIAMATO ===");
-																					//System.out.println("Authentication: " + authentication);
-																					//System.out.println("Principal: " + authentication.getPrincipal());	
+    	
         try {
             // Ottiene l'email dell'utente corrente dal SecurityContext
             String currentUserEmail = SecurityUtils.getCurrentUserEmail();
@@ -61,6 +60,7 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      * Accessibile solo agli utenti autenticati.
      * PUT /api/utenti/me
      */
+    
     @PutMapping("/me")
     public ResponseEntity<?> updateMyProfile(@RequestBody Utente utenteAggiornato) {
         try {
@@ -109,6 +109,7 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      * Accessibile solo agli utenti con account premium.
      * GET /api/utenti/premium/who-liked-me
      */
+    
     @GetMapping("/premium/who-liked-me")
     @PreAuthorize("hasRole('PREMIUM')") // Annotation per verificare il ruolo
     public ResponseEntity<?> whoLikedMe() {
@@ -131,6 +132,7 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      * Esempio di endpoint che verifica manualmente i permessi
      * GET /api/utenti/premium/boost-profile
      */
+    
     @GetMapping("/premium/boost-profile")
     public ResponseEntity<?> boostProfile() {
         try {
