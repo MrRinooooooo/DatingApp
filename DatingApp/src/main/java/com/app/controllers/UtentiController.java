@@ -2,9 +2,13 @@ package com.app.controllers;
 
 import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
+import com.app.repositories.UtenteRepository;
 import com.app.services.PhotoService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +29,9 @@ public class UtentiController {
     
     @Autowired
     private PhotoService photoService;
+    
+    @Autowired
+    private UtenteRepository utenteRepository;
  
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
@@ -165,9 +172,15 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     		if (currentUserEmail == null) {
     			return ResponseEntity.badRequest().body("Utente non autenticato");
     		}
+    		
+    		Optional<Utente> fotoEsistente = utenteRepository.findByUsername(currentUserEmail);
+    		
+    		if (fotoEsistente.isPresent() && fotoEsistente.get().getFotoProfilo() != null) {
+    			return ResponseEntity.badRequest().body("Foto gia presente");
+    		}
     		//aggiungi foto
     		Utente utente = photoService.addPhoto(currentUserEmail, fotoAggiunta);
-    		return ResponseEntity.ok("foto aggiunta con successo " + fotoAggiunta + " " + utente);
+    		return ResponseEntity.ok("foto aggiunta con successo " + fotoAggiunta);
     	} catch (Exception e) {
     		return ResponseEntity.badRequest().body("Errore durante l'aggiunta dell'immagine profilo");
     	}
