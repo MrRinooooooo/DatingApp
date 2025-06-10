@@ -50,8 +50,10 @@ public class AbbonamentoController {
 					//IMPLEMENTAZIONE    stripeSubscriptionId = .getStripeSubscriptionId();
 				}
 			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), abbonamentoDto.getTipoAbbonamento().toUpperCase(), abbonamentoDto.getMetodoPagamento().toUpperCase(), stripeSubscriptionId);
+			//Imposta tipoAccount dell'utente loggato a "PREMIUM"
 			utente.setTipoAccount("PREMIUM");
 			utenteRepository.save(utente);
+			
 			return ResponseEntity.ok(abbonamentoRepository.save(nuovoAbbonamento));
 			
 		} catch (RuntimeException e) {

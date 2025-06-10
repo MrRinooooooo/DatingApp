@@ -52,8 +52,6 @@ public class PreferenzeService {
 		preferenze.setMinEta(preferenzeDto.getEtaMinima());
 		preferenze.setMaxEta(preferenzeDto.getEtaMassima());
 		preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
-		
-		System.out.println("DistanzaMax: " + preferenzeDto.getDistanzaMax());
 
 		return preferenceRepository.save(preferenze);
 		
