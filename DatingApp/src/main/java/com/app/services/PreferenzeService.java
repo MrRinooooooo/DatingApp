@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.PreferenzeDto;
@@ -41,22 +44,27 @@ public class PreferenzeService {
 	}
 	
 	public Preferenze salvaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
-		Utente utente = utenteRepository.findById(utenteId)
-				.orElseThrow(() -> new RuntimeException("Utente non trovato"));
-		
-		Preferenze preferenze = preferenceRepository.findByUtenteId(utenteId)
-				.orElse(new Preferenze());
-		
-		preferenze.setUtente(utente);
-		preferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
-		preferenze.setMinEta(preferenzeDto.getEtaMinima());
-		preferenze.setMaxEta(preferenzeDto.getEtaMassima());
-		preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
-		
-		System.out.println("DistanzaMax: " + preferenzeDto.getDistanzaMax());
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    if (authentication != null && authentication.getPrincipal() instanceof User) {
+	        User springUser = (User) authentication.getPrincipal(); // Usa l'oggetto User di Spring Security
+	        
+	        // Recupera l'utente dal database usando l'email
+	        Utente utente = utenteRepository.findByUsername(springUser.getUsername())
+	                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-		return preferenceRepository.save(preferenze);
-		
+	        
+	        Preferenze preferenze = new Preferenze();
+	        preferenze.setUtente(utente);
+	        preferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
+	        preferenze.setMinEta(preferenzeDto.getEtaMinima());
+	        preferenze.setMaxEta(preferenzeDto.getEtaMassima());
+	        preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
+
+	       return preferenceRepository.saveAndFlush(preferenze);	//forziamo la creazione immediata dell'oggetto
+	    } else {
+	        throw new RuntimeException("Autenticazione non valida");
+	    }
 	}
 	
 	public PreferenzeDto modificaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
