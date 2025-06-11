@@ -12,7 +12,10 @@ import com.app.entities.Utente;
 public interface UtenteRepository extends JpaRepository<Utente, Long>{
 
     // Metodo esistente
-    Optional<Utente> findByUsername(String email);
+	Optional<Utente> findByUsername(String email);
+	
+	@Query("SELECT u FROM Utente u WHERE u.username = :email")
+	Utente findByUsernameSecure(String email);
     
     // Verifica se esiste un utente con questa email
     boolean existsByUsername(String email);
@@ -33,5 +36,6 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 		                              @Param("eta_minima") Integer etaMinima,
 		                              @Param("eta_massima") Integer etaMassima,
 		                              @Param("distanza_massima") Double distanzaMax);
+	
 }
 
