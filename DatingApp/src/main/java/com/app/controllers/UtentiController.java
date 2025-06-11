@@ -1,8 +1,14 @@
 package com.app.controllers;
 
+import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
+import com.app.repositories.UtenteRepository;
+import com.app.services.PhotoService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +26,12 @@ public class UtentiController {
  
     @Autowired
     private UtenteService utenteService;
+    
+    @Autowired
+    private PhotoService photoService;
+    
+    @Autowired
+    private UtenteRepository utenteRepository;
  
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
@@ -138,7 +150,6 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
  
             																			// String currentUserEmail = SecurityUtils.getCurrentUserEmail();
             																			//System.out.println(currentUserEmail);
- 
             // Logica per il boost del profilo - Da implementare
  
             return ResponseEntity.ok("Profilo boostato con successo - Funzionalità Premium");
@@ -147,4 +158,45 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
         }
     }
+    
+    /**
+     * Endpoint per aggiungere una foto profilo dell'utente
+     * Accessibile solo agli utenti autenticati.
+     */
+    
+    @PostMapping("/me/foto") 
+    public ResponseEntity<?> uploadPhoto(@RequestBody UtenteDiscoverDTO fotoAggiunta) {
+    	try {
+    		// verifica se l'utente è autenticato
+    		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+    		if (currentUserEmail == null) {
+    			return ResponseEntity.badRequest().body("Utente non autenticato");
+    		}
+    		
+    		Optional<Utente> fotoEsistente = utenteRepository.findByUsername(currentUserEmail);
+    		
+    		if (fotoEsistente.isPresent() && fotoEsistente.get().getFotoProfilo() != null) {
+    			return ResponseEntity.badRequest().body("Foto gia presente");
+    		}
+    		//aggiungi foto
+    		Utente utente = photoService.addPhoto(currentUserEmail, fotoAggiunta);
+    		return ResponseEntity.ok("foto aggiunta con successo " + fotoAggiunta);
+    	} catch (Exception e) {
+    		return ResponseEntity.badRequest().body("Errore durante l'aggiunta dell'immagine profilo");
+    	}
+    }
+    
+    @DeleteMapping("/me/foto")
+    public ResponseEntity<?> deletePhoto() {
+        try {
+            String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+            if (currentUserEmail == null) {
+                return ResponseEntity.badRequest().body("Utente non autenticato");    
+            }
+            photoService.deletePhoto(currentUserEmail );
+            return ResponseEntity.ok("Foto eliminata con successo");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Errore durante l'eliminazione");
+        }
+    } 
 }

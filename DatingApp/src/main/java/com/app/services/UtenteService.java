@@ -82,6 +82,10 @@ public class UtenteService {
 	       utenteEsistente.setPosizione(datiAggiornati.getPosizione());
 	    }
 	    
+	    if (datiAggiornati.getFotoProfilo() != null) {
+	    	utenteEsistente.setFotoProfilo(datiAggiornati.getFotoProfilo());	//foto aggiornata
+	    }
+	    
 	    // NON permettere la modifica di: email, password, id, dataRegistrazione, tipoAccount
 	    
 	    return utenteRepository.save(utenteEsistente);
@@ -105,12 +109,13 @@ public class UtenteService {
 	    profiloPubblico.setPosizione(utente.getPosizione());
 	    profiloPubblico.setGenere(utente.getGenere());
 	    profiloPubblico.setDataNascita(utente.getDataNascita());
+	    profiloPubblico.setFotoProfilo(utente.getFotoProfilo());
 	    
 	    // NON includere: email, password, dataRegistrazione, tipoAccount
 	    
 	    return profiloPubblico;
 	}
-	
+
 	// Prende dati utente loggato (se loggato)
 	public Utente getCurrentUser() {
 		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
@@ -132,5 +137,4 @@ public class UtenteService {
 			}
 		return isPremium;
 	}
-	
 }

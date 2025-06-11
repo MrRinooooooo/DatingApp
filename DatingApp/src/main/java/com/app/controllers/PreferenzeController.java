@@ -4,6 +4,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.PreferenzeDto;
 import com.app.entities.Utente;
+import com.app.repositories.UtenteRepository;
 import com.app.services.PreferenzeService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
@@ -30,6 +34,9 @@ public class PreferenzeController {
 	@Autowired
 	UtenteService utenteService;
 	
+	@Autowired
+	UtenteRepository utenteRepository;
+	
 	//unico metodo per verificare se l'utente è autenticato 
 	//lo chiameremo poi in ogni metodo
 
@@ -42,15 +49,27 @@ public class PreferenzeController {
 	}*/
 
 	@PostMapping("/me")
-	public ResponseEntity<?> creaPreferenze( @RequestBody PreferenzeDto preferenzeDto) {
-		try {
-			Utente utente = utenteService.getCurrentUser();
-			return ResponseEntity.ok(preferenzeService.salvaPreferenze(utente.getId(), preferenzeDto));
-		} catch (RuntimeException e) {
-			return ResponseEntity.status(400).body(e.getMessage());
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body("Errore durante la creazione preferenze:" + e.getMessage());
-		}
+	public ResponseEntity<?> creaPreferenze(@RequestBody PreferenzeDto preferenzeDto) {
+	    try {
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        if (authentication != null && authentication.getPrincipal() instanceof User) {
+	            User springUser = (User) authentication.getPrincipal();
+	            Utente utente = utenteRepository.findByUsername(springUser.getUsername())
+	                    .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+	            
+	            //debug utenteID
+	            System.out.println("Utente ID prima di salvare: " + utente.getId());
+	            System.out.println("Preferenze: " + preferenzeDto);
+
+	            return ResponseEntity.ok(preferenzeService.salvaPreferenze(utente.getId(), preferenzeDto));
+	        } else {
+	            return ResponseEntity.status(401).body("Utente non autenticato");
+	        }
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.status(400).body(e.getMessage());
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Errore durante la creazione: " + e.getMessage());
+	    }
 	}
 
 	@GetMapping("/me")

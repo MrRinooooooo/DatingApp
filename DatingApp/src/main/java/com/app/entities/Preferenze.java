@@ -1,5 +1,7 @@
 package com.app.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,12 +16,14 @@ import jakarta.persistence.Table;
 public class Preferenze {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "utente_id", columnDefinition = "bigint(11)")
-	private Long utenteId;
-	
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "utenteId", nullable = false)
+	@JsonManagedReference
+	private Utente utente;
+
 	@Column(name = "genere_preferito", nullable = false, columnDefinition = "varchar(255)")
 	private String generePreferito;
 	
