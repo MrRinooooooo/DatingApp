@@ -12,10 +12,10 @@ public class Messaggio {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long  id;
 	
-	@Column(name = "match_Id", columnDefinition="bigint")
+	@Column(name = "match_Id", columnDefinition="bigint(11)")
 	private Long matchId;
 	
-	@Column(name = "mittente_Id", columnDefinition = "bigint")
+	@Column(name = "mittente_Id", columnDefinition = "bigint(11)")
 	private Long mittenteId;
 	
 	@Column(name = "contenuto", columnDefinition = "varchar(255)")
@@ -31,7 +31,7 @@ public class Messaggio {
 	public Long  getId() {
 		return id;
 	}
-	public void setId(Long  id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	

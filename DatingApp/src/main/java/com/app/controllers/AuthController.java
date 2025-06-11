@@ -57,13 +57,6 @@ public class AuthController {
             // Crea il nuovo utente
             Utente nuovoUtente = utenteService.createUtente(registrazioneDto);
  
-            // Genera il token JWT per il nuovo utente
-            String token = jwtUtil.generateToken(
-                nuovoUtente.getId(), 
-                nuovoUtente.getUsername(), 
-                nuovoUtente.getTipoAccount()
-            );
- 
             return ResponseEntity.ok(new LoginResponse(
                 "Disponibile dopo il login",												// Token vuoto volendo da implementare nuovo modello 
                 "Registrazione completata con successo", 

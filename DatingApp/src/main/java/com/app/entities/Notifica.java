@@ -4,12 +4,9 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,9 +17,8 @@ public class Notifica {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;	
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "utenteId", referencedColumnName = "id")
-	private Utente utente;
+	@Column(name = "utente_id", columnDefinition= "bigint(11)")
+	private Long utenteId;
 	
 	@Column(name = "tipo", columnDefinition="varchar(100)") // nuovo match, nuovo messaggio, super_like ricevuto
 	private String tipo;
@@ -40,20 +36,20 @@ public class Notifica {
 		// Default constructor
 	}
 	
-	public Notifica(Utente utente, String tipo, String contenuto, LocalDateTime timestamp, boolean letta) {
-		this.utente = utente;
+	public Notifica(Long utenteId, String tipo, String contenuto) {
+		this.utenteId = utenteId;
 		this.tipo = tipo;
 		this.contenuto = contenuto;
-		this.timestamp = timestamp;
-		this.letta = letta;
+		this.timestamp = LocalDateTime.now();
+		this.letta = false;
 	}
 	
-	public Utente getUtenteId() {
-		return utente;
+	public Long getUtenteId() {
+		return utenteId;
 	}
 
-	public void setUtenteId(Utente utente) {
-		this.utente = utente;
+	public void setUtenteId(Long utenteId) {
+		this.utenteId = utenteId;
 	}
 
 	public String getTipo() {
@@ -90,7 +86,7 @@ public class Notifica {
 
 	@Override
 	public String toString() {
-		return "Notifica [utenteId=" + utente + ", tipo=" + tipo + ", contenuto=" + contenuto + ", data=" + timestamp
+		return "Notifica [utenteId=" + utenteId + ", tipo=" + tipo + ", contenuto=" + contenuto + ", data=" + timestamp
 				+ ", letta=" + letta + "]";
 	}	
 

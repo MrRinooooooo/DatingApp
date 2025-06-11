@@ -89,7 +89,10 @@ public class SecurityConfig {
                 ).permitAll()
                 
                 // Endpoint che richiedono ruolo PREMIUM
-                .requestMatchers("/api/premium/**").hasRole("PREMIUM")
+
+
+    //            .requestMatchers("/api/premium/**").hasRole("PREMIUM")                    DA CAPIRE COME GESTIRE L'ECCEZIONE DI premium/upgrade
+
                 
                 // Tutti gli altri endpoint richiedono autenticazione
                 .anyRequest().authenticated()

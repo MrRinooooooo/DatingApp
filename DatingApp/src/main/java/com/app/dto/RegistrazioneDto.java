@@ -1,8 +1,17 @@
 package com.app.dto;
 
-public class RegistrazioneDto {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+public class RegistrazioneDto {
+	
+    @NotBlank(message = "Email è obbligatoria")
+    @Email(message = "Formato email non valido")
 	private String email;
+    
+    @NotBlank(message = "Password è obbligatoria")
+    @Size(min = 6, message = "Password deve essere di almeno 6 caratteri")
 	private String password;
 
   public RegistrazioneDto() {

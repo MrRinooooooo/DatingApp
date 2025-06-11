@@ -2,15 +2,11 @@ package com.app.entities;
 
 import java.time.LocalDateTime;
 
-//prova
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,13 +18,11 @@ public class Swipe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "utente_id")
-	private Utente utenteSwipe;
+	@Column(name = "utente_id", columnDefinition = "bigint(11)")
+	private Long utenteSwipeId;
 	
-	@ManyToOne
-	@JoinColumn(name = "utente_target_id")
-	private Utente utenteTargetSwipe;
+	@Column(name = "utente_target_id", columnDefinition = "bigint(11)")
+	private Long utenteTargetSwipeId;
 	
 	@Column(name = "tipo", nullable = false, columnDefinition = "varchar(255)")
 	private String tipo;
@@ -40,10 +34,9 @@ public class Swipe {
 		
 	}
 	
-	public Swipe(Long id, Utente utenteSwipe, Utente utenteTargetSwipe, String tipo, LocalDateTime timestamp) {
-		this.id = id;
-		this.utenteSwipe = utenteSwipe;
-		this.utenteTargetSwipe = utenteTargetSwipe;
+	public Swipe(Long utenteSwipeId, Long utenteTargetSwipeId, String tipo, LocalDateTime timestamp) {
+		this.utenteSwipeId = utenteSwipeId;
+		this.utenteTargetSwipeId = utenteTargetSwipeId;
 		this.tipo = tipo;
 		this.timestamp = timestamp;
 	}
@@ -56,20 +49,20 @@ public class Swipe {
 		this.id = id;
 	}
 
-	public Utente getUtenteSwipe() {
-		return utenteSwipe;
+	public Long getUtenteSwipeId() {
+		return utenteSwipeId;
 	}
 
-	public void setUtenteSwipe(Utente utenteSwipe) {
-		this.utenteSwipe = utenteSwipe;
+	public void setUtenteSwipeId(Long utenteSwipeId) {
+		this.utenteSwipeId = utenteSwipeId;
 	}
 
-	public Utente getUtenteTargetSwipe() {
-		return utenteTargetSwipe;
+	public Long getUtenteTargetSwipeId() {
+		return utenteTargetSwipeId;
 	}
 
-	public void setUtenteTargetSwipe(Utente utenteTargetSwipe) {
-		this.utenteTargetSwipe = utenteTargetSwipe;
+	public void setUtenteTargetSwipeId(Long utenteTargetSwipeId) {
+		this.utenteTargetSwipeId = utenteTargetSwipeId;
 	}
 
 	public String getTipo() {
@@ -90,7 +83,7 @@ public class Swipe {
 	
 	@Override
 	public String toString() {
-		return "Swipe [utente_id=" + utenteSwipe + ", utente_target_swipe=" + utenteTargetSwipe + ", tipo=" + tipo + ", data=" + timestamp
+		return "Swipe [utente_id=" + utenteSwipeId + ", utente_target_swipe=" + utenteTargetSwipeId + ", tipo=" + tipo + ", data=" + timestamp
 				 + "]";
 	}	
 }

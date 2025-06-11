@@ -12,6 +12,7 @@ import com.app.entities.Posizione;
 import com.app.entities.Utente;
 import com.app.repositories.MessaggioRepository;
 import com.app.repositories.UtenteRepository;
+import com.app.utils.SecurityUtils;
 import com.app.dto.*;
 
 @Service
@@ -81,6 +82,10 @@ public class UtenteService {
 	       utenteEsistente.setPosizione(datiAggiornati.getPosizione());
 	    }
 	    
+	    if (datiAggiornati.getFotoProfilo() != null) {
+	    	utenteEsistente.setFotoProfilo(datiAggiornati.getFotoProfilo());	//foto aggiornata
+	    }
+	    
 	    // NON permettere la modifica di: email, password, id, dataRegistrazione, tipoAccount
 	    
 	    return utenteRepository.save(utenteEsistente);
@@ -104,10 +109,32 @@ public class UtenteService {
 	    profiloPubblico.setPosizione(utente.getPosizione());
 	    profiloPubblico.setGenere(utente.getGenere());
 	    profiloPubblico.setDataNascita(utente.getDataNascita());
+	    profiloPubblico.setFotoProfilo(utente.getFotoProfilo());
 	    
 	    // NON includere: email, password, dataRegistrazione, tipoAccount
 	    
 	    return profiloPubblico;
 	}
+
+	// Prende dati utente loggato (se loggato)
+	public Utente getCurrentUser() {
+		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+		if (currentUserEmail == null) {
+			throw new RuntimeException("Utente non autenticato");
+		}
+		return findByEmail(currentUserEmail);
+	}
 	
+	// Restituisce true se il tipoAccount dell'utente loggato è "PREMIUM"
+	public boolean isPremium() {
+		Utente utente = getCurrentUser();
+		boolean isPremium;
+		
+		if(utente.getTipoAccount()=="PREMIUM") {
+			isPremium=true;
+			}else {
+				isPremium=false;
+			}
+		return isPremium;
+	}
 }

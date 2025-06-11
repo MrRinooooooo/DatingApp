@@ -1,15 +1,15 @@
 package com.app.entities;
 
 import java.time.LocalDate;
-import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -25,7 +25,7 @@ public class Utente {
 	@Column(name = "nome", columnDefinition = "varchar(255)")
 	private String nome;
 	
-	@Column(name = "username", nullable = false, columnDefinition = "varchar(255)")
+	@Column(name = "username", nullable = false, unique = true, columnDefinition = "varchar(255)")
 	private String username;
 	
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
@@ -55,32 +55,9 @@ public class Utente {
 	@Column(name = "data_registrazione")
 	private LocalDate dataRegistrazione;
 	
-	 @OneToOne(mappedBy = "utente")
-	 private Preferenze preferenze;
-	 
-	 @OneToMany(mappedBy = "utenteSwipe")
-	 private List<Swipe> swipeEffettuati;
-	 
-	 @OneToMany(mappedBy = "utenteTargetSwipe")
-	 private List<Swipe> swipeRicevuti;
-	 
-	 @OneToMany(mappedBy = "utente1Id")
-	 private List<Match> utente1Id;
-	 
-	 @OneToMany(mappedBy = "utente2Id")
-	 private List<Match> utente2Id;
-	 
-	 @OneToMany(mappedBy = "mittenteId")
-	 private List<Messaggio> mittenteId;
-	 
-	 @OneToMany(mappedBy = "utente")
-	 private List<Notifica> notificaUtente;
-	 
-	 @OneToMany(mappedBy = "segnalante")
-	 private List<Report> Segnalante;
-	 
-	 @OneToMany(mappedBy = "segnalato")
-	 private List<Report> Segnalato;
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
+    private Preferenze preferenze;
 	
 	public Utente() {
 		
@@ -124,6 +101,10 @@ public class Utente {
 		this.nome = nome;
 	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	public String getUsername() {
 		return username;
 	}
@@ -142,78 +123,6 @@ public class Utente {
 
 	public String getGenere() {
 		return genere;
-	}
-
-	public Preferenze getPreferenze() {
-		return preferenze;
-	}
-
-	public void setPreferenze(Preferenze preferenze) {
-		this.preferenze = preferenze;
-	}
-
-	public List<Swipe> getSwipeEffettuati() {
-		return swipeEffettuati;
-	}
-
-	public void setSwipeEffettuati(List<Swipe> swipeEffettuati) {
-		this.swipeEffettuati = swipeEffettuati;
-	}
-
-	public List<Swipe> getSwipeRicevuti() {
-		return swipeRicevuti;
-	}
-
-	public void setSwipeRicevuti(List<Swipe> swipeRicevuti) {
-		this.swipeRicevuti = swipeRicevuti;
-	}
-
-	public List<Match> getMatchUtente1() {
-		return utente1Id;
-	}
-
-	public void setMatchUtente1(List<Match> matchUtente1) {
-		this.utente1Id = matchUtente1;
-	}
-
-	public List<Match> getMatchUtente2() {
-		return utente2Id;
-	}
-
-	public void setMatchUtente2(List<Match> matchUtente2) {
-		this.utente2Id = matchUtente2;
-	}
-
-	public List<Messaggio> getMittenteId() {
-		return mittenteId;
-	}
-
-	public void setMittenteId(List<Messaggio> mittente) {
-		this.mittenteId = mittente;
-	}
-
-	public List<Notifica> getNotificaUtente() {
-		return notificaUtente;
-	}
-
-	public void setNotificaUtente(List<Notifica> notificaUtente) {
-		this.notificaUtente = notificaUtente;
-	}
-
-	public List<Report> getSegnalante() {
-		return Segnalante;
-	}
-
-	public void setSegnalante(List<Report> segnalante) {
-		Segnalante = segnalante;
-	}
-
-	public List<Report> getSegnalato() {
-		return Segnalato;
-	}
-
-	public void setSegnalato(List<Report> segnalato) {
-		Segnalato = segnalato;
 	}
 
 	public void setGenere(String genere) {

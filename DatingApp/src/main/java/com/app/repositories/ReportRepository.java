@@ -9,13 +9,13 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     
     // Verifica se esiste già una segnalazione tra due utenti
-    boolean existsBySegnalante_IdAndSegnalato_Id(Long segnalanteId, Long segnalatoId);
+    boolean existsBySegnalanteIdAndSegnalatoId(Long segnalanteId, Long segnalatoId);
     
     // Trova tutte le segnalazioni ricevute da un utente
-    List<Report> findBySegnalato_Id(Long segnalatoId);
+    List<Report> findBySegnalatoId(Long segnalatoId);
     
     // Trova tutte le segnalazioni fatte da un utente
-    List<Report> findBySegnalante_Id(Long segnalanteId);
+    List<Report> findBySegnalanteId(Long segnalanteId);
     
     // Trova tutte le segnalazioni con un motivo specifico
     List<Report> findByMotivoContainingIgnoreCase(String motivo);

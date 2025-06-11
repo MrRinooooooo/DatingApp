@@ -1,12 +1,12 @@
 package com.app.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -16,32 +16,35 @@ import jakarta.persistence.Table;
 public class Preferenze {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@OneToOne
 	@MapsId
-	@JoinColumn(name = "utenteId")
+	@JoinColumn(name = "utenteId", nullable = false)
+	@JsonManagedReference
 	private Utente utente;
-	
+
 	@Column(name = "genere_preferito", nullable = false, columnDefinition = "varchar(255)")
 	private String generePreferito;
 	
-	@Column(name = "eta_minima", nullable = false)
+	@Column(name = "eta_minima", nullable = false, columnDefinition = "int(3)")
 	private Integer minEta;
 
-	@Column(name = "eta_massima", nullable = false)
+	@Column(name = "eta_massima", nullable = false, columnDefinition = "int(3)")
 	private Integer maxEta;
 
 	@Column(name = "distanza_massima", nullable = false)
 	private Double distanzaMax;
 	
+	@OneToOne(mappedBy = "preferenze")
+    private Utente utente;
+	
 	public Preferenze() {
-		
+		super();
 	}
 	
-	public Preferenze(Utente utente, String generePreferito, Integer minEta, Integer maxEta, Double distanzaMax) {
-		this.utente = utente;
+	public Preferenze(Long utente, String generePreferito, Integer minEta, Integer maxEta, Double distanzaMax) {
+		this.utenteId = utente;
 		this.generePreferito = generePreferito;
 		this.minEta = minEta;
 		this.maxEta = maxEta;
@@ -56,12 +59,12 @@ public class Preferenze {
 		this.id = id;
 	}
 
-	public Utente getUtente() {
-		return utente;
+	public Long getUtenteId() {
+		return utenteId;
 	}
 
-	public void setUtente(Utente utente) {
-		this.utente = utente;
+	public void setUtenteId(Long utenteId) {
+		this.utenteId = utenteId;
 	}
 
 	public String getGenerePreferito() {
@@ -98,7 +101,7 @@ public class Preferenze {
 
 
 	public String toString() {
-		return "Preferenze [utente_id=" + utente + ", genere_preferito" + generePreferito + ", eta_minima=" + minEta + ", eta_massima=" + maxEta
+		return "Preferenze [utente_id=" + utenteId + ", genere_preferito" + generePreferito + ", eta_minima=" + minEta + ", eta_massima=" + maxEta
 				 + ", distanza_massima" + distanzaMax + "]";
 	}	
 	

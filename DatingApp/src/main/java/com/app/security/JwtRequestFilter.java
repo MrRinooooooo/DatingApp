@@ -63,8 +63,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             	
             																		// Prima verifica: proviamo a estrarre tutti i claims per vedere se il token è ben formato
  																					//System.out.println("--- Tentativo estrazione claims ---");
-				 Claims claims = jwtUtil.extractAllClaims(jwtToken);
-				 System.out.println("Claims estratti con successo: " + claims);          	
+																					// Claims claims = jwtUtil.extractAllClaims(jwtToken);
+																					// System.out.println("Claims estratti con successo: " + claims);          	
             	
             	
             	

@@ -44,7 +44,7 @@ public class SwipeService {
             System.out.println("Utente ID: " + utente.getId());
             
             // Trova tutti gli utenti già swipati da questo utente
-            List<Long> utentiGiaSwipati = swipeRepository.findUtenteTargetIdsByUtenteSwipe(utente.getId());
+            List<Long> utentiGiaSwipati = swipeRepository.findUtenteTargetIdsByUtenteSwipeId(utente.getId());
             
             System.out.println("Utenti già swipati: " + utentiGiaSwipati.size());
             
@@ -103,8 +103,8 @@ public class SwipeService {
             
             // Crea il nuovo swipe
             Swipe swipe = new Swipe();
-            swipe.setUtenteSwipe(utenteSwipe);
-            swipe.setUtenteTargetSwipe(utenteTarget);
+            swipe.setUtenteSwipeId(utenteSwipe.getId());
+            swipe.setUtenteTargetSwipeId(utenteTarget.getId());
             swipe.setTipo(dto.getTipo());
             swipe.setTimestamp(LocalDateTime.now());
             
@@ -113,8 +113,14 @@ public class SwipeService {
             
             // Se è un LIKE, controlla se c'è reciprocità
             if ("LIKE".equals(dto.getTipo()) || "SUPER_LIKE".equals(dto.getTipo())) {
-                return controllaMatch(utenteSwipe, utenteTarget);
-            }            
+
+            // Invio una notifica push ai due utenti coinvolti che è stao creato il Match
+
+                return controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
+            }
+
+            
+            // Se lo swipe di tipo LIKE/SUPER_LIKE è reciproco creo un MATCH
             
             // Invio una notifica push ai due utenti coinvolti che è stao creato il Match
             
@@ -127,27 +133,29 @@ public class SwipeService {
     
     // ========== CONTROLLA MATCH ==========
     @Transactional
-    private String controllaMatch(Utente utente1, Utente utente2) {
+    private String controllaMatch(Long utente1Id, Long utente2Id) {
+    	
+    	Utente utente2 = utenteRepository.findById(utente2Id).get();
         
         System.out.println("=== CONTROLLO MATCH ===");
-        System.out.println("Utente1: " + utente1.getId() + " -> Utente2: " + utente2.getId());
+        System.out.println("Utente1: " + utente1Id + " -> Utente2: " + utente2Id);
         
         // ✅ CORRETTO: Usa il metodo aggiornato del SwipeRepository
         boolean matchReciprico = swipeRepository.existsByUtenteSwipeIdAndUtenteTargetSwipeIdAndTipoIn(
-            utente2.getId(), utente1.getId(), List.of("LIKE", "SUPER_LIKE"));
+            utente2Id, utente1Id, List.of("LIKE", "SUPER_LIKE"));
         
         if (matchReciprico) {
             System.out.println("MATCH TROVATO! Creazione match...");
             
             // ✅ CORRETTO: Usa il metodo aggiornato del MatchRepository
             boolean matchEsiste = matchRepository.existsMatchBetweenUsers(
-                utente1.getId(), utente2.getId());
+                utente1Id, utente2Id);
             
             if (!matchEsiste) {
                 // Crea il match
                 Match match = new Match();
-                match.setUtente1Id(utente1);
-                match.setUtente2Id(utente2);
+                match.setUtente1Id(utente1Id);
+                match.setUtente2Id(utente2Id);
                 match.setTimestamp(LocalDateTime.now());
                 
                 Match savedMatch = matchRepository.save(match);

@@ -51,7 +51,7 @@ public class ReportService {
             }
             
             // Controllo che non abbia già segnalato questo utente
-            boolean giaSegnalato = reportRepository.existsBySegnalante_IdAndSegnalato_Id(
+            boolean giaSegnalato = reportRepository.existsBySegnalanteIdAndSegnalatoId(
                 segnalante.getId(), segnalato.getId());
             if (giaSegnalato) {
                 throw new IllegalArgumentException("Hai già segnalato questo utente");
@@ -59,8 +59,8 @@ public class ReportService {
             
             // Creo il report
             Report report = new Report();
-            report.setSegnalato(segnalato);        
-            report.setSegnalante(segnalante);      
+            report.setSegnalatoId(segnalato.getId());        
+            report.setSegnalanteId(segnalante.getId());      
             report.setMotivo(dto.getMotivo());
             report.setTimestamp(LocalDateTime.now());
             
@@ -101,7 +101,7 @@ public class ReportService {
             }
             
             // Controllo che non abbia già segnalato questo utente
-            boolean giaSegnalato = reportRepository.existsBySegnalante_IdAndSegnalato_Id(
+            boolean giaSegnalato = reportRepository.existsBySegnalanteIdAndSegnalatoId(
                 segnalante.getId(), segnalato.getId());
             if (giaSegnalato) {
                 throw new IllegalArgumentException("Hai già segnalato questo utente");
@@ -109,8 +109,8 @@ public class ReportService {
             
             // Creo il report
             Report report = new Report();
-            report.setSegnalato(segnalato);        
-            report.setSegnalante(segnalante);      
+            report.setSegnalatoId(segnalato.getId());        
+            report.setSegnalanteId(segnalante.getId());      
             report.setMotivo(dto.getMotivo());
             report.setTimestamp(LocalDateTime.now());
             
@@ -131,7 +131,7 @@ public class ReportService {
     // ========== GET REPORT PER UTENTE ==========
     public List<ReportDTO> getReportsByUtente(Long utenteId) {
         try {
-            List<Report> reports = reportRepository.findBySegnalato_Id(utenteId);
+            List<Report> reports = reportRepository.findBySegnalatoId(utenteId);
             return reports.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -163,8 +163,8 @@ public class ReportService {
     private ReportDTO convertToDTO(Report entity) {
         ReportDTO dto = new ReportDTO();
         dto.setId(entity.getId());
-        dto.setSegnalatoId(entity.getSegnalato().getId());      
-        dto.setSegnalanteId(entity.getSegnalante().getId());    
+        dto.setSegnalatoId(entity.getSegnalatoId());      
+        dto.setSegnalanteId(entity.getSegnalanteId());    
         dto.setMotivo(entity.getMotivo());
         dto.setTimestamp(entity.getTimestamp());
         return dto;
