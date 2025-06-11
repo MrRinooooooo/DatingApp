@@ -1,25 +1,21 @@
 package com.app.entities;
 
 import java.time.LocalDateTime;
-import java.util.Locale.Category;
-
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "report")
 public class Report {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;	
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "segnalatoId", referencedColumnName = "id")
-	private  Utente segnalato;	
+	@Column(name = "segnalato_id", columnDefinition = "bigint(11)")
+	private  Long segnalatoId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "segnalanteId", referencedColumnName = "id")
-	private  Utente segnalante;	
+	@Column(name = "segnalante_id", columnDefinition = "bigint(11)")
+	private  Long segnalanteId;
 		
 	@Column(name = "motivo", columnDefinition = "Text")
 	private String motivo;	
@@ -27,6 +23,18 @@ public class Report {
 	@Column(name = "timestamp", columnDefinition = "datetime")
 	private LocalDateTime timestamp;
 		
+	public Report() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public Report(Long segnalatoId, Long segnalanteId, String motivo, LocalDateTime timestamp) {
+		super();
+		this.segnalatoId = segnalatoId;
+		this.segnalanteId = segnalanteId;
+		this.motivo = motivo;
+		this.timestamp = timestamp;
+	}
 	
 	public Long getId() {
 		return id;
@@ -34,17 +42,17 @@ public class Report {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Utente getSegnalato() {
-		return segnalato;
+	public Long getSegnalatoId() {
+		return segnalatoId;
 	}
-	public void setSegnalato(Utente segnalato) {
-		this.segnalato = segnalato;
+	public void setSegnalatoId(Long segnalato) {
+		this.segnalatoId = segnalato;
 	}
-	public Utente getSegnalante() {
-		return segnalante;
+	public Long getSegnalanteId() {
+		return segnalanteId;
 	}
-	public void setSegnalante(Utente segnalante) {
-		this.segnalante = segnalante;
+	public void setSegnalanteId(Long segnalante) {
+		this.segnalanteId = segnalante;
 	}
 
 	public String getMotivo() {

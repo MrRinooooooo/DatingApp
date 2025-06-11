@@ -27,6 +27,7 @@ public class Preferenze {
 	@JsonManagedReference	//per evitare il loop infinito del json di risposta
 	private Utente utente;
 
+
 	@Column(name = "genere_preferito", columnDefinition = "varchar(255)")
 	private String generePreferito;
 	
@@ -34,11 +35,11 @@ public class Preferenze {
 	private Integer minEta;
 
 	@Column(name = "eta_massima", columnDefinition = "int(3)")
+
 	private Integer maxEta;
 
 	@Column(name = "distanza_massima")
 	private Double distanzaMax;
-	
 	
 	public Preferenze() {
 		super();

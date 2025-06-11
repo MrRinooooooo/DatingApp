@@ -1,8 +1,25 @@
+# File di aiuto
 HELP.md
+
+# Build e dipendenze
 target/
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+build/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+
+# File temporanei e di log
+*.log
+*.tmp
+*.swp
 
 ### STS ###
 .apt_generated
@@ -26,8 +43,16 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+# File di sistema
+*.DS_Store
+
+# File di configurazione sensibili
+application.properties
+
+# Esempio di file di configurazione (da includere nel repo)
+!application.properties.example
+
