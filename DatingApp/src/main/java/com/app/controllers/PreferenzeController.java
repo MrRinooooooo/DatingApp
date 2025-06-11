@@ -36,41 +36,6 @@ public class PreferenzeController {
 	
 	@Autowired
 	UtenteRepository utenteRepository;
-	
-	//unico metodo per verificare se l'utente è autenticato 
-	//lo chiameremo poi in ogni metodo
-
-	/*private Utente getCurrentUser() {
-		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
-		if (currentUserEmail == null) {
-			throw new RuntimeException("Utente non autenticato");
-		}
-		return utenteService.findByEmail(currentUserEmail);
-	}*/
-
-	@PostMapping("/me")
-	public ResponseEntity<?> creaPreferenze(@RequestBody PreferenzeDto preferenzeDto) {
-	    try {
-	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        if (authentication != null && authentication.getPrincipal() instanceof User) {
-	            User springUser = (User) authentication.getPrincipal();
-	            Utente utente = utenteRepository.findByUsername(springUser.getUsername())
-	                    .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-	            
-	            //debug utenteID
-	            System.out.println("Utente ID prima di salvare: " + utente.getId());
-	            System.out.println("Preferenze: " + preferenzeDto);
-
-	            return ResponseEntity.ok(preferenzeService.salvaPreferenze(utente.getId(), preferenzeDto));
-	        } else {
-	            return ResponseEntity.status(401).body("Utente non autenticato");
-	        }
-	    } catch (RuntimeException e) {
-	        return ResponseEntity.status(400).body(e.getMessage());
-	    } catch (Exception e) {
-	        return ResponseEntity.badRequest().body("Errore durante la creazione: " + e.getMessage());
-	    }
-	}
 
 	@GetMapping("/me")
 	public ResponseEntity<?> getPreferenze() {

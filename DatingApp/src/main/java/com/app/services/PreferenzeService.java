@@ -43,32 +43,6 @@ public class PreferenzeService {
 			throw new RuntimeException("Autenticazione non valida");
 		}
 	}
-  
-	public PreferenzeDto salvaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		if (authentication != null && authentication.getPrincipal() instanceof User) {
-			User springUser = (User) authentication.getPrincipal(); // Usa l'oggetto User di Spring Security
-
-			// Recupera l'utente dal database usando l'email
-			Utente utente = utenteRepository.findByUsername(springUser.getUsername())
-					.orElseThrow(() -> new RuntimeException("Utente non trovato"));
-
-			Preferenze preferenze = new Preferenze();
-			preferenze.setUtente(utente);
-			preferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
-			preferenze.setMinEta(preferenzeDto.getEtaMinima());
-			preferenze.setMaxEta(preferenzeDto.getEtaMassima());
-			preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
-
-			preferenceRepository.saveAndFlush(preferenze); // forziamo la creazione immediata dell'oggetto
-
-			return new PreferenzeDto(preferenze.getGenerePreferito(), preferenze.getMinEta(), preferenze.getMaxEta(),
-					preferenze.getDistanzaMax());
-		} else {
-			throw new RuntimeException("Autenticazione non valida");
-		}
-	}
 
 	public PreferenzeDto modificaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,13 +52,16 @@ public class PreferenzeService {
 
 			Utente utente = utenteRepository.findByUsername(springUser.getUsername())
 					.orElseThrow(() -> new RuntimeException("Utente non trovato"));
+			
 
-			Preferenze modificaPreferenze = new Preferenze();
-			modificaPreferenze.setUtente(utente);
+			Preferenze modificaPreferenze = preferenceRepository.findByUtenteId(utente.getId())
+			        .orElseThrow(() -> new RuntimeException("Preferenze non trovate"));
 			modificaPreferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
 			modificaPreferenze.setMinEta(preferenzeDto.getEtaMinima());
 			modificaPreferenze.setMaxEta(preferenzeDto.getEtaMassima());
 			modificaPreferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
+			
+			preferenceRepository.save(modificaPreferenze);
 
 			return new PreferenzeDto(modificaPreferenze.getGenerePreferito(), modificaPreferenze.getMinEta(),
 					modificaPreferenze.getMaxEta(), modificaPreferenze.getDistanzaMax());
