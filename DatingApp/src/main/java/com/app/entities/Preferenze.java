@@ -20,26 +20,28 @@ public class Preferenze {
 	@Id
 	private Long id;
 	
+
 	@OneToOne
 	@MapsId
-	@JoinColumn(name = "utenteId", nullable = false)
-	@JsonManagedReference
+	@JoinColumn(name = "utente", nullable = false)
+	@JsonManagedReference	//per evitare il loop infinito del json di risposta
 	private Utente utente;
-	
-	@Column(name = "genere_preferito", nullable = false, columnDefinition = "varchar(255)")
+
+	@Column(name = "genere_preferito", columnDefinition = "varchar(255)")
 	private String generePreferito;
 	
-	@Column(name = "eta_minima", nullable = false)
+	@Column(name = "eta_minima", columnDefinition = "int(3)")
 	private Integer minEta;
 
-	@Column(name = "eta_massima", nullable = false)
+	@Column(name = "eta_massima", columnDefinition = "int(3)")
 	private Integer maxEta;
 
-	@Column(name = "distanza_massima", nullable = false)
+	@Column(name = "distanza_massima")
 	private Double distanzaMax;
 	
+	
 	public Preferenze() {
-		
+		super();
 	}
 	
 	public Preferenze(Utente utente, String generePreferito, Integer minEta, Integer maxEta, Double distanzaMax) {
@@ -103,6 +105,4 @@ public class Preferenze {
 		return "Preferenze [utente_id=" + utente + ", genere_preferito" + generePreferito + ", eta_minima=" + minEta + ", eta_massima=" + maxEta
 				 + ", distanza_massima" + distanzaMax + "]";
 	}	
-	
-	
 }
