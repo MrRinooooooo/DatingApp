@@ -35,7 +35,7 @@ public class Abbonamento {
 		@Column(name = "metodo_pagamento", columnDefinition = "varchar(255)")
 		private String metodoPagamento;
 				
-		@Column(name = "stripe_subscription_id", columnDefinition = "bigint(11)")
+		@Column(name = "stripe_subscription_id", columnDefinition = "bigint(30)")
 		private Long stripeSubscriptionId;
 
 		public Abbonamento() {

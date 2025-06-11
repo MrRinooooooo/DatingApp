@@ -10,13 +10,11 @@ public class Match {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "utente1Id", referencedColumnName = "id")
-	private Utente utente1Id;
+	@Column(name = "utente1_id", columnDefinition = "bigint(11)")
+	private Long utente1Id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "utente2Id", referencedColumnName = "id")
-	private Utente utente2Id;
+	@Column(name = "utente2_id", columnDefinition = "bigint(11)")
+	private Long utente2Id;
 
 	@Column(name = "timestamp", columnDefinition = "datetime")
 	private LocalDateTime timestamp;
@@ -26,9 +24,9 @@ public class Match {
 		// Costruttore vuoto per JPA
 	}
 
-	public Match(Utente utente1, Utente utente2) {
-		this.utente1Id = utente1;
-		this.utente2Id = utente2;
+	public Match(Long utente1Id, Long utente2Id) {
+		this.utente1Id = utente1Id;
+		this.utente2Id = utente2Id;
 		this.timestamp = LocalDateTime.now();
 	}
 
@@ -41,19 +39,19 @@ public class Match {
 		this.id = id;
 	}
 
-	public Utente getUtente1Id() {
+	public Long getUtente1Id() {
 		return utente1Id;
 	}
 
-	public void setUtente1Id(Utente utente1Id) {
+	public void setUtente1Id(Long utente1Id) {
 		this.utente1Id = utente1Id;
 	}
 
-	public Utente getUtente2Id() {
+	public Long getUtente2Id() {
 		return utente2Id;
 	}
 
-	public void setUtente2Id(Utente utente2Id) {
+	public void setUtente2Id(Long utente2Id) {
 		this.utente2Id = utente2Id;
 	}
 
@@ -63,29 +61,5 @@ public class Match {
 
 	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
-	}
-
-	// ========== UTILITY ==========
-	@Override
-	public String toString() {
-		return "Match{" +
-				"id=" + id +
-				", utente1=" + (utente1Id != null ? utente1Id.getId() : null) +
-				", utente2=" + (utente2Id != null ? utente2Id.getId() : null) +
-				", timestamp=" + timestamp +
-				'}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Match match = (Match) o;
-		return id != null && id.equals(match.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
 	}
 }

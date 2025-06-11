@@ -41,17 +41,9 @@ public class PreferenzeService {
 	}
 	
 	public Preferenze salvaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
-		Utente utente = utenteRepository.findById(utenteId)
-				.orElseThrow(() -> new RuntimeException("Utente non trovato"));
 		
 		Preferenze preferenze = preferenceRepository.findByUtenteId(utenteId)
-				.orElse(new Preferenze());
-		
-		preferenze.setUtente(utente);
-		preferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
-		preferenze.setMinEta(preferenzeDto.getEtaMinima());
-		preferenze.setMaxEta(preferenzeDto.getEtaMassima());
-		preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
+				.orElse( new Preferenze(utenteId,preferenzeDto.getGenerePreferito(),preferenzeDto.getEtaMinima(),preferenzeDto.getEtaMassima(),preferenzeDto.getDistanzaMax()));
 
 		return preferenceRepository.save(preferenze);
 		
