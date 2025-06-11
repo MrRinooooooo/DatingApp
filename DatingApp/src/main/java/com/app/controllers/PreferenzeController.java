@@ -41,7 +41,7 @@ public class PreferenzeController {
 	public ResponseEntity<?> getPreferenze() {
 		try {
 			Utente utente = utenteService.getCurrentUser();
-			Optional<PreferenzeDto> preferenze = preferenzeService.getPreferenzeByUtenteId(utente.getId());
+			PreferenzeDto preferenze = preferenzeService.getPreferenzeByUtenteId(utente.getId());
 			return ResponseEntity.ok(preferenze);
 
 		} catch (RuntimeException e) {

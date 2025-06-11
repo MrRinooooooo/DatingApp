@@ -26,23 +26,24 @@ public class PreferenzeService {
 	private PreferenceRepository preferenceRepository;
 
 	// prendiamo tutti gli utenti
-	public Optional<PreferenzeDto> getPreferenzeByUtenteId(Long utenteId) {
+    public PreferenzeDto getPreferenzeByUtenteId(Long utenteId) {
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (authentication != null && authentication.getPrincipal() instanceof User) {
-			User springUser = (User) authentication.getPrincipal();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User springUser = (User) authentication.getPrincipal();
 
-			// Troviamo l'utente nel database e trasformiamo le sue preferenze in
-			// PreferenzeDto
-			return utenteRepository.findByUsername(springUser.getUsername())
-					.flatMap(utente -> Optional.ofNullable(utente.getPreferenze())
-							.map(preferenze -> new PreferenzeDto(preferenze.getGenerePreferito(),
-									preferenze.getMinEta(), preferenze.getMaxEta(), preferenze.getDistanzaMax())));
-		} else {
-			throw new RuntimeException("Autenticazione non valida");
-		}
-	}
+            // Troviamo l'utente nel database e trasformiamo le sue preferenze in
+            // PreferenzeDto
+
+            Preferenze preferenze = preferenceRepository.findById(utenteId).get();
+            PreferenzeDto preferenzeDto = new PreferenzeDto(preferenze.getGenerePreferito(), preferenze.getMinEta(), preferenze.getMaxEta(), preferenze.getDistanzaMax());
+            return preferenzeDto;
+
+        } else {
+            throw new RuntimeException("Autenticazione non valida");
+        }
+    }
 
 	public PreferenzeDto modificaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

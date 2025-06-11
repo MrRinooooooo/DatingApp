@@ -22,7 +22,6 @@ public class Preferenze {
 	
 
 	@OneToOne
-	@MapsId
 	@JoinColumn(name = "utente", nullable = false)
 	@JsonManagedReference	//per evitare il loop infinito del json di risposta
 	private Utente utente;
