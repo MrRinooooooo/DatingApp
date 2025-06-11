@@ -44,8 +44,8 @@ public class MessaggioService {
                 .orElseThrow(() -> new EntityNotFoundException("Match non trovato"));
             
             // Verifica che l'utente faccia parte del match
-            if (!match.getUtente1Id().getId().equals(utente.getId()) && 
-                !match.getUtente2Id().getId().equals(utente.getId())) {
+            if (!match.getUtente1Id().equals(utente.getId()) && 
+                !match.getUtente2Id().equals(utente.getId())) {
                 throw new IllegalArgumentException("Non sei autorizzato a vedere questa chat");
             }
             
@@ -83,8 +83,8 @@ public class MessaggioService {
                 .orElseThrow(() -> new EntityNotFoundException("Match non trovato"));
             
             // Verifica che il mittente faccia parte del match
-            if (!match.getUtente1Id().getId().equals(mittente.getId()) && 
-                !match.getUtente2Id().getId().equals(mittente.getId())) {
+            if (!match.getUtente1Id().equals(mittente.getId()) && 
+                !match.getUtente2Id().equals(mittente.getId())) {
                 throw new IllegalArgumentException("Non sei autorizzato a scrivere in questa chat");
             }
             

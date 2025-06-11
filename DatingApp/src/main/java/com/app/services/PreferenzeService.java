@@ -43,7 +43,7 @@ public class PreferenzeService {
 			throw new RuntimeException("Autenticazione non valida");
 		}
 	}
-
+  
 	public PreferenzeDto salvaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
