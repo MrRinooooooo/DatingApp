@@ -88,6 +88,10 @@ public class SwipeService {
             Utente utenteTarget = utenteRepository.findById(dto.getUtenteTargetId())
                 .orElseThrow(() -> new EntityNotFoundException("Utente target non trovato"));
             
+            if (utenteSwipe == utenteTarget) {
+            	return "Non puoi creare uno swipe con te stesso";
+            }
+            
             // ✅ CORRETTO: Usa il metodo aggiornato del SwipeRepository
             // Verifica se esiste già uno swipe tra mittente e target
             boolean giaSwipato = swipeRepository.existsByUtenteSwipeIdAndUtenteTargetSwipeId(
@@ -109,8 +113,12 @@ public class SwipeService {
             
             // Se è un LIKE, controlla se c'è reciprocità
             if ("LIKE".equals(dto.getTipo()) || "SUPER_LIKE".equals(dto.getTipo())) {
+
+            // Invio una notifica push ai due utenti coinvolti che è stao creato il Match
+
                 return controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
             }
+
             
             // Se lo swipe di tipo LIKE/SUPER_LIKE è reciproco creo un MATCH
             
