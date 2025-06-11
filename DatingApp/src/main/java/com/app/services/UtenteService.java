@@ -40,9 +40,19 @@ public class UtenteService {
 			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
 			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);
 			Preferenze preferenze = new Preferenze();
-			preferenze.setUtente(nuovoUtente);
+			
+			System.out.println("nuovo utente da salvare");
+			System.out.println(nuovoUtente);
+			
+			utenteRepository.save(nuovoUtente);
+			
+			preferenze.setUtente(utenteRepository.findByUsernameSecure(nuovoUtente.getUsername()));
+
+			preferenze.setId(nuovoUtente.getId());
+			System.out.println(preferenze);
+			
 			preferenceRepository.save(preferenze);
-			return utenteRepository.save(nuovoUtente);
+			return nuovoUtente;
 	}
 	
 	//CONTROLLO EMAIL ESISTENTE
