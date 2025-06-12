@@ -89,7 +89,7 @@
 		    <groupId>com.stripe</groupId>
 		    <artifactId>stripe-java</artifactId>
 		    <version>24.16.0</version>
-		</dependency>		
+		</dependency>			
 	</dependencies>
 	<build>
 		<plugins>
