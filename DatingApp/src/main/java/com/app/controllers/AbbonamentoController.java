@@ -1,5 +1,6 @@
 package com.app.controllers;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import com.app.entities.Utente;
 import com.app.repositories.AbbonamentoRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.services.AbbonamentoService;
+import com.app.services.StripeService;
 import com.app.services.UtenteService;
+import com.stripe.model.checkout.Session;
 
 
 @RestController
@@ -34,6 +37,9 @@ public class AbbonamentoController {
 	
 	@Autowired
 	AbbonamentoService abbonamentoService;
+	
+	@Autowired
+	StripeService stripeService;
 
     AbbonamentoController(UtenteRepository utenteRepository) {
         this.utenteRepository = utenteRepository;
@@ -43,7 +49,7 @@ public class AbbonamentoController {
 	@PostMapping("/upgrade")
 	public ResponseEntity<?> createSubscription( @RequestParam String metodoPagamento) {
 		try {
-			Long stripeSubscriptionId = null;
+			String stripeSubscriptionId = null;
 			Utente utente = utenteService.getCurrentUser();			
 			
 		// SE LO VOGLIAMO GESTIRE CON @SCHEDULE CHE IMPOSTA il tipoAccount di Utente a "STANDARD"
@@ -60,11 +66,19 @@ public class AbbonamentoController {
 				if(ultimoAbbonamento.getTipo().equals("PREMIUM") && ultimoAbbonamento.isAttivo() == true) {
 					return ResponseEntity.ok().body("Abbonamento già attivo!");
 				}
-			}
+			} 
 			
-			if (metodoPagamento == "STRIPE")
+			/* SE UTILIZZI METODO STRIPE RICEVI ID da collegamento API stripe - NB hai bisogno delle chiavi reali
+			   #stripe.secret.key=YOUR_STRIPE_SECRET_KEY
+			   #stripe.public.key=YOUR_STRIPE_PUBLIC_KEY
+			   su application.properties
+			*/
+			if (metodoPagamento.equals("STRIPE"))
 				{
-					//IMPLEMENTAZIONE    stripeSubscriptionId = .getStripeSubscriptionId();
+				Session session = stripeService.createCheckoutSession("http://localhost:8080/success",
+							"http://localhost:8080/cancel","Abbonamento Premium","price_1RY4sNP0z2XEGqAd6zLfQjCr");
+				
+				stripeSubscriptionId = session.getId();
 				}
 			
 			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), "PREMIUM", metodoPagamento.toUpperCase(), stripeSubscriptionId);

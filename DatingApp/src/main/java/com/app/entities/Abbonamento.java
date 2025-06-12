@@ -35,8 +35,8 @@ public class Abbonamento {
 		@Column(name = "metodo_pagamento", columnDefinition = "varchar(255)")
 		private String metodoPagamento;
 				
-		@Column(name = "stripe_subscription_id", columnDefinition = "bigint(30)")
-		private Long stripeSubscriptionId;
+		@Column(name = "stripe_subscription_id", columnDefinition = "varchar(255)")
+		private String stripeSubscriptionId;
 
 		public Abbonamento() {
 			this.dataInizio = LocalDate.now();
@@ -44,7 +44,7 @@ public class Abbonamento {
 			this.attivo = true;
 		}
 
-	public Abbonamento(Long utenteID, String tipo, String metodoPagamento, Long stripeSubscriptionId) {
+	public Abbonamento(Long utenteID, String tipo, String metodoPagamento, String stripeSubscriptionId) {
 			super();
 			this.utenteId = utenteID;
 			this.tipo = tipo;
@@ -111,11 +111,11 @@ public class Abbonamento {
 			this.metodoPagamento = metodoPagamento;
 		}
 
-		public Long getStripeSubscriptionId() {
+		public String getStripeSubscriptionId() {
 			return stripeSubscriptionId;
 		}
 
-		public void setStripeSubscriptionId(Long stripeSubscriptionId) {
+		public void setStripeSubscriptionId(String stripeSubscriptionId) {
 			this.stripeSubscriptionId = stripeSubscriptionId;
 		}
 		
