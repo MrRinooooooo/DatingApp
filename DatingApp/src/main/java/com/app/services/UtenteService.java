@@ -105,8 +105,7 @@ public class UtenteService {
 
 			uLoggato.setPassword(passwordEncoder.encode(uModificato.getPassword().trim()));
 			uLoggato.setUsername(uModificato.getUsername().trim());
-
-			System.out.println(uModificato.getNome());
+			
 			if (uModificato.getNome() == null) uModificato.setNome("");
 			uLoggato.setNome(uModificato.getNome().trim());
 
