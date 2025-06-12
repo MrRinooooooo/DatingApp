@@ -1,21 +1,18 @@
 package com.app.services;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.RegistrazioneDto;
-import com.app.entities.Posizione;
+
 import com.app.entities.Preferenze;
 import com.app.entities.Utente;
 import com.app.repositories.MessaggioRepository;
 import com.app.repositories.PreferenceRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.utils.SecurityUtils;
-import com.app.dto.*;
 
 @Service
 public class UtenteService {
@@ -74,40 +71,65 @@ public class UtenteService {
 	}
 	
 	//UPDATE UTENTE	
-	public Utente updateProfile(String email, Utente datiAggiornati) {
-	    // Trova l'utente esistente
-	    Utente utenteEsistente = utenteRepository.findByUsername(email)
-	        .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-	    
-	    // Aggiorna solo i campi che possono essere modificati dall'utente
-	    if (datiAggiornati.getNome() != null && !datiAggiornati.getNome().trim().isEmpty()) {
-	        utenteEsistente.setNome(datiAggiornati.getNome().trim());
+	public ResponseEntity<?> updateProfile(String email, Utente uModificato) {
+		
+		try {			
+						
+			if (email == null)
+			    return ResponseEntity.badRequest().body("Utente non autenticato"); // Verifico che la username non sia nulla		
+			
+			Utente uLoggato = utenteRepository.findByUsername(email)
+			    .orElseThrow(() -> new RuntimeException("Utente non trovato")); // Trova l'utente esistente			
+			  
+			if (uLoggato.getId() != uModificato.getId()) 
+				return ResponseEntity.badRequest().body("Modifica rifiutata: Id utente non modificabile!"); // Verifico che l'id utente non sia stato modificato  
+			
+			if ( !(uLoggato.getDataRegistrazione().equals(uModificato.getDataRegistrazione())) )  
+				return ResponseEntity.badRequest().body("Modifica rifiutata: Data di registrazione non modificabile!"); // Verifico che la data di registrazione utente non sia stata modificata			 
+			            
+			if ( !(uLoggato.getTipoAccount().equals(uModificato.getTipoAccount())) )
+				return ResponseEntity.badRequest().body("Modifica rifiutata: Tipo Account non modificabile!"); // Verifico che il tipo di account utente non sia stato modificato			 
+			           
+			if ( !(uLoggato.getUsername().equals(uModificato.getUsername())) ) 				
+				if ( !(isEmailValida(uModificato.getUsername())) ) 
+					return ResponseEntity.badRequest().body("Modifica username rifiutata: il valore digitato non è valido");
+				 else if ( utenteRepository.existsByUsername(uModificato.getUsername()) ) 
+					return ResponseEntity.badRequest().body("Modifica username rifiutata: Esite già nel database"); // Verifico che la nuova username non sia già usata nel database e sia valida
+						          
+			if ( uModificato.getPassword() != null && uModificato.getPassword().length() < 6 ) 
+				return ResponseEntity.badRequest().body("Password non valida, deve essere di almeno 6 caratteri!"); // Verifico che la nuova password contenga almeno 6 caratteri            	
+			
+			// SE MODIFICO USERNAME O PASSWORD IL TOKEN NON E' PIU' VALIDO. DOBBIAMO GENERARNE UNO NUOVO TRAMITE IL LOGIN
+			
+			// Aggiorna solo i campi che possono essere modificati dall'utente
+			uLoggato.setPassword(passwordEncoder.encode(uModificato.getPassword().trim()));			
+			uLoggato.setUsername(uModificato.getUsername().trim());
+			uLoggato.setNome(uModificato.getNome().trim());
+			uLoggato.setDataNascita(uModificato.getDataNascita());			
+			uLoggato.setBio(uModificato.getBio().trim());
+			uLoggato.setGenere(uModificato.getGenere().trim());
+			uLoggato.setInteressi(uModificato.getInteressi().trim());
+			uLoggato.setPosizione(uModificato.getPosizione());
+			uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
+			
+			utenteRepository.save(uLoggato);
+			
+			return ResponseEntity.ok(uLoggato); 
+    	 } catch (Exception e) {
+    		 return ResponseEntity.badRequest().body("Errore nell'aggiornamento del profilo: " + e.getMessage());
+    	 }	    
+	}	
+	
+	/**
+	 * Metodo per verificare che l'email sia corretta.
+	 */	
+	public boolean isEmailValida(String email) {
+	    if (email == null || email.trim().isEmpty()) {
+	        return false;
 	    }
-	    
-	    if (datiAggiornati.getBio() != null) {
-	        utenteEsistente.setBio(datiAggiornati.getBio().trim());
-	    }
-	    
-	    if (datiAggiornati.getGenere() != null) {
-	        utenteEsistente.setGenere(datiAggiornati.getGenere().trim());
-	    }
-	    
-	    if (datiAggiornati.getInteressi() != null) {
-	        utenteEsistente.setInteressi(datiAggiornati.getInteressi().trim());
-	    }
-	    
-	    if (datiAggiornati.getPosizione() != null) {
-	       utenteEsistente.setPosizione(datiAggiornati.getPosizione());
-	    }
-	    
-	    if (datiAggiornati.getFotoProfilo() != null) {
-	    	utenteEsistente.setFotoProfilo(datiAggiornati.getFotoProfilo());	//foto aggiornata
-	    }
-	    
-	    // NON permettere la modifica di: email, password, id, dataRegistrazione, tipoAccount
-	    
-	    return utenteRepository.save(utenteEsistente);
-	}
+	 // Regex: almeno un punto dopo la @
+	    return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+	}	
 
 	/**
 	 * Ottiene il profilo pubblico di un utente (senza informazioni sensibili)
