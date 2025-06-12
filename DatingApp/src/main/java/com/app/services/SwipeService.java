@@ -52,6 +52,11 @@ public class SwipeService {
             List<Utente> utentiDisponibili = utenteRepository.findUtentiDaSwipare(
                 utente.getId(), utentiGiaSwipati);
             
+            
+            
+            //DA IMPLEMENTARE FILTRO PER PREFERENZE
+            
+            
             System.out.println("Utenti disponibili: " + utentiDisponibili.size());
             
             // Converti in DTO
