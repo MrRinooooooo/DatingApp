@@ -1,14 +1,16 @@
 package com.app.controllers;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.dto.AbbonamentoDto;
 import com.app.entities.Abbonamento;
 import com.app.entities.Utente;
 import com.app.repositories.AbbonamentoRepository;
@@ -39,17 +41,33 @@ public class AbbonamentoController {
 	
 	// --------------- UPGRADE ACCOUNT A PREMIUM
 	@PostMapping("/upgrade")
-	public ResponseEntity<?> createSubscription( @RequestBody AbbonamentoDto abbonamentoDto) {
+	public ResponseEntity<?> createSubscription( @RequestParam String metodoPagamento) {
 		try {
 			Long stripeSubscriptionId = null;
-			Utente utente = utenteService.getCurrentUser();
+			Utente utente = utenteService.getCurrentUser();			
+			
+		// SE LO VOGLIAMO GESTIRE CON @SCHEDULE CHE IMPOSTA il tipoAccount di Utente a "STANDARD"
+			/*if(utente.getTipoAccount().equals("PREMIUM")) {
+				return ResponseEntity.ok("Abbonamento già attivo");
+			}*/
 			
 			
-			if (abbonamentoDto.getMetodoPagamento().toUpperCase() == "STRIPE")
+			Optional<Abbonamento> ultimoAbbonamentoOpt = abbonamentoService.getLastSubscriptionByUserId(utente.getId());
+			
+			if (ultimoAbbonamentoOpt.isPresent()) {
+				Abbonamento ultimoAbbonamento = ultimoAbbonamentoOpt.get();
+				
+				if(ultimoAbbonamento.getTipo().equals("PREMIUM") && ultimoAbbonamento.isAttivo() == true) {
+					return ResponseEntity.ok().body("Abbonamento già attivo!");
+				}
+			}
+			
+			if (metodoPagamento == "STRIPE")
 				{
 					//IMPLEMENTAZIONE    stripeSubscriptionId = .getStripeSubscriptionId();
 				}
-			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), abbonamentoDto.getTipoAbbonamento().toUpperCase(), abbonamentoDto.getMetodoPagamento().toUpperCase(), stripeSubscriptionId);
+			
+			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), "PREMIUM", metodoPagamento.toUpperCase(), stripeSubscriptionId);
 			//Imposta tipoAccount dell'utente loggato a "PREMIUM"
 			utente.setTipoAccount("PREMIUM");
 			utenteRepository.save(utente);
