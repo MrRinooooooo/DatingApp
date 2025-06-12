@@ -81,16 +81,16 @@ public class UtenteService {
 			Utente uLoggato = utenteRepository.findByUsername(email)
 			    .orElseThrow(() -> new RuntimeException("Utente non trovato")); // Trova l'utente esistente			
 			  
-			if (uLoggato.getId() != uModificato.getId()) 
+			if (uLoggato.getId() != uModificato.getId())
 				return ResponseEntity.badRequest().body("Modifica rifiutata: Id utente non modificabile!"); // Verifico che l'id utente non sia stato modificato  
 			
-			if ( !(uLoggato.getDataRegistrazione().equals(uModificato.getDataRegistrazione())) )  
+			if ( !(uLoggato.getDataRegistrazione().equals(uModificato.getDataRegistrazione())) )
 				return ResponseEntity.badRequest().body("Modifica rifiutata: Data di registrazione non modificabile!"); // Verifico che la data di registrazione utente non sia stata modificata			 
 			            
 			if ( !(uLoggato.getTipoAccount().equals(uModificato.getTipoAccount())) )
 				return ResponseEntity.badRequest().body("Modifica rifiutata: Tipo Account non modificabile!"); // Verifico che il tipo di account utente non sia stato modificato			 
 			           
-			if ( !(uLoggato.getUsername().equals(uModificato.getUsername())) ) 				
+			if ( !(uLoggato.getUsername().equals(uModificato.getUsername())) ) 
 				if ( !(isEmailValida(uModificato.getUsername())) ) 
 					return ResponseEntity.badRequest().body("Modifica username rifiutata: il valore digitato non è valido");
 				 else if ( utenteRepository.existsByUsername(uModificato.getUsername()) ) 
@@ -102,10 +102,10 @@ public class UtenteService {
 			// SE MODIFICO USERNAME O PASSWORD IL TOKEN NON E' PIU' VALIDO. DOBBIAMO GENERARNE UNO NUOVO TRAMITE IL LOGIN
 			
 			// Aggiorna solo i campi che possono essere modificati dall'utente
-			uLoggato.setPassword(passwordEncoder.encode(uModificato.getPassword().trim()));			
+			uLoggato.setPassword(passwordEncoder.encode(uModificato.getPassword().trim()));
 			uLoggato.setUsername(uModificato.getUsername().trim());
 			uLoggato.setNome(uModificato.getNome().trim());
-			uLoggato.setDataNascita(uModificato.getDataNascita());			
+			uLoggato.setDataNascita(uModificato.getDataNascita());
 			uLoggato.setBio(uModificato.getBio().trim());
 			uLoggato.setGenere(uModificato.getGenere().trim());
 			uLoggato.setInteressi(uModificato.getInteressi().trim());

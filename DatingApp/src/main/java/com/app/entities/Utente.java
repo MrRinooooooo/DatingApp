@@ -73,6 +73,12 @@ public class Utente {
 		this.password = password;
 		this.tipoAccount = "STANDARD";
 		this.dataRegistrazione = LocalDate.now();
+		
+		this.nome="";
+		this.genere="";
+		this.bio="";
+		this.interessi="";
+		this.fotoProfilo="";
 	}
 	
 	//includiamo anche Posizione
