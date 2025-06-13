@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table (name = "utente")
@@ -25,9 +27,12 @@ public class Utente {
 	@Column(name = "nome", columnDefinition = "varchar(255)")
 	private String nome;
 	
+	@NotBlank
+    @Email(message = "Formato email non valido")
 	@Column(name = "username", nullable = false, unique = true, columnDefinition = "varchar(255)")
 	private String username;
 	
+	@NotBlank
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
 	private String password;
 	
@@ -49,10 +54,10 @@ public class Utente {
 	@Column(name = "foto_profilo", columnDefinition = "varchar(255)")
 	private String fotoProfilo;
 	
-	@Column(name = "tipo_account", columnDefinition = "varchar(255)")
+	@Column(name = "tipo_account", nullable = false, columnDefinition = "varchar(255)")
 	private String tipoAccount;
 	
-	@Column(name = "data_registrazione")
+	@Column(name = "data_registrazione", nullable = false)
 	private LocalDate dataRegistrazione;
 	
 	@OneToOne(cascade = CascadeType.ALL)
@@ -68,6 +73,12 @@ public class Utente {
 		this.password = password;
 		this.tipoAccount = "STANDARD";
 		this.dataRegistrazione = LocalDate.now();
+		
+		this.nome="";
+		this.genere="";
+		this.bio="";
+		this.interessi="";
+		this.fotoProfilo="";
 	}
 	
 	//includiamo anche Posizione

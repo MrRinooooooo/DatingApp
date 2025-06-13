@@ -69,22 +69,9 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      */
     
     @PutMapping("/me")
-    public ResponseEntity<?> updateMyProfile(@RequestBody Utente utenteAggiornato) {
-        try {
-            String currentUserEmail = SecurityUtils.getCurrentUserEmail();
- 
-            if (currentUserEmail == null) {
-                return ResponseEntity.badRequest().body("Utente non autenticato");
-            }
- 
-            // Aggiorna il profilo dell'utente
-            Utente utente = utenteService.updateProfile(currentUserEmail, utenteAggiornato);
- 
-            return ResponseEntity.ok(utente);
- 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Errore nell'aggiornamento del profilo: " + e.getMessage());
-        }
+    public ResponseEntity<?> updateMyProfile(@RequestBody Utente utenteAggiornato) {    	
+    	String currentUserEmail = SecurityUtils.getCurrentUserEmail(); 					// Estraggo la username dell'utente loggato dal JWT token    	
+        return utenteService.updateProfile(currentUserEmail, utenteAggiornato); 		// Aggiorna il profilo dell'utente
     }
  
     /**
