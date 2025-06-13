@@ -110,23 +110,25 @@ public class UtenteService {
 			uLoggato.setUsername(uModificato.getUsername().trim());
 			
 			if (uModificato.getNome() == null) uModificato.setNome("");
-			uLoggato.setNome(uModificato.getNome().trim());
+				uLoggato.setNome(uModificato.getNome().trim());
 
-      uLoggato.setDataNascita(uModificato.getDataNascita());	
+			uLoggato.setDataNascita(uModificato.getDataNascita());	
 			
 			if (uModificato.getBio() == (null)) uModificato.setBio("");				
 				uLoggato.setBio(uModificato.getBio().trim());			
 			
 			if (uModificato.getGenere() == (null)) uModificato.setGenere("");
-			uLoggato.setGenere(uModificato.getGenere().trim());
+				uLoggato.setGenere(uModificato.getGenere().trim());
 			
 			if (uModificato.getInteressi() == (null)) uModificato.setInteressi("");
-			uLoggato.setInteressi(uModificato.getInteressi().trim());
+				uLoggato.setInteressi(uModificato.getInteressi().trim());
 			
-			uLoggato.setPosizione(uModificato.getPosizione());
+				uLoggato.setPosizione(uModificato.getPosizione());
 			
 			if (uModificato.getFotoProfilo() == (null)) uModificato.setFotoProfilo("");
-			uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
+				uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
+			
+			uLoggato.setPrimoAccesso(false);
 			
 			utenteRepository.save(uLoggato);
 			
