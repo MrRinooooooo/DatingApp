@@ -55,6 +55,12 @@ public class Utente {
 	@Column(name = "data_registrazione")
 	private LocalDate dataRegistrazione;
 	
+	@Column(name = "notifiche_attive", columnDefinition = "bit(1)")
+	private Boolean notificheAttive;
+	
+	@Column(name = "device_token", columnDefinition = "varchar(255)")
+	private String deviceToken;
+	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
     private Preferenze preferenze;
@@ -68,6 +74,8 @@ public class Utente {
 		this.password = password;
 		this.tipoAccount = "STANDARD";
 		this.dataRegistrazione = LocalDate.now();
+		this.notificheAttive = true;
+		this.deviceToken = null;
 	}
 	
 	//includiamo anche Posizione
@@ -183,6 +191,22 @@ public class Utente {
 
 	public void setDataRegistrazione(LocalDate dataRegistrazione) {
 		this.dataRegistrazione = dataRegistrazione;
+	}
+	
+	public Boolean getNotificheAttive() {
+		return notificheAttive;
+	}
+	
+	public void setNotificheAttive(Boolean notificheAttive) {
+		this.notificheAttive = notificheAttive;
+	}
+	
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+	
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package com.app.controllers;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,7 @@ public class ReportController {
     }
 
     @GetMapping("/admin/report")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReportDTO>> getReportsByUtente(@RequestParam Long utenteId) {
         try {
             List<ReportDTO> reports = reportService.getReportsByUtente(utenteId);
@@ -68,6 +70,7 @@ public class ReportController {
     }
     
     @GetMapping("/admin/report/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReportDTO>> getAllReports() {
         try {
             List<ReportDTO> reports = reportService.getAllReports();

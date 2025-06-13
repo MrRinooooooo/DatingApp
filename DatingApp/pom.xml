@@ -89,7 +89,22 @@
 		    <groupId>com.stripe</groupId>
 		    <artifactId>stripe-java</artifactId>
 		    <version>24.16.0</version>
-		</dependency>		
+		</dependency>	
+		<!-- Firebase Admin SDK -->
+<dependency>
+    <groupId>com.google.firebase</groupId>
+    <artifactId>firebase-admin</artifactId>
+    <version>9.2.0</version>
+</dependency>
+
+<!-- Google Auth Library -->
+<dependency>
+    <groupId>com.google.auth</groupId>
+    <artifactId>google-auth-library-oauth2-http</artifactId>
+    <version>1.19.0</version>
+</dependency>
+		
+			
 	</dependencies>
 	<build>
 		<plugins>

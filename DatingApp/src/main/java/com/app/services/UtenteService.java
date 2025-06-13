@@ -155,4 +155,63 @@ public class UtenteService {
 			}
 		return isPremium;
 	}
+	
+	// aggiorno device token per le notifiche di Firebase
+	
+	public void updateDeviceToken(String email, String deviceToken) {
+		Utente utente = utenteRepository.findByUsername(email)
+				.orElseThrow(()-> new RuntimeException("Utente non trovato"));
+		
+		utente.setDeviceToken(deviceToken);
+		utenteRepository.save(utente);
+	}
+	
+	// Controllo se l'utente ha notifiche attive
+	public boolean hasNotificationsEnabled(Long utenteId) {
+		Utente utente = utenteRepository.findById(utenteId)
+				.orElse(null);
+		
+		return utente != null &&
+				utente.getNotificheAttive() != null &&
+				utente.getNotificheAttive() &&
+				utente.getDeviceToken() != null;
+	}
+	
+	// Abilita o disabilita le notifiche
+	public void toggleNotifications(String email, boolean enabled) {
+		Utente utente = utenteRepository.findByUsername(email)
+				.orElseThrow(() -> new RuntimeException("Utente non trovato"));
+		
+		utente.setNotificheAttive(enabled);
+		utenteRepository.save(utente);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
