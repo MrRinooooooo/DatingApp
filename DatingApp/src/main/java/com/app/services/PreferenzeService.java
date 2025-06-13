@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.PreferenzeDto;
@@ -15,7 +18,7 @@ import com.app.repositories.UtenteRepository;
 
 @Service
 public class PreferenzeService {
-	
+
 	@Autowired
 	private UtenteRepository utenteRepository;
 
@@ -23,58 +26,49 @@ public class PreferenzeService {
 	private PreferenceRepository preferenceRepository;
 
 	// prendiamo tutti gli utenti
-	public Optional<PreferenzeDto> getPreferenzeByUtenteId(Long utenteId) {
-		return preferenceRepository.findByUtenteId(utenteId)
-				.map(preferenze -> new PreferenzeDto(preferenze.getGenerePreferito(), preferenze.getMinEta(),
-						preferenze.getMaxEta(), preferenze.getDistanzaMax()));
-	}
+    public PreferenzeDto getPreferenzeByUtenteId(Long utenteId) {
 
-	public List<Utente> filtraUtenti(Long utenteId) {
-		Optional<Preferenze> preferenze = preferenceRepository.findByUtenteId(utenteId);
-		if (preferenze.isEmpty()) {
-			return Collections.emptyList();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User springUser = (User) authentication.getPrincipal();
+
+            // Troviamo l'utente nel database e trasformiamo le sue preferenze in
+            // PreferenzeDto
+
+            Preferenze preferenze = preferenceRepository.findById(utenteId).get();
+            PreferenzeDto preferenzeDto = new PreferenzeDto(preferenze.getGenerePreferito(), preferenze.getMinEta(), preferenze.getMaxEta(), preferenze.getDistanzaMax());
+            return preferenzeDto;
+
+        } else {
+            throw new RuntimeException("Autenticazione non valida");
+        }
+    }
+
+	public PreferenzeDto modificaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication != null && authentication.getPrincipal() instanceof User) {
+			User springUser = (User) authentication.getPrincipal();
+
+			Utente utente = utenteRepository.findByUsername(springUser.getUsername())
+					.orElseThrow(() -> new RuntimeException("Utente non trovato"));
+			
+
+			Preferenze modificaPreferenze = preferenceRepository.findByUtenteId(utente.getId())
+			        .orElseThrow(() -> new RuntimeException("Preferenze non trovate"));
+			modificaPreferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
+			modificaPreferenze.setMinEta(preferenzeDto.getEtaMinima());
+			modificaPreferenze.setMaxEta(preferenzeDto.getEtaMassima());
+			modificaPreferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
+			
+			preferenceRepository.save(modificaPreferenze);
+
+			return new PreferenzeDto(modificaPreferenze.getGenerePreferito(), modificaPreferenze.getMinEta(),
+					modificaPreferenze.getMaxEta(), modificaPreferenze.getDistanzaMax());
+		} else {
+			throw new RuntimeException("Autenticazione non valida");
 		}
 
-		Preferenze p = preferenze.get();
-		return utenteRepository.findByPreferenze(p.getGenerePreferito(), p.getMinEta(), p.getMaxEta(),
-				p.getDistanzaMax());
 	}
-	
-	public Preferenze salvaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
-		Utente utente = utenteRepository.findById(utenteId)
-				.orElseThrow(() -> new RuntimeException("Utente non trovato"));
-		
-		Preferenze preferenze = preferenceRepository.findByUtenteId(utenteId)
-				.orElse(new Preferenze());
-		
-		preferenze.setUtente(utente);
-		preferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
-		preferenze.setMinEta(preferenzeDto.getEtaMinima());
-		preferenze.setMaxEta(preferenzeDto.getEtaMassima());
-		preferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
-
-		return preferenceRepository.save(preferenze);
-		
-	}
-	
-	public PreferenzeDto modificaPreferenze(Long utenteId, PreferenzeDto preferenzeDto) {
-		Preferenze modificaPreferenze = preferenceRepository.findById(utenteId)
-				.orElseThrow(() -> new RuntimeException("Utente non trovato con id" + utenteId));
-				modificaPreferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
-				modificaPreferenze.setMinEta(preferenzeDto.getEtaMinima());
-				modificaPreferenze.setMaxEta(preferenzeDto.getEtaMassima());
-				modificaPreferenze.setDistanzaMax(preferenzeDto.getDistanzaMax());
-				
-				Preferenze nuovaPreferenza = preferenceRepository.save(modificaPreferenze);
-				
-				//conversione
-				
-				return new PreferenzeDto(
-						nuovaPreferenza.getGenerePreferito(),
-						nuovaPreferenza.getMinEta(),
-						nuovaPreferenza.getMaxEta(),
-						nuovaPreferenza.getDistanzaMax()
-						);
-	}
-
 }

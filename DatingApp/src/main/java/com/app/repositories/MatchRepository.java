@@ -16,7 +16,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
      * Trova tutti i match di un utente (sia come utente1 che come utente2)
      * METODO CORRETTO - usa @Query per maggiore chiarezza
      */
-    @Query("SELECT m FROM Match m WHERE m.utente1Id.id = :utenteId OR m.utente2Id.id = :utenteId ORDER BY m.timestamp DESC")
+    @Query("SELECT m FROM Match m WHERE m.utente1Id = :utenteId OR m.utente2Id = :utenteId ORDER BY m.timestamp DESC")
     List<Match> findMatchesByUtenteId(@Param("utenteId") Long utenteId);
     
     /**
@@ -24,8 +24,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
      * METODO CORRETTO - sostituisce quello problematico
      */
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM Match m " +
-           "WHERE (m.utente1Id.id = :utente1Id AND m.utente2Id.id = :utente2Id) " +
-           "OR (m.utente1Id.id = :utente2Id AND m.utente2Id.id = :utente1Id)")
+           "WHERE (m.utente1Id = :utente1Id AND m.utente2Id = :utente2Id) " +
+           "OR (m.utente1Id = :utente2Id AND m.utente2Id = :utente1Id)")
     boolean existsMatchBetweenUsers(@Param("utente1Id") Long utente1Id, 
                                    @Param("utente2Id") Long utente2Id);
     
@@ -33,15 +33,15 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
      * Trova un match specifico tra due utenti
      */
     @Query("SELECT m FROM Match m WHERE " +
-           "(m.utente1Id.id = :utente1Id AND m.utente2Id.id = :utente2Id) " +
-           "OR (m.utente1Id.id = :utente2Id AND m.utente2Id.id = :utente1Id)")
+           "(m.utente1Id = :utente1Id AND m.utente2Id = :utente2Id) " +
+           "OR (m.utente1Id = :utente2Id AND m.utente2Id = :utente1Id)")
     Optional<Match> findMatchBetweenUsers(@Param("utente1Id") Long utente1Id, 
                                          @Param("utente2Id") Long utente2Id);
     
     /**
      * Conta i match totali di un utente
      */
-    @Query("SELECT COUNT(m) FROM Match m WHERE m.utente1Id.id = :utenteId OR m.utente2Id.id = :utenteId")
+    @Query("SELECT COUNT(m) FROM Match m WHERE m.utente1Id = :utenteId OR m.utente2Id = :utenteId")
     Long countMatchesByUtenteId(@Param("utenteId") Long utenteId);
     
     // ========== METODI LEGACY (puoi tenerli se li usi altrove) ==========
@@ -50,5 +50,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
      * Metodo legacy - trova match (meno efficiente)
      * NOTA: Per usarlo correttamente devi passare lo stesso ID due volte
      */
-    List<Match> findByUtente1Id_IdOrUtente2Id_Id(Long utenteId1, Long utenteId2);
+    
+    List<Match> findByUtente1IdOrUtente2Id(Long utente1Id, Long utente2Id);
 }

@@ -78,8 +78,8 @@ public class MatchService {
             
             if (match != null) {
                 // Verifica che l'utente sia coinvolto nel match
-                boolean isUserInMatch = match.getUtente1Id().getId().equals(utente.getId()) || 
-                                       match.getUtente2Id().getId().equals(utente.getId());
+                boolean isUserInMatch = match.getUtente1Id().equals(utente.getId()) || 
+                                       match.getUtente2Id().equals(utente.getId());
                 
                 if (isUserInMatch) {
                     System.out.println("Match trovato e autorizzato");
@@ -136,8 +136,8 @@ public class MatchService {
             
             // Crea il nuovo match
             Match match = new Match();
-            match.setUtente1Id(utente1);
-            match.setUtente2Id(utente2);
+            match.setUtente1Id(utente1.getId());
+            match.setUtente2Id(utente2.getId());
             match.setTimestamp(java.time.LocalDateTime.now());
             
             Match savedMatch = matchRepository.save(match);
@@ -171,8 +171,8 @@ public class MatchService {
             
             if (match != null) {
                 // Verifica che l'utente sia coinvolto nel match
-                boolean isUserInMatch = match.getUtente1Id().getId().equals(utente.getId()) || 
-                                       match.getUtente2Id().getId().equals(utente.getId());
+                boolean isUserInMatch = match.getUtente1Id().equals(utente.getId()) || 
+                                       match.getUtente2Id().equals(utente.getId());
                 
                 if (isUserInMatch) {
                     matchRepository.delete(match);
@@ -221,22 +221,28 @@ public class MatchService {
      * Converte un Match in MatchDTO per evitare problemi di serializzazione JSON
      */
     private MatchDTO convertToDTO(Match match) {
+    	
+    	
+    	
         MatchDTO dto = new MatchDTO();
         dto.setId(match.getId());
         dto.setTimestamp(match.getTimestamp());
         
         // Dati utente 1
         if (match.getUtente1Id() != null) {
-            dto.setUtente1Id(match.getUtente1Id().getId());
-            dto.setUtente1Nome(match.getUtente1Id().getNome());
-            dto.setUtente1Email(match.getUtente1Id().getUsername());
+        	Utente utente1 = utenteRepository.findById(match.getUtente1Id()).get();
+        	
+            dto.setUtente1Id(match.getUtente1Id());
+            dto.setUtente1Nome(utente1.getNome());
+            dto.setUtente1Email(utente1.getUsername());
         }
         
         // Dati utente 2
         if (match.getUtente2Id() != null) {
-            dto.setUtente2Id(match.getUtente2Id().getId());
-            dto.setUtente2Nome(match.getUtente2Id().getNome());
-            dto.setUtente2Email(match.getUtente2Id().getUsername());
+        	Utente utente2 = utenteRepository.findById(match.getUtente2Id()).get();
+            dto.setUtente2Id(match.getUtente2Id());
+            dto.setUtente2Nome(utente2.getNome());
+            dto.setUtente2Email(utente2.getUsername());
         }
         
         return dto;

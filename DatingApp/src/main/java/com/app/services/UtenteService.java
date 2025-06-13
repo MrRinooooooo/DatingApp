@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.app.dto.RegistrazioneDto;
 import com.app.entities.Posizione;
+import com.app.entities.Preferenze;
 import com.app.entities.Utente;
 import com.app.repositories.MessaggioRepository;
+import com.app.repositories.PreferenceRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.utils.SecurityUtils;
 import com.app.dto.*;
@@ -22,6 +24,9 @@ public class UtenteService {
 
 	@Autowired
 	private UtenteRepository utenteRepository;
+	
+	@Autowired 
+	private PreferenceRepository preferenceRepository;
 
     UtenteService(MessaggioRepository messaggioRepository) {
         this.messaggioRepository = messaggioRepository;
@@ -33,8 +38,21 @@ public class UtenteService {
 	//REGISTRAZIONE
 	public Utente createUtente(RegistrazioneDto registrazioneDto) {
 			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
-			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);			
-			return utenteRepository.save(nuovoUtente);
+			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);
+			Preferenze preferenze = new Preferenze();
+			
+			System.out.println("nuovo utente da salvare");
+			System.out.println(nuovoUtente);
+			
+			utenteRepository.save(nuovoUtente);
+			
+			preferenze.setUtente(utenteRepository.findByUsernameSecure(nuovoUtente.getUsername()));
+
+			preferenze.setId(nuovoUtente.getId());
+			System.out.println(preferenze);
+			
+			preferenceRepository.save(preferenze);
+			return nuovoUtente;
 	}
 	
 	//CONTROLLO EMAIL ESISTENTE
@@ -82,6 +100,10 @@ public class UtenteService {
 	       utenteEsistente.setPosizione(datiAggiornati.getPosizione());
 	    }
 	    
+	    if (datiAggiornati.getFotoProfilo() != null) {
+	    	utenteEsistente.setFotoProfilo(datiAggiornati.getFotoProfilo());	//foto aggiornata
+	    }
+	    
 	    // NON permettere la modifica di: email, password, id, dataRegistrazione, tipoAccount
 	    
 	    return utenteRepository.save(utenteEsistente);
@@ -105,12 +127,13 @@ public class UtenteService {
 	    profiloPubblico.setPosizione(utente.getPosizione());
 	    profiloPubblico.setGenere(utente.getGenere());
 	    profiloPubblico.setDataNascita(utente.getDataNascita());
+	    profiloPubblico.setFotoProfilo(utente.getFotoProfilo());
 	    
 	    // NON includere: email, password, dataRegistrazione, tipoAccount
 	    
 	    return profiloPubblico;
 	}
-	
+
 	// Prende dati utente loggato (se loggato)
 	public Utente getCurrentUser() {
 		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
@@ -132,5 +155,4 @@ public class UtenteService {
 			}
 		return isPremium;
 	}
-	
 }
