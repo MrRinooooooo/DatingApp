@@ -37,5 +37,6 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 		                              @Param("eta_massima") Integer etaMassima,
 		                              @Param("distanza_massima") Double distanzaMax);
 	
+	List<Utente> findByTipoAccount (String tipoAccount);
 }
 
