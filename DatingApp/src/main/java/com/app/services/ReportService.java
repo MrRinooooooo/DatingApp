@@ -107,6 +107,7 @@ public class ReportService {
                 throw new IllegalArgumentException("Hai già segnalato questo utente");
             }
             
+            
             // Creo il report
             Report report = new Report();
             report.setSegnalatoId(segnalato.getId());        

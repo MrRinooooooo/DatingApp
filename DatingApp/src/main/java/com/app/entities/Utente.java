@@ -1,17 +1,22 @@
 package com.app.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table (name = "utente")
@@ -25,9 +30,12 @@ public class Utente {
 	@Column(name = "nome", columnDefinition = "varchar(255)")
 	private String nome;
 	
+	@NotBlank
+    @Email(message = "Formato email non valido")
 	@Column(name = "username", nullable = false, unique = true, columnDefinition = "varchar(255)")
 	private String username;
 	
+	@NotBlank
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
 	private String password;
 	
@@ -49,10 +57,10 @@ public class Utente {
 	@Column(name = "foto_profilo", columnDefinition = "varchar(255)")
 	private String fotoProfilo;
 	
-	@Column(name = "tipo_account", columnDefinition = "varchar(255)")
+	@Column(name = "tipo_account", nullable = false, columnDefinition = "varchar(255)")
 	private String tipoAccount;
 	
-	@Column(name = "data_registrazione")
+	@Column(name = "data_registrazione", nullable = false)
 	private LocalDate dataRegistrazione;
 	
 	@Column(name = "notifiche_attive", columnDefinition = "bit(1)")
@@ -60,15 +68,21 @@ public class Utente {
 	
 	@Column(name = "device_token", columnDefinition = "varchar(255)")
 	private String deviceToken;
+
+	@Column(name = "primo_accesso", nullable = false)
+	private boolean primoAccesso;
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
     private Preferenze preferenze;
 	
+	@OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Abbonamento> abbonamenti;
+	
 	public Utente() {
 		
 	}
-	
+
 	public Utente(String email, String password) {
 		this.username = email;
 		this.password = password;
@@ -76,10 +90,11 @@ public class Utente {
 		this.dataRegistrazione = LocalDate.now();
 		this.notificheAttive = true;
 		this.deviceToken = null;
+		this.primoAccesso = true;
 	}
 	
 	//includiamo anche Posizione
-	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione) {
+	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione, boolean primoAccesso) {
 		this.nome = nome;
 		this.username = email;
 		this.password = password;
@@ -91,6 +106,7 @@ public class Utente {
 		this.fotoProfilo = fotoProfilo;
 		this.tipoAccount = tipoAccount;
 		this.dataRegistrazione = dataRegistrazione;
+		this.primoAccesso = primoAccesso;
 	}
 
 	public Long getId() {
@@ -192,7 +208,7 @@ public class Utente {
 	public void setDataRegistrazione(LocalDate dataRegistrazione) {
 		this.dataRegistrazione = dataRegistrazione;
 	}
-	
+
 	public Boolean getNotificheAttive() {
 		return notificheAttive;
 	}
@@ -208,7 +224,23 @@ public class Utente {
 	public void setDeviceToken(String deviceToken) {
 		this.deviceToken = deviceToken;
 	}
+
+	public boolean isPrimoAccesso() {
+		return primoAccesso;
+	}
+
+	public void setPrimoAccesso(boolean primoAccesso) {
+		this.primoAccesso = primoAccesso;
+	}
 	
+	public List<Abbonamento> getAbbonamenti() {
+		return abbonamenti;
+	}
+
+	public void setAbbonamenti(List<Abbonamento> abbonamenti) {
+		this.abbonamenti = abbonamenti;
+	}
+
 	@Override
 	public String toString() {
 	    return "Utente{" +
@@ -226,6 +258,5 @@ public class Utente {
 	            ", dataRegistrazione=" + dataRegistrazione +
 	            '}';
 	}
-	
-	
+  
 }

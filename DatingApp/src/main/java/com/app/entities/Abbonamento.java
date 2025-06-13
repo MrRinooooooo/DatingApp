@@ -2,11 +2,15 @@ package com.app.entities;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,8 +21,10 @@ public class Abbonamento {
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
 		private Long id;
 		
-		@Column(name = "utente_id", columnDefinition = "bigint(11)")
-		private Long utenteId;
+		@ManyToOne
+	    @JoinColumn(name = "utente_id", nullable = false)
+		@JsonIgnore
+	    private Utente utente;
 		
 		@Column(name = "tipo", columnDefinition = "varchar(255)")
 		private String tipo;
@@ -35,8 +41,10 @@ public class Abbonamento {
 		@Column(name = "metodo_pagamento", columnDefinition = "varchar(255)")
 		private String metodoPagamento;
 				
-		@Column(name = "stripe_subscription_id", columnDefinition = "bigint(30)")
-		private Long stripeSubscriptionId;
+		@Column(name = "stripe_subscription_id", columnDefinition = "varchar(255)")
+		private String stripeSubscriptionId;
+		
+		
 
 		public Abbonamento() {
 			this.dataInizio = LocalDate.now();
@@ -44,9 +52,9 @@ public class Abbonamento {
 			this.attivo = true;
 		}
 
-	public Abbonamento(Long utenteID, String tipo, String metodoPagamento, Long stripeSubscriptionId) {
+	public Abbonamento(Utente utente, String tipo, String metodoPagamento, String stripeSubscriptionId) {
 			super();
-			this.utenteId = utenteID;
+			this.utente = utente;
 			this.tipo = tipo;
 			this.dataInizio = LocalDate.now();
 			this.dataFine = dataInizio.plusDays(30);
@@ -63,12 +71,12 @@ public class Abbonamento {
 			this.id = id;
 		}
 
-		public Long getUtenteId() {
-			return utenteId;
+		public Utente getUtente() {
+			return utente;
 		}
 
-		public void setUtenteId(Long utenteID) {
-			this.utenteId = utenteID;
+		public void setUtenteId(Utente utente) {
+			this.utente = utente;
 		}
 
 		public String getTipo() {
@@ -111,11 +119,11 @@ public class Abbonamento {
 			this.metodoPagamento = metodoPagamento;
 		}
 
-		public Long getStripeSubscriptionId() {
+		public String getStripeSubscriptionId() {
 			return stripeSubscriptionId;
 		}
 
-		public void setStripeSubscriptionId(Long stripeSubscriptionId) {
+		public void setStripeSubscriptionId(String stripeSubscriptionId) {
 			this.stripeSubscriptionId = stripeSubscriptionId;
 		}
 		
