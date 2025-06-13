@@ -1,0 +1,4 @@
+# Firebase Configuration Template - Copia in application-local.properties
+firebase.credentials.path=./config/firebase-service-account.json
+firebase.project.id=your-firebase-project-id
+firebase.database.url=https://your-firebase-project-id-default-rtdb.firebaseio.com

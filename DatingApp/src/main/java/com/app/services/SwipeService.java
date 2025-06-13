@@ -1,5 +1,5 @@
 package com.app.services;
-
+import com.app.services.FirebaseService;
 import com.app.entities.Swipe;
 import com.app.entities.Utente;
 import com.app.entities.Match;
@@ -29,6 +29,9 @@ public class SwipeService {
     
     @Autowired
     private MatchRepository matchRepository;
+    
+    @Autowired
+    private FirebaseService firebaseService;
     
     // ========== GET PROFILI DA SWIPARE ==========
     public List<UtenteDiscoverDTO> getProfilDaSwipare(String emailUtente) {
@@ -118,11 +121,16 @@ public class SwipeService {
             
             // Se è un LIKE, controlla se c'è reciprocità
             if ("LIKE".equals(dto.getTipo()) || "SUPER_LIKE".equals(dto.getTipo())) {
+                String risultato = controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
 
-            // Invio una notifica push ai due utenti coinvolti che è stao creato il Match
+                // Se NON è un match ma è un SUPER_LIKE, invia una notifica al target
+                if ("SUPER_LIKE".equals(dto.getTipo()) && !risultato.startsWith("È UN MATCH")) {
+                    firebaseService.inviaNotificaSuperLike(utenteTarget.getId(), utenteSwipe.getNome());
+                }
 
-                return controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
+                return risultato;
             }
+
 
             
             // Se lo swipe di tipo LIKE/SUPER_LIKE è reciproco creo un MATCH
@@ -145,14 +153,14 @@ public class SwipeService {
         System.out.println("=== CONTROLLO MATCH ===");
         System.out.println("Utente1: " + utente1Id + " -> Utente2: " + utente2Id);
         
-        // ✅ CORRETTO: Usa il metodo aggiornato del SwipeRepository
+        // Usa il metodo aggiornato del SwipeRepository
         boolean matchReciprico = swipeRepository.existsByUtenteSwipeIdAndUtenteTargetSwipeIdAndTipoIn(
             utente2Id, utente1Id, List.of("LIKE", "SUPER_LIKE"));
         
         if (matchReciprico) {
             System.out.println("MATCH TROVATO! Creazione match...");
             
-            // ✅ CORRETTO: Usa il metodo aggiornato del MatchRepository
+            // Usa il metodo aggiornato del MatchRepository
             boolean matchEsiste = matchRepository.existsMatchBetweenUsers(
                 utente1Id, utente2Id);
             
@@ -166,7 +174,12 @@ public class SwipeService {
                 Match savedMatch = matchRepository.save(match);
                 System.out.println("Match creato con ID: " + savedMatch.getId());
                 
-                return "🎉 È UN MATCH! Ora puoi chattare con " + utente2.getNome();
+                // invio notifiche Firebase ai due utenti
+                Utente utente1 = utenteRepository.findById(utente2Id).get();
+                firebaseService.inviaNotificaMatch(utente1Id, utente2.getNome());
+                firebaseService.inviaNotificaMatch(utente2Id, utente1.getNome());
+                
+                return "È UN MATCH! Ora puoi chattare con " + utente2.getNome();
             } else {
                 System.out.println("Match già esistente");
             }

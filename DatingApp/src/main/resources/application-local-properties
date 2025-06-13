@@ -1,0 +1,4 @@
+# Firebase Configuration (NON COMMITTARE!)
+firebase.credentials.path=./config/firebase-service-account.json
+firebase.project.id=datingapp-emiliano-dc9ac
+firebase.database.url=https://datingapp-emiliano-dc9ac-default-rtdb.firebaseio.com

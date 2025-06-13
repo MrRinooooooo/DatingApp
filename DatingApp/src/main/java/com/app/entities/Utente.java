@@ -63,6 +63,12 @@ public class Utente {
 	@Column(name = "data_registrazione", nullable = false)
 	private LocalDate dataRegistrazione;
 	
+	@Column(name = "notifiche_attive", columnDefinition = "bit(1)")
+	private Boolean notificheAttive;
+	
+	@Column(name = "device_token", columnDefinition = "varchar(255)")
+	private String deviceToken;
+
 	@Column(name = "primo_accesso", nullable = false)
 	private boolean primoAccesso;
 	
@@ -82,6 +88,8 @@ public class Utente {
 		this.password = password;
 		this.tipoAccount = "STANDARD";
 		this.dataRegistrazione = LocalDate.now();
+		this.notificheAttive = true;
+		this.deviceToken = null;
 		this.primoAccesso = true;
 	}
 	
@@ -200,7 +208,23 @@ public class Utente {
 	public void setDataRegistrazione(LocalDate dataRegistrazione) {
 		this.dataRegistrazione = dataRegistrazione;
 	}
+
+	public Boolean getNotificheAttive() {
+		return notificheAttive;
+	}
 	
+	public void setNotificheAttive(Boolean notificheAttive) {
+		this.notificheAttive = notificheAttive;
+	}
+	
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+	
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+
 	public boolean isPrimoAccesso() {
 		return primoAccesso;
 	}
@@ -234,6 +258,5 @@ public class Utente {
 	            ", dataRegistrazione=" + dataRegistrazione +
 	            '}';
 	}
-	
-	
+  
 }

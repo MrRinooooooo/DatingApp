@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase FCM Token Test - DatingApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #007bff;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-ok { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; color: #333; }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .token-section {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .token-display {
+            width: 100%;
+            min-height: 120px;
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            background: white;
+            resize: vertical;
+        }
+
+        .notification-test {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .logs {
+            background: #343a40;
+            color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #495057;
+        }
+
+        .log-time {
+            color: #28a745;
+            margin-right: 10px;
+        }
+
+        .log-error { color: #dc3545; }
+        .log-success { color: #28a745; }
+        .log-info { color: #17a2b8; }
+
+        .guide-section {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .guide-section h3 {
+            color: #0c5460;
+            margin-bottom: 15px;
+        }
+
+        .guide-section ol {
+            margin-left: 20px;
+        }
+
+        .guide-section li {
+            margin: 8px 0;
+            color: #0c5460;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Firebase FCM Test</h1>
+            <p>Generazione Token Reali per DatingApp Backend</p>
+        </div>
+
+        <div class="content">
+            <!-- Status Section -->
+            <div class="status-card">
+                <h2>📊 Status Sistema</h2>
+                <div class="status-item">
+                    <div class="status-icon status-warning" id="firebase-status">⏳</div>
+                    <span>Firebase SDK: <span id="firebase-text">Caricamento...</span></span>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-warning" id="permission-status">⏳</div>
+                    <span>Permessi Notifiche: <span id="permission-text">Non richiesti</span></span>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-warning" id="token-status">⏳</div>
+                    <span>Token FCM: <span id="token-text">Non generato</span></span>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon status-warning" id="sw-status">⏳</div>
+                    <span>Service Worker: <span id="sw-text">Non registrato</span></span>
+                </div>
+            </div>
+
+            <!-- Controls Section -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="btn" id="init-btn" onclick="initializeFirebase()">
+                    🚀 Inizializza Firebase
+                </button>
+                <button class="btn" id="permission-btn" onclick="requestPermission()" disabled>
+                    🔔 Richiedi Permessi
+                </button>
+                <button class="btn" id="token-btn" onclick="generateToken()" disabled>
+                    🎟️ Genera Token FCM
+                </button>
+            </div>
+
+            <!-- Token Display Section -->
+            <div class="token-section">
+                <h3>🎯 Token FCM Generato</h3>
+                <p>Copia questo token e usalo nel tuo backend al posto di "fakeDeviceToken123456789"</p>
+                <textarea class="token-display" id="token-display" 
+                          placeholder="Il token FCM apparirà qui una volta generato..."></textarea>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="btn" onclick="copyToken()" id="copy-btn" disabled>
+                        📋 Copia Token
+                    </button>
+                    <button class="btn" onclick="testBackendIntegration()" id="backend-btn" disabled>
+                        🔧 Test Backend
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notification Test Section -->
+            <div class="notification-test">
+                <h3>🧪 Test Notifiche</h3>
+                <p>Una volta ottenuto il token, puoi testare le notifiche direttamente qui:</p>
+                <div style="margin: 15px 0;">
+                    <input type="text" id="test-title" placeholder="Titolo notifica" 
+                           style="width: 48%; padding: 10px; margin: 5px 1%; border: 1px solid #ccc; border-radius: 5px;">
+                    <input type="text" id="test-body" placeholder="Corpo notifica" 
+                           style="width: 48%; padding: 10px; margin: 5px 1%; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" onclick="sendTestNotification()" id="test-notif-btn" disabled>
+                        📢 Invia Notifica Test
+                    </button>
+                </div>
+            </div>
+
+            <!-- Guide Section -->
+            <div class="guide-section">
+                <h3>📖 Come usare questo token nel tuo backend</h3>
+                <ol>
+                    <li>Genera il token FCM usando il pulsante sopra</li>
+                    <li>Copia il token generato</li>
+                    <li>Nel tuo backend, chiama <code>POST /api/device/token</code> con il body:</li>
+                    <pre style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px;">
+{
+  "deviceToken": "IL_TUO_TOKEN_COPIATO_QUI"
+}</pre>
+                    <li>Ora testa con <code>POST /api/device/test-notification</code></li>
+                    <li>Dovresti vedere la notifica apparire in questo browser!</li>
+                </ol>
+            </div>
+
+            <!-- Logs Section -->
+            <div>
+                <h3>📝 Logs Sistema</h3>
+                <div class="logs" id="logs">
+                    <div class="log-entry">
+                        <span class="log-time">[00:00:00]</span>
+                        <span class="log-info">Sistema pronto. Clicca "Inizializza Firebase" per iniziare.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js';
+
+        // Configurazione Firebase (dai tuoi screenshot)
+        const firebaseConfig = {
+  apiKey: "AIzaSyDlVkdD6ZmiHSzFpOOQ6dsmDXE1EYfzxsE",
+  authDomain: "datingapp-emiliano-dc9ac.firebaseapp.com",
+  projectId: "datingapp-emiliano-dc9ac",
+  storageBucket: "datingapp-emiliano-dc9ac.firebasestorage.app",
+  messagingSenderId: "495268141226",
+  appId: "1:495268141226:web:cacd2a77327898d06cd8d3"
+};
+
+        // VAPID Key - DEVI OTTENERLA dalla Console Firebase!
+        // Vai su Firebase Console > Progetto > Cloud Messaging > Certificati web push
+        const vapidKey = "BBfBESHY-Tw1qDXsN4j4trexzQ-4R-o9uLpDdb4scjdUL_tOnVtM-VFiJQyux6KXHeAKSEtDz4Kcnc1plGKMEqk";
+
+        let app;
+        let messaging;
+        let currentToken = null;
+
+        // Funzioni globali
+        window.initializeFirebase = async function() {
+            try {
+                addLog('Inizializzazione Firebase...', 'info');
+                
+                // Inizializza Firebase
+                app = initializeApp(firebaseConfig);
+                updateStatus('firebase', 'ok', 'Inizializzato');
+                addLog('Firebase inizializzato con successo', 'success');
+
+                // Registra Service Worker
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                    updateStatus('sw', 'ok', 'Registrato');
+                    addLog('Service Worker registrato', 'success');
+                    
+                    // Inizializza messaging
+                    messaging = getMessaging(app);
+                    addLog('Firebase Messaging inizializzato', 'success');
+                    
+                    // Abilita prossimo step
+                    document.getElementById('permission-btn').disabled = false;
+                    document.getElementById('init-btn').disabled = true;
+                    
+                } else {
+                    throw new Error('Service Worker non supportato');
+                }
+                
+            } catch (error) {
+                updateStatus('firebase', 'error', 'Errore: ' + error.message);
+                addLog('Errore inizializzazione: ' + error.message, 'error');
+            }
+        };
+
+        window.requestPermission = async function() {
+            try {
+                addLog('Richiesta permessi notifiche...', 'info');
+                
+                const permission = await Notification.requestPermission();
+                
+                if (permission === 'granted') {
+                    updateStatus('permission', 'ok', 'Concessi');
+                    addLog('Permessi notifiche concessi', 'success');
+                    document.getElementById('token-btn').disabled = false;
+                    document.getElementById('permission-btn').disabled = true;
+                } else {
+                    updateStatus('permission', 'error', 'Negati');
+                    addLog('Permessi notifiche negati', 'error');
+                }
+                
+            } catch (error) {
+                updateStatus('permission', 'error', 'Errore: ' + error.message);
+                addLog('Errore permessi: ' + error.message, 'error');
+            }
+        };
+
+        window.generateToken = async function() {
+            try {
+                addLog('Generazione token FCM...', 'info');
+                
+                currentToken = await getToken(messaging, { vapidKey: vapidKey });
+                
+                if (currentToken) {
+                    updateStatus('token', 'ok', 'Generato');
+                    addLog('Token FCM generato con successo', 'success');
+                    
+                    // Mostra token
+                    document.getElementById('token-display').value = currentToken;
+                    document.getElementById('copy-btn').disabled = false;
+                    document.getElementById('backend-btn').disabled = false;
+                    document.getElementById('test-notif-btn').disabled = false;
+                    document.getElementById('token-btn').disabled = true;
+                    
+                    // Setup message listener
+                    onMessage(messaging, (payload) => {
+                        addLog('Messaggio ricevuto: ' + payload.notification.title, 'success');
+                        
+                        // Mostra notifica custom
+                        showCustomNotification(payload.notification.title, payload.notification.body);
+                    });
+                    
+                } else {
+                    updateStatus('token', 'error', 'Impossibile generare');
+                    addLog('Impossibile generare token FCM', 'error');
+                }
+                
+            } catch (error) {
+                updateStatus('token', 'error', 'Errore: ' + error.message);
+                addLog('Errore generazione token: ' + error.message, 'error');
+            }
+        };
+
+        window.copyToken = function() {
+            const tokenDisplay = document.getElementById('token-display');
+            tokenDisplay.select();
+            document.execCommand('copy');
+            addLog('Token copiato negli appunti', 'success');
+        };
+
+        window.testBackendIntegration = async function() {
+            try {
+                addLog('Test integrazione backend...', 'info');
+                
+                const backendUrl = prompt('Inserisci URL del tuo backend (es: http://localhost:8080):', 'http://localhost:8080');
+                if (!backendUrl) return;
+                
+                // Test chiamata al backend
+                const response = await fetch(`${backendUrl}/api/device/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + prompt('Inserisci il tuo JWT token:')
+                    },
+                    body: JSON.stringify({
+                        deviceToken: currentToken
+                    })
+                });
+                
+                if (response.ok) {
+                    addLog('Token inviato al backend con successo', 'success');
+                    addLog('Ora puoi testare /api/device/test-notification', 'info');
+                } else {
+                    addLog('Errore invio al backend: ' + response.statusText, 'error');
+                }
+                
+            } catch (error) {
+                addLog('Errore test backend: ' + error.message, 'error');
+            }
+        };
+
+        window.sendTestNotification = function() {
+            const title = document.getElementById('test-title').value || 'Test Notifica';
+            const body = document.getElementById('test-body').value || 'Questa è una notifica di test';
+            
+            showCustomNotification(title, body);
+            addLog(`Notifica test inviata: ${title}`, 'info');
+        };
+
+        // Funzioni helper
+        function updateStatus(type, status, text) {
+            const iconEl = document.getElementById(`${type}-status`);
+            const textEl = document.getElementById(`${type}-text`);
+            
+            iconEl.className = `status-icon status-${status}`;
+            iconEl.textContent = status === 'ok' ? '✓' : status === 'error' ? '✗' : '⏳';
+            textEl.textContent = text;
+        }
+
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-${type}">${message}</span>
+            `;
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function showCustomNotification(title, body) {
+            // Notifica personalizzata nell'interfaccia
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 1000;
+                max-width: 300px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <strong>${title}</strong><br>
+                <span style="font-size: 0.9em;">${body}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Rimuovi dopo 5 secondi
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // CSS per animazione
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inizializzazione automatica al caricamento
+        addLog('Pagina caricata. Sistema pronto.', 'success');
+    </script>
+</body>
+</html>
