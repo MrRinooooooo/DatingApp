@@ -76,7 +76,7 @@ public class Utente {
 	public Utente() {
 		
 	}
-	
+
 	public Utente(String email, String password) {
 		this.username = email;
 		this.password = password;
@@ -207,6 +207,14 @@ public class Utente {
 
 	public void setPrimoAccesso(boolean primoAccesso) {
 		this.primoAccesso = primoAccesso;
+	}
+	
+	public List<Abbonamento> getAbbonamenti() {
+		return abbonamenti;
+	}
+
+	public void setAbbonamenti(List<Abbonamento> abbonamenti) {
+		this.abbonamenti = abbonamenti;
 	}
 
 	@Override

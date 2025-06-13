@@ -128,4 +128,10 @@ public class AbbonamentoController {
 		}
 	}
 	
+	// --------------- ENDPOINT PER TEST DOWNLGRADE ABBONAMENTI
+	@GetMapping("/test")
+	public void testDowngrade() {
+		abbonamentoService.controllaScadenzeAbbonamenti();
+	}
+	
 }
