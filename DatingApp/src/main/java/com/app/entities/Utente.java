@@ -1,15 +1,18 @@
 package com.app.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -66,6 +69,9 @@ public class Utente {
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
     private Preferenze preferenze;
+	
+	@OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Abbonamento> abbonamenti;
 	
 	public Utente() {
 		

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.entities.Abbonamento;
+import com.app.entities.Utente;
 import com.app.repositories.AbbonamentoRepository;
 
 @Service
@@ -16,13 +17,13 @@ public class AbbonamentoService {
 	AbbonamentoRepository abbonamentoRepository;
 	
 	//GET LISTA COMPLETA ABBONAMENTI DI utente_id
-	public List<Abbonamento> getSubscriptionHistoryByUserId(Long utente_id) {
-		return abbonamentoRepository.findByUtenteIdOrderByDataFine(utente_id);
+	public List<Abbonamento> getSubscriptionHistoryByUserId(Utente utente) {
+		return abbonamentoRepository.findByUtenteIdOrderByDataFine(utente);
 	}
 	
 	//GET ULTIMO ABBONAMENTO DI utente_id
-	public Optional<Abbonamento> getLastSubscriptionByUserId(Long utente_id)
+	public Optional<Abbonamento> getLastSubscriptionByUserId(Utente utente)
 	{
-		return abbonamentoRepository.findFirstByUtenteIdOrderByDataFineDesc(utente_id);
+		return abbonamentoRepository.findFirstByUtenteOrderByDataFineDesc(utente);
 	}
 }

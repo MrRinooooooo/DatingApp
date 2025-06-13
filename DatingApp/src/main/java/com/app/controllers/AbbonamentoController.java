@@ -1,13 +1,11 @@
 package com.app.controllers;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,7 +61,7 @@ public class AbbonamentoController {
 			if(!metodoPagamento.equals("STRIPE") && !metodoPagamento.equals("PAYPAL"))
 				return ResponseEntity.badRequest().body("Metodo di pagamento non accettato");
 			
-			Optional<Abbonamento> ultimoAbbonamentoOpt = abbonamentoService.getLastSubscriptionByUserId(utente.getId());
+			Optional<Abbonamento> ultimoAbbonamentoOpt = abbonamentoService.getLastSubscriptionByUserId(utente);
 			
 			if (ultimoAbbonamentoOpt.isPresent()) {
 				Abbonamento ultimoAbbonamento = ultimoAbbonamentoOpt.get();
@@ -86,7 +84,7 @@ public class AbbonamentoController {
 				stripeSubscriptionId = session.getId();
 				}
 			
-			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), "PREMIUM", metodoPagamento, stripeSubscriptionId);
+			Abbonamento nuovoAbbonamento = new Abbonamento( utente, "PREMIUM", metodoPagamento, stripeSubscriptionId);
 			//Imposta tipoAccount dell'utente loggato a "PREMIUM"
 			utente.setTipoAccount("PREMIUM");
 			utenteRepository.save(utente);
@@ -106,7 +104,7 @@ public class AbbonamentoController {
 		try {
 			Utente utente = utenteService.getCurrentUser();
 			
-			return ResponseEntity.ok(abbonamentoService.getLastSubscriptionByUserId(utente.getId()));
+			return ResponseEntity.ok(abbonamentoService.getLastSubscriptionByUserId(utente));
 			
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(400).body(e.getMessage());
@@ -121,7 +119,7 @@ public class AbbonamentoController {
 		try {
 			Utente utente = utenteService.getCurrentUser();
 			
-			return ResponseEntity.ok(abbonamentoService.getSubscriptionHistoryByUserId(utente.getId()));
+			return ResponseEntity.ok(abbonamentoService.getSubscriptionHistoryByUserId(utente));
 			
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(400).body(e.getMessage());
