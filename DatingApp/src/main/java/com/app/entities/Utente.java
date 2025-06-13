@@ -60,6 +60,9 @@ public class Utente {
 	@Column(name = "data_registrazione", nullable = false)
 	private LocalDate dataRegistrazione;
 	
+	@Column(name = "primo_accesso", nullable = false)
+	private boolean primoAccesso;
+	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
     private Preferenze preferenze;
@@ -73,16 +76,11 @@ public class Utente {
 		this.password = password;
 		this.tipoAccount = "STANDARD";
 		this.dataRegistrazione = LocalDate.now();
-		
-		this.nome="";
-		this.genere="";
-		this.bio="";
-		this.interessi="";
-		this.fotoProfilo="";
+		this.primoAccesso = true;
 	}
 	
 	//includiamo anche Posizione
-	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione) {
+	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione, boolean primoAccesso) {
 		this.nome = nome;
 		this.username = email;
 		this.password = password;
@@ -94,6 +92,7 @@ public class Utente {
 		this.fotoProfilo = fotoProfilo;
 		this.tipoAccount = tipoAccount;
 		this.dataRegistrazione = dataRegistrazione;
+		this.primoAccesso = primoAccesso;
 	}
 
 	public Long getId() {
@@ -196,6 +195,14 @@ public class Utente {
 		this.dataRegistrazione = dataRegistrazione;
 	}
 	
+	public boolean isPrimoAccesso() {
+		return primoAccesso;
+	}
+
+	public void setPrimoAccesso(boolean primoAccesso) {
+		this.primoAccesso = primoAccesso;
+	}
+
 	@Override
 	public String toString() {
 	    return "Utente{" +

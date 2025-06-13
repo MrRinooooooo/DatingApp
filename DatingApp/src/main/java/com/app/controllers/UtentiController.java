@@ -2,6 +2,7 @@ package com.app.controllers;
 
 import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
+import com.app.repositories.SwipeRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.services.PhotoService;
 import com.app.services.UtenteService;
@@ -32,6 +33,9 @@ public class UtentiController {
     
     @Autowired
     private UtenteRepository utenteRepository;
+    
+    @Autowired
+    private SwipeRepository swipeRepository;
  
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
@@ -108,14 +112,9 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     @PreAuthorize("hasRole('PREMIUM')") // Annotation per verificare il ruolo
     public ResponseEntity<?> whoLikedMe() {
         try {
-        																				//   String currentUserEmail = SecurityUtils.getCurrentUserEmail();
-																						//System.out.println(currentUserEmail);
-            // Questa funzionalità è disponibile solo per utenti premium
-            // L'annotation @PreAuthorize si occupa già del controllo
- 
-            // Logica per ottenere gli utenti che hanno messo "like" - Da implementare
- 
-            return ResponseEntity.ok("Lista degli utenti che ti hanno messo like - Funzionalità Premium");
+        	
+        	Utente utente = utenteService.getCurrentUser();
+            return ResponseEntity.ok(swipeRepository.findLikesByUtenteTargetId(utente.getId()));
  
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());

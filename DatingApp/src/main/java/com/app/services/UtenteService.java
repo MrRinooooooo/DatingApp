@@ -96,8 +96,11 @@ public class UtenteService {
 				 else if ( utenteRepository.existsByUsername(uModificato.getUsername()) ) 
 					return ResponseEntity.badRequest().body("Modifica username rifiutata: Esite già nel database"); // Verifico che la nuova username non sia già usata nel database e sia valida
 						          
-			if ( uModificato.getPassword() != null && uModificato.getPassword().length() < 6 ) 
-				return ResponseEntity.badRequest().body("Password non valida, deve essere di almeno 6 caratteri!"); // Verifico che la nuova password contenga almeno 6 caratteri            	
+			if ( uModificato.getPassword() == null || uModificato.getPassword().length() < 6 )
+				return ResponseEntity.badRequest().body("Password non valida, deve essere di almeno 6 caratteri!"); // Verifico che la nuova password contenga almeno 6 caratteri e non sia nulla         	
+			
+			if( uModificato.getDataNascita() == null)
+				return ResponseEntity.badRequest().body("Non puoi lasciare il campo data di nascita vuoto!"); // Verifico che la nuova data di nascita non sia nulla     
 			
 			// SE MODIFICO USERNAME O PASSWORD IL TOKEN NON E' PIU' VALIDO. DOBBIAMO GENERARNE UNO NUOVO TRAMITE IL LOGIN
 			
@@ -107,23 +110,25 @@ public class UtenteService {
 			uLoggato.setUsername(uModificato.getUsername().trim());
 			
 			if (uModificato.getNome() == null) uModificato.setNome("");
-			uLoggato.setNome(uModificato.getNome().trim());
+				uLoggato.setNome(uModificato.getNome().trim());
 
-      uLoggato.setDataNascita(uModificato.getDataNascita());	
+			uLoggato.setDataNascita(uModificato.getDataNascita());	
 			
 			if (uModificato.getBio() == (null)) uModificato.setBio("");				
 				uLoggato.setBio(uModificato.getBio().trim());			
 			
 			if (uModificato.getGenere() == (null)) uModificato.setGenere("");
-			uLoggato.setGenere(uModificato.getGenere().trim());
+				uLoggato.setGenere(uModificato.getGenere().trim());
 			
 			if (uModificato.getInteressi() == (null)) uModificato.setInteressi("");
-			uLoggato.setInteressi(uModificato.getInteressi().trim());
+				uLoggato.setInteressi(uModificato.getInteressi().trim());
 			
-			uLoggato.setPosizione(uModificato.getPosizione());
+				uLoggato.setPosizione(uModificato.getPosizione());
 			
 			if (uModificato.getFotoProfilo() == (null)) uModificato.setFotoProfilo("");
-			uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
+				uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
+			
+			uLoggato.setPrimoAccesso(false);
 			
 			utenteRepository.save(uLoggato);
 			
