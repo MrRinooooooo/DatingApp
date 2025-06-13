@@ -50,13 +50,18 @@ public class AbbonamentoController {
 	public ResponseEntity<?> createSubscription( @RequestParam String metodoPagamento) {
 		try {
 			String stripeSubscriptionId = null;
-			Utente utente = utenteService.getCurrentUser();			
+			Utente utente = utenteService.getCurrentUser();	
 			
 		// SE LO VOGLIAMO GESTIRE CON @SCHEDULE CHE IMPOSTA il tipoAccount di Utente a "STANDARD"
 			/*if(utente.getTipoAccount().equals("PREMIUM")) {
 				return ResponseEntity.ok("Abbonamento già attivo");
 			}*/
 			
+			metodoPagamento=metodoPagamento.toUpperCase();
+			
+			//ACCETTA SOLO STRIPE O PAYPAL
+			if(!metodoPagamento.equals("STRIPE") && !metodoPagamento.equals("PAYPAL"))
+				return ResponseEntity.badRequest().body("Metodo di pagamento non accettato");
 			
 			Optional<Abbonamento> ultimoAbbonamentoOpt = abbonamentoService.getLastSubscriptionByUserId(utente.getId());
 			
@@ -81,7 +86,7 @@ public class AbbonamentoController {
 				stripeSubscriptionId = session.getId();
 				}
 			
-			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), "PREMIUM", metodoPagamento.toUpperCase(), stripeSubscriptionId);
+			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), "PREMIUM", metodoPagamento, stripeSubscriptionId);
 			//Imposta tipoAccount dell'utente loggato a "PREMIUM"
 			utente.setTipoAccount("PREMIUM");
 			utenteRepository.save(utente);
