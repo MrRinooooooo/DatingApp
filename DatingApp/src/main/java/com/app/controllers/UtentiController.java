@@ -160,43 +160,28 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      */
     
     @GetMapping("/me/foto")
-    public ResponseEntity<?> viewPhoto() {
-    try {
-		// verifica se l'utente è autenticato
-		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
-		if (currentUserEmail == null) {
-			return ResponseEntity.badRequest().body("Utente non autenticato");
-		}
-		
-		Utente utente = utenteRepository.findByUsername(currentUserEmail)
-				.orElseThrow(() -> new RuntimeException("Utente non trovato"));	//modo professionale invece di optional utente
-		
-		String nomeFoto = utente.getFotoProfilo(); //abbiamo preso la foto
-	
-		if(nomeFoto == null || nomeFoto.isEmpty()) {
-		    return ResponseEntity.badRequest().body("nessuna immagine trovata");
-		}
-		
-		Path filePath = Paths.get("uploads", nomeFoto);
-		//condizione
-		if(!Files.exists(filePath)) {
-			return ResponseEntity.badRequest().body("File non trovato");
-		}
-		
-		//leggiamo il file
-		byte[] imageBytes = Files.readAllBytes(filePath);
-		
-		
-		//restituiamo l'immagine che verrà letta come array di byte
-		return ResponseEntity.ok()
-				.contentType(MediaType.IMAGE_JPEG)
-				.body(imageBytes);
-		
-    } catch(Exception e) {
-    	e.printStackTrace();
-		return ResponseEntity.badRequest().body("Errore durante la visualizzazione dell'immagine profilo" + e.getMessage());
+    public ResponseEntity<?> getPhoto() {
+        String email = SecurityUtils.getCurrentUserEmail();
+        if (email == null) {
+            return ResponseEntity.badRequest().body("Utente non autenticato");
+        }
+
+        try {
+            byte[] photoBytes = photoService.getPhoto(email);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(photoBytes);
+        } catch (RuntimeException e) {
+            // Qui gestisci le eccezioni lanciate dal Service con un messaggio chiaro
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // Questo cattura eventuali altri errori come IOException non previsti
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore imprevisto: " + e.getMessage());
+        }
     }
-    }
+
+    
     
     @PostMapping("/me/foto") 
     //USIAMO REQUESTPART PER IL MULTIPART 
