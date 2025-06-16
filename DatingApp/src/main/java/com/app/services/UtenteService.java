@@ -109,13 +109,13 @@ public class UtenteService {
 			if (uModificato.getNome() == null) uModificato.setNome("");
 			uLoggato.setNome(uModificato.getNome().trim());
 
-      uLoggato.setDataNascita(uModificato.getDataNascita());	
+			uLoggato.setDataNascita(uModificato.getDataNascita());	
 			
 			if (uModificato.getBio() == (null)) uModificato.setBio("");				
 				uLoggato.setBio(uModificato.getBio().trim());			
 			
-			if (uModificato.getGenere() == (null)) uModificato.setGenere("");
-			uLoggato.setGenere(uModificato.getGenere().trim());
+			if (uModificato.getGenere() == (null)) uModificato.setGenere(null);
+			uLoggato.setGenere(uModificato.getGenere());
 			
 			if (uModificato.getInteressi() == (null)) uModificato.setInteressi("");
 			uLoggato.setInteressi(uModificato.getInteressi().trim());

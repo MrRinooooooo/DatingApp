@@ -1,5 +1,7 @@
 package com.app.repositories;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.app.entities.Utente;
+import com.app.enums.Genere;
 
 public interface UtenteRepository extends JpaRepository<Utente, Long>{
 
@@ -36,6 +39,9 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 		                              @Param("eta_minima") Integer etaMinima,
 		                              @Param("eta_massima") Integer etaMassima,
 		                              @Param("distanza_massima") Double distanzaMax);
+	
+	// Visualizza tutti gli utenti trane quello autenticato
+	List<Utente> findByIdNot(Long excludeId);
 	
 }
 

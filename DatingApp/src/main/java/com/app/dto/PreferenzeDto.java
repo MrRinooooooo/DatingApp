@@ -1,45 +1,47 @@
 package com.app.dto;
 
+import com.app.enums.Genere;
+
 public class PreferenzeDto {
 
-	private String generePreferito;
-	private int etaMinima;
-	private int etaMassima;
+	private Genere generePreferito;
+	private Integer minEta;
+	private Integer maxEta;
 	private Double distanzaMax;
 	
 	public PreferenzeDto() {
 		
 	}
 	
-	public PreferenzeDto(String generePreferito, int etaMinima, int etaMassima, double distanzaMax) {
+	public PreferenzeDto(Genere generePreferito, Integer minEta, Integer maxEta, Double distanzaMax) {
 		this.generePreferito = generePreferito;
-		this.etaMinima = etaMinima;
-		this.etaMassima = etaMassima;
+		this.minEta = minEta;
+		this.maxEta = maxEta;
 		this.distanzaMax = distanzaMax;
 	}
 
-	public String getGenerePreferito() {
+	public Genere getGenerePreferito() {
 		return generePreferito;
 	}
 
-	public void setGenerePreferito(String generePreferito) {
+	public void setGenerePreferito(Genere generePreferito) {
 		this.generePreferito = generePreferito;
 	}
 
-	public int getEtaMinima() {
-		return etaMinima;
+	public Integer getMinEta() {
+		return minEta;
 	}
 
-	public void setEtaMinima(int etaMinima) {
-		this.etaMinima = etaMinima;
+	public void setMinEta(Integer minEta) {
+		this.minEta = minEta;
 	}
 
-	public int getEtaMassima() {
-		return etaMassima;
+	public Integer getMaxEta() {
+		return maxEta;
 	}
 
-	public void setEtaMassima(int etaMassima) {
-		this.etaMassima = etaMassima;
+	public void setMaxEta(Integer maxEta) {
+		this.maxEta = maxEta;
 	}
 
 	public Double getDistanzaMax() {
