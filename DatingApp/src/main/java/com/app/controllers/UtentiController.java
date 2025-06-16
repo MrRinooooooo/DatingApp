@@ -7,14 +7,22 @@ import com.app.services.PhotoService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
  
 /**
  * Controller per la gestione degli utenti.
@@ -151,8 +159,49 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      * Accessibile solo agli utenti autenticati.
      */
     
+    @GetMapping("/me/foto")
+    public ResponseEntity<?> viewPhoto() {
+    try {
+		// verifica se l'utente è autenticato
+		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
+		if (currentUserEmail == null) {
+			return ResponseEntity.badRequest().body("Utente non autenticato");
+		}
+		
+		Utente utente = utenteRepository.findByUsername(currentUserEmail)
+				.orElseThrow(() -> new RuntimeException("Utente non trovato"));	//modo professionale invece di optional utente
+		
+		String nomeFoto = utente.getFotoProfilo(); //abbiamo preso la foto
+	
+		if(nomeFoto == null || nomeFoto.isEmpty()) {
+		    return ResponseEntity.badRequest().body("nessuna immagine trovata");
+		}
+		
+		Path filePath = Paths.get("uploads", nomeFoto);
+		//condizione
+		if(!Files.exists(filePath)) {
+			return ResponseEntity.badRequest().body("File non trovato");
+		}
+		
+		//leggiamo il file
+		byte[] imageBytes = Files.readAllBytes(filePath);
+		
+		
+		//restituiamo l'immagine che verrà letta come array di byte
+		return ResponseEntity.ok()
+				.contentType(MediaType.IMAGE_JPEG)
+				.body(imageBytes);
+		
+    } catch(Exception e) {
+    	e.printStackTrace();
+		return ResponseEntity.badRequest().body("Errore durante la visualizzazione dell'immagine profilo" + e.getMessage());
+    }
+    }
+    
     @PostMapping("/me/foto") 
-    public ResponseEntity<?> uploadPhoto(@RequestBody UtenteDiscoverDTO fotoAggiunta) {
+    //USIAMO REQUESTPART PER IL MULTIPART 
+   
+    public ResponseEntity<?> uploadPhoto( @RequestPart("foto_profilo") MultipartFile file) {
     	try {
     		// verifica se l'utente è autenticato
     		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
@@ -160,30 +209,25 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     			return ResponseEntity.badRequest().body("Utente non autenticato");
     		}
     		
-    		Optional<Utente> fotoEsistente = utenteRepository.findByUsername(currentUserEmail);
-    		
-    		if (fotoEsistente.isPresent() && fotoEsistente.get().getFotoProfilo() != null) {
-    			return ResponseEntity.badRequest().body("Foto gia presente");
-    		}
-    		//aggiungi foto
-    		Utente utente = photoService.addPhoto(currentUserEmail, fotoAggiunta);
-    		return ResponseEntity.ok("foto aggiunta con successo " + fotoAggiunta);
+    		Utente utente = photoService.addPhoto(currentUserEmail, file);
+    		return ResponseEntity.ok("foto aggiunta con successo " + file);
     	} catch (Exception e) {
-    		return ResponseEntity.badRequest().body("Errore durante l'aggiunta dell'immagine profilo");
+    		e.printStackTrace();
+    		return ResponseEntity.badRequest().body("Errore durante l'aggiunta dell'immagine profilo" + e.getMessage());
     	}
     }
     
     @DeleteMapping("/me/foto")
-    public ResponseEntity<?> deletePhoto() {
+    public ResponseEntity<?> deletePhoto(@RequestParam String fileName) {
         try {
             String currentUserEmail = SecurityUtils.getCurrentUserEmail();
             if (currentUserEmail == null) {
                 return ResponseEntity.badRequest().body("Utente non autenticato");    
             }
-            photoService.deletePhoto(currentUserEmail );
+            photoService.deletePhoto(currentUserEmail, fileName );
             return ResponseEntity.ok("Foto eliminata con successo");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Errore durante l'eliminazione");
+            return ResponseEntity.badRequest().body("Errore durante l'eliminazione" + e.getMessage());
         }
     } 
 }
