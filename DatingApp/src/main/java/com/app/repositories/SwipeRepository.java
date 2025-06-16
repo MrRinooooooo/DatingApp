@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +68,16 @@ public interface SwipeRepository extends JpaRepository<Swipe, Long> {
      */
     @Query("SELECT s FROM Swipe s WHERE s.tipo = :tipo ORDER BY s.timestamp DESC")
     List<Swipe> findByTipo(@Param("tipo") String tipo);
-
+    
+    // METODO PER CONTEGGIO GIORNALIERO LIKE / SUPER_LIKE    
+    @Query("SELECT COUNT(s) FROM Swipe s WHERE s.utenteSwipeId = :utenteId AND s.tipo = :tipo AND s.timestamp BETWEEN :start AND :end")
+    long contaSwipeGiornalieri(
+        @Param("utenteId") Long utenteId,
+        @Param("tipo") String tipo,
+        @Param("start") LocalDateTime start,
+        @Param("end") LocalDateTime end
+    );
+    
     // ========== METODI LEGACY (compatibilità) ==========
     
     /**

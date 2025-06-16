@@ -2,6 +2,7 @@ package com.app.services;
 import com.app.services.FirebaseService;
 import com.app.entities.Swipe;
 import com.app.entities.Utente;
+import com.app.exceptions.LimitReachedException;
 import com.app.entities.Match;
 import com.app.dto.SwipeDTO;
 import com.app.dto.UtenteDiscoverDTO;
@@ -13,7 +14,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +36,9 @@ public class SwipeService {
     
     @Autowired
     private FirebaseService firebaseService;
+    
+    @Autowired
+    private UtenteService utenteService;
     
     // ========== GET PROFILI DA SWIPARE ==========
     public List<UtenteDiscoverDTO> getProfilDaSwipare(String emailUtente) {
@@ -109,6 +116,36 @@ public class SwipeService {
                 return "Hai già uno swipe con questo utente";
             }
             
+   //CONTROLLO LIMITE LIKE E SUPERLIKE GIORNALIERI
+            boolean isPremium = utenteService.isPremium();
+            LocalDateTime inizioGiorno = LocalDate.now().atStartOfDay();
+            LocalDateTime fineGiorno = LocalDate.now().atTime(LocalTime.MAX);
+            
+   // Conta LIKE giornalieri
+            long likeOggi = swipeRepository.contaSwipeGiornalieri(senderId, "LIKE", inizioGiorno, fineGiorno);
+            long superLikeOggi = swipeRepository.contaSwipeGiornalieri(senderId, "SUPER_LIKE", inizioGiorno, fineGiorno);
+            
+            System.out.println("Like di oggi: "+likeOggi);
+            System.out.println("SuperLike di oggi: "+superLikeOggi);
+            
+   // Controlli per utenti standard
+            
+            System.out.println(!isPremium);
+            
+            if (!isPremium) {
+                if (dto.getTipo().equals("LIKE") && likeOggi >= 20) {
+                    throw new LimitReachedException("Hai raggiunto il limite giornaliero di 20 like.");
+                }
+                if (dto.getTipo().equals("SUPER_LIKE") && superLikeOggi >= 0) {
+                    throw new LimitReachedException("I super like sono disponibili solo con abbonamento Premium.");
+                }
+            } else {
+                if (dto.getTipo().equals("SUPER_LIKE") && superLikeOggi >= 5) {
+                    throw new LimitReachedException("Hai raggiunto il limite giornaliero di 5 super like.");
+                }
+            }
+        
+            
             // Crea il nuovo swipe
             Swipe swipe = new Swipe();
             swipe.setUtenteSwipeId(utenteSwipe.getId());
@@ -121,7 +158,7 @@ public class SwipeService {
             
             // Se è un LIKE, controlla se c'è reciprocità
             if ("LIKE".equals(dto.getTipo()) || "SUPER_LIKE".equals(dto.getTipo())) {
-                String risultato = controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
+                String risultato = dto.getTipo() + controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
 
                 // Se NON è un match ma è un SUPER_LIKE, invia una notifica al target
                 if ("SUPER_LIKE".equals(dto.getTipo()) && !risultato.startsWith("È UN MATCH")) {
@@ -185,7 +222,7 @@ public class SwipeService {
             }
         }
         
-        return "Like inviato a " + utente2.getNome();
+        return " inviato a " + utente2.getNome();
     }
     
     // ========== METODI AGGIUNTIVI ==========
