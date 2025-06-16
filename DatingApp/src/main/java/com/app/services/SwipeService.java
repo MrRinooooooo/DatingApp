@@ -145,7 +145,6 @@ public class SwipeService {
                 }
             }
         
-            
             // Crea il nuovo swipe
             Swipe swipe = new Swipe();
             swipe.setUtenteSwipeId(utenteSwipe.getId());
