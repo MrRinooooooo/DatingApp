@@ -3,11 +3,18 @@ package com.app.entities;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.app.enums.Genere;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+<<<<<<< e7qOGVJ7_filtri_preferenze
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+=======
 import jakarta.persistence.FetchType;
+>>>>>>> main
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,8 +46,9 @@ public class Utente {
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(60)")
 	private String password;
 	
-	@Column(name = "genere", columnDefinition = "varchar(255)")
-	private String genere;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "genere")
+	private Genere genere;
 	
 	@Column(name = "data_nascita")
 	private LocalDate dataNascita;
@@ -87,6 +95,20 @@ public class Utente {
 		this.username = email;
 		this.password = password;
 		this.tipoAccount = "STANDARD";
+<<<<<<< e7qOGVJ7_filtri_preferenze
+		this.dataRegistrazione = LocalDate.now();		
+		this.nome="";
+		this.genere= null;
+		this.dataNascita = null;		
+		this.bio="";
+		this.interessi="";
+		this.posizione = null;
+		this.fotoProfilo="";
+	}
+	
+	//includiamo anche Posizione
+	public Utente(String nome, String email, String password, Genere genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione) {
+=======
 		this.dataRegistrazione = LocalDate.now();
 		this.notificheAttive = true;
 		this.deviceToken = null;
@@ -95,6 +117,7 @@ public class Utente {
 	
 	//includiamo anche Posizione
 	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione, boolean primoAccesso) {
+>>>>>>> main
 		this.nome = nome;
 		this.username = email;
 		this.password = password;
@@ -145,11 +168,11 @@ public class Utente {
 		this.password = password;
 	}
 
-	public String getGenere() {
+	public Genere getGenere() {
 		return genere;
 	}
 
-	public void setGenere(String genere) {
+	public void setGenere(Genere genere) {
 		this.genere = genere;
 	}
 

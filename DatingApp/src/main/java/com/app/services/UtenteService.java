@@ -117,8 +117,8 @@ public class UtenteService {
 			if (uModificato.getBio() == (null)) uModificato.setBio("");				
 				uLoggato.setBio(uModificato.getBio().trim());			
 			
-			if (uModificato.getGenere() == (null)) uModificato.setGenere("");
-				uLoggato.setGenere(uModificato.getGenere().trim());
+			if (uModificato.getGenere() == (null)) uModificato.setGenere(null);
+			uLoggato.setGenere(uModificato.getGenere());
 			
 			if (uModificato.getInteressi() == (null)) uModificato.setInteressi("");
 				uLoggato.setInteressi(uModificato.getInteressi().trim());
@@ -225,33 +225,4 @@ public class UtenteService {
 		utente.setNotificheAttive(enabled);
 		utenteRepository.save(utente);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

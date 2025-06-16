@@ -106,10 +106,15 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body("Tipo di abbonamento non valido. Valori ammessi: GOLD, PLATINUM, PREMIUM.");
         }
+        else if (ex.getMessage() != null && ex.getMessage().contains("Genere")) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Tipo di genere non valido. Valori ammessi: FEMMINA, MASCHIO.");
+        }
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body("Richiesta non valida: " + ex.getMessage());
-    }
+    }    
     
     
     /**
