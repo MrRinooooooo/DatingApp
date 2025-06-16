@@ -1,7 +1,8 @@
 package com.app.services;
-
+import com.app.services.FirebaseService;
 import com.app.entities.Swipe;
 import com.app.entities.Utente;
+import com.app.exceptions.LimitReachedException;
 import com.app.entities.Match;
 import com.app.dto.SwipeDTO;
 import com.app.dto.UtenteDiscoverDTO;
@@ -13,7 +14,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +33,12 @@ public class SwipeService {
     
     @Autowired
     private MatchRepository matchRepository;
+    
+    @Autowired
+    private FirebaseService firebaseService;
+    
+    @Autowired
+    private UtenteService utenteService;
     
     // ========== GET PROFILI DA SWIPARE ==========
     public List<UtenteDiscoverDTO> getProfilDaSwipare(String emailUtente) {
@@ -106,6 +116,35 @@ public class SwipeService {
                 return "Hai già uno swipe con questo utente";
             }
             
+   //CONTROLLO LIMITE LIKE E SUPERLIKE GIORNALIERI
+            boolean isPremium = utenteService.isPremium();
+            LocalDateTime inizioGiorno = LocalDate.now().atStartOfDay();
+            LocalDateTime fineGiorno = LocalDate.now().atTime(LocalTime.MAX);
+            
+   // Conta LIKE giornalieri
+            long likeOggi = swipeRepository.contaSwipeGiornalieri(senderId, "LIKE", inizioGiorno, fineGiorno);
+            long superLikeOggi = swipeRepository.contaSwipeGiornalieri(senderId, "SUPER_LIKE", inizioGiorno, fineGiorno);
+            
+            System.out.println("Like di oggi: "+likeOggi);
+            System.out.println("SuperLike di oggi: "+superLikeOggi);
+            
+   // Controlli per utenti standard
+            
+            System.out.println(!isPremium);
+            
+            if (!isPremium) {
+                if (dto.getTipo().equals("LIKE") && likeOggi >= 20) {
+                    throw new LimitReachedException("Hai raggiunto il limite giornaliero di 20 like.");
+                }
+                if (dto.getTipo().equals("SUPER_LIKE") && superLikeOggi >= 0) {
+                    throw new LimitReachedException("I super like sono disponibili solo con abbonamento Premium.");
+                }
+            } else {
+                if (dto.getTipo().equals("SUPER_LIKE") && superLikeOggi >= 5) {
+                    throw new LimitReachedException("Hai raggiunto il limite giornaliero di 5 super like.");
+                }
+            }
+        
             // Crea il nuovo swipe
             Swipe swipe = new Swipe();
             swipe.setUtenteSwipeId(utenteSwipe.getId());
@@ -118,11 +157,16 @@ public class SwipeService {
             
             // Se è un LIKE, controlla se c'è reciprocità
             if ("LIKE".equals(dto.getTipo()) || "SUPER_LIKE".equals(dto.getTipo())) {
+                String risultato = dto.getTipo() + controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
 
-            // Invio una notifica push ai due utenti coinvolti che è stao creato il Match
+                // Se NON è un match ma è un SUPER_LIKE, invia una notifica al target
+                if ("SUPER_LIKE".equals(dto.getTipo()) && !risultato.startsWith("È UN MATCH")) {
+                    firebaseService.inviaNotificaSuperLike(utenteTarget.getId(), utenteSwipe.getNome());
+                }
 
-                return controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
+                return risultato;
             }
+
 
             
             // Se lo swipe di tipo LIKE/SUPER_LIKE è reciproco creo un MATCH
@@ -145,14 +189,14 @@ public class SwipeService {
         System.out.println("=== CONTROLLO MATCH ===");
         System.out.println("Utente1: " + utente1Id + " -> Utente2: " + utente2Id);
         
-        // ✅ CORRETTO: Usa il metodo aggiornato del SwipeRepository
+        // Usa il metodo aggiornato del SwipeRepository
         boolean matchReciprico = swipeRepository.existsByUtenteSwipeIdAndUtenteTargetSwipeIdAndTipoIn(
             utente2Id, utente1Id, List.of("LIKE", "SUPER_LIKE"));
         
         if (matchReciprico) {
             System.out.println("MATCH TROVATO! Creazione match...");
             
-            // ✅ CORRETTO: Usa il metodo aggiornato del MatchRepository
+            // Usa il metodo aggiornato del MatchRepository
             boolean matchEsiste = matchRepository.existsMatchBetweenUsers(
                 utente1Id, utente2Id);
             
@@ -166,13 +210,18 @@ public class SwipeService {
                 Match savedMatch = matchRepository.save(match);
                 System.out.println("Match creato con ID: " + savedMatch.getId());
                 
-                return "🎉 È UN MATCH! Ora puoi chattare con " + utente2.getNome();
+                // invio notifiche Firebase ai due utenti
+                Utente utente1 = utenteRepository.findById(utente2Id).get();
+                firebaseService.inviaNotificaMatch(utente1Id, utente2.getNome());
+                firebaseService.inviaNotificaMatch(utente2Id, utente1.getNome());
+                
+                return "È UN MATCH! Ora puoi chattare con " + utente2.getNome();
             } else {
                 System.out.println("Match già esistente");
             }
         }
         
-        return "Like inviato a " + utente2.getNome();
+        return " inviato a " + utente2.getNome();
     }
     
     // ========== METODI AGGIUNTIVI ==========

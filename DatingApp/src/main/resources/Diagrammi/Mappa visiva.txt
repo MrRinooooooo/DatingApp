@@ -1,0 +1,31 @@
+Questa rappresentazione mostra le interazioni tra gli endpoint e i servizi, evidenziando il flusso delle richieste e delle risposte.
+
+1) AuthController
+- POST /api/auth/register → Registra un nuovo utente ➝ UtenteService.createUtente()
+- POST /api/auth/login → Effettua login ➝ UtenteService.findByEmail()
+- GET /api/auth/validate → Valida un token JWT ➝ JwtUtil.validateToken()
+
+2) UtentiController
+- GET /api/utenti/me → Recupera il profilo utente ➝ UtenteService.findByEmail()
+- PUT /api/utenti/me → Aggiorna il profilo ➝ UtenteService.updateProfile()
+- GET /api/utenti/{id} → Visualizza il profilo pubblico ➝ UtenteService.getPublicProfile()
+- POST /api/utenti/me/foto → Aggiunge foto profilo ➝ PhotoService.addPhoto()
+- DELETE /api/utenti/me/foto → Elimina foto profilo ➝ PhotoService.deletePhoto()
+
+3) PreferenzeController
+- GET /api/preferenze/me → Ottiene le preferenze ➝ PreferenzeService.getPreferenzeByUtenteId()
+- PUT /api/preferenze/me → Modifica le preferenze ➝ PreferenzeService.modificaPreferenze()
+
+4) SwipeController
+- GET /api/utenti/discover → Recupera i profili da swipare ➝ SwipeService.getProfilDaSwipare()
+- POST /api/swipe → Effettua uno swipe ➝ SwipeService.eseguiSwipe()
+
+5) ReportController
+- POST /api/report → Segnala un utente ➝ ReportService.creaReport()
+- GET /api/report/{id} → Recupera i report di un utente ➝ ReportService.getReportsByUtente()
+- GET /api/report/all → Recupera tutti i report ➝ ReportService.getAllReports()
+
+6) AbbonamentoController
+- GET /api/abbonamenti/storico → Recupera la lista di abbonamenti ➝ AbbonamentoService.getSubscriptionHistoryByUserId()
+- GET /api/abbonamenti/ultimo → Recupera l'ultimo abbonamento ➝ AbbonamentoService.getLastSubscriptionByUserId()
+

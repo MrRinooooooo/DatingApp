@@ -1,6 +1,7 @@
 package com.app.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.app.enums.Genere;
 
@@ -8,12 +9,17 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+<<<<<<< e7qOGVJ7_filtri_preferenze
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+=======
+import jakarta.persistence.FetchType;
+>>>>>>> main
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -65,18 +71,31 @@ public class Utente {
 	@Column(name = "data_registrazione", nullable = false)
 	private LocalDate dataRegistrazione;
 	
+	@Column(name = "notifiche_attive", columnDefinition = "bit(1)")
+	private Boolean notificheAttive;
+	
+	@Column(name = "device_token", columnDefinition = "varchar(255)")
+	private String deviceToken;
+
+	@Column(name = "primo_accesso", nullable = false)
+	private boolean primoAccesso;
+	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
     private Preferenze preferenze;
 	
+	@OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Abbonamento> abbonamenti;
+	
 	public Utente() {
 		
 	}
-	
+
 	public Utente(String email, String password) {
 		this.username = email;
 		this.password = password;
 		this.tipoAccount = "STANDARD";
+<<<<<<< e7qOGVJ7_filtri_preferenze
 		this.dataRegistrazione = LocalDate.now();		
 		this.nome="";
 		this.genere= null;
@@ -89,6 +108,16 @@ public class Utente {
 	
 	//includiamo anche Posizione
 	public Utente(String nome, String email, String password, Genere genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione) {
+=======
+		this.dataRegistrazione = LocalDate.now();
+		this.notificheAttive = true;
+		this.deviceToken = null;
+		this.primoAccesso = true;
+	}
+	
+	//includiamo anche Posizione
+	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione, boolean primoAccesso) {
+>>>>>>> main
 		this.nome = nome;
 		this.username = email;
 		this.password = password;
@@ -100,6 +129,7 @@ public class Utente {
 		this.fotoProfilo = fotoProfilo;
 		this.tipoAccount = tipoAccount;
 		this.dataRegistrazione = dataRegistrazione;
+		this.primoAccesso = primoAccesso;
 	}
 
 	public Long getId() {
@@ -201,7 +231,39 @@ public class Utente {
 	public void setDataRegistrazione(LocalDate dataRegistrazione) {
 		this.dataRegistrazione = dataRegistrazione;
 	}
+
+	public Boolean getNotificheAttive() {
+		return notificheAttive;
+	}
 	
+	public void setNotificheAttive(Boolean notificheAttive) {
+		this.notificheAttive = notificheAttive;
+	}
+	
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+	
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+
+	public boolean isPrimoAccesso() {
+		return primoAccesso;
+	}
+
+	public void setPrimoAccesso(boolean primoAccesso) {
+		this.primoAccesso = primoAccesso;
+	}
+	
+	public List<Abbonamento> getAbbonamenti() {
+		return abbonamenti;
+	}
+
+	public void setAbbonamenti(List<Abbonamento> abbonamenti) {
+		this.abbonamenti = abbonamenti;
+	}
+
 	@Override
 	public String toString() {
 	    return "Utente{" +
@@ -219,6 +281,5 @@ public class Utente {
 	            ", dataRegistrazione=" + dataRegistrazione +
 	            '}';
 	}
-	
-	
+  
 }

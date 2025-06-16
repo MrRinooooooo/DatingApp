@@ -52,13 +52,13 @@ public class SwipeController {
         System.out.println("Target: " + swipeDTO.getUtenteTargetId());
         System.out.println("Tipo: " + swipeDTO.getTipo());
         
-        try {
+      //  try {         LE ECCEZIONI VENGONO GESTITE SINGOLARMENTE NEL SERVICE
             String risultato = swipeService.eseguiSwipe(swipeDTO, userPrincipal.getUserId());
             return ResponseEntity.ok(risultato);
-        } catch (Exception e) {
+      /*  } catch (Exception e) {
             System.err.println("Errore swipe: " + e.getMessage());
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
-        }
+        }*/
     }
     
 }

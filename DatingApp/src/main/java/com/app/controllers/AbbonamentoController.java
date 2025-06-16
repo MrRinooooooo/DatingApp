@@ -1,13 +1,11 @@
 package com.app.controllers;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,15 +48,20 @@ public class AbbonamentoController {
 	public ResponseEntity<?> createSubscription( @RequestParam String metodoPagamento) {
 		try {
 			String stripeSubscriptionId = null;
-			Utente utente = utenteService.getCurrentUser();			
+			Utente utente = utenteService.getCurrentUser();	
 			
 		// SE LO VOGLIAMO GESTIRE CON @SCHEDULE CHE IMPOSTA il tipoAccount di Utente a "STANDARD"
 			/*if(utente.getTipoAccount().equals("PREMIUM")) {
 				return ResponseEntity.ok("Abbonamento già attivo");
 			}*/
 			
+			metodoPagamento=metodoPagamento.toUpperCase();
 			
-			Optional<Abbonamento> ultimoAbbonamentoOpt = abbonamentoService.getLastSubscriptionByUserId(utente.getId());
+			//ACCETTA SOLO STRIPE O PAYPAL
+			if(!metodoPagamento.equals("STRIPE") && !metodoPagamento.equals("PAYPAL"))
+				return ResponseEntity.badRequest().body("Metodo di pagamento non accettato");
+			
+			Optional<Abbonamento> ultimoAbbonamentoOpt = abbonamentoService.getLastSubscriptionByUserId(utente);
 			
 			if (ultimoAbbonamentoOpt.isPresent()) {
 				Abbonamento ultimoAbbonamento = ultimoAbbonamentoOpt.get();
@@ -81,7 +84,7 @@ public class AbbonamentoController {
 				stripeSubscriptionId = session.getId();
 				}
 			
-			Abbonamento nuovoAbbonamento = new Abbonamento( utente.getId(), "PREMIUM", metodoPagamento.toUpperCase(), stripeSubscriptionId);
+			Abbonamento nuovoAbbonamento = new Abbonamento( utente, "PREMIUM", metodoPagamento, stripeSubscriptionId);
 			//Imposta tipoAccount dell'utente loggato a "PREMIUM"
 			utente.setTipoAccount("PREMIUM");
 			utenteRepository.save(utente);
@@ -101,7 +104,7 @@ public class AbbonamentoController {
 		try {
 			Utente utente = utenteService.getCurrentUser();
 			
-			return ResponseEntity.ok(abbonamentoService.getLastSubscriptionByUserId(utente.getId()));
+			return ResponseEntity.ok(abbonamentoService.getLastSubscriptionByUserId(utente));
 			
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(400).body(e.getMessage());
@@ -116,13 +119,19 @@ public class AbbonamentoController {
 		try {
 			Utente utente = utenteService.getCurrentUser();
 			
-			return ResponseEntity.ok(abbonamentoService.getSubscriptionHistoryByUserId(utente.getId()));
+			return ResponseEntity.ok(abbonamentoService.getSubscriptionHistoryByUserId(utente));
 			
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(400).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Errore durante la visualizzazione dello storico:" + e.getMessage());
 		}
+	}
+	
+	// --------------- ENDPOINT PER TEST DOWNLGRADE ABBONAMENTI
+	@GetMapping("/test")
+	public void testDowngrade() {
+		abbonamentoService.controllaScadenzeAbbonamenti();
 	}
 	
 }

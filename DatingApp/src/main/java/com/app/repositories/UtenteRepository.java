@@ -40,8 +40,12 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>{
 		                              @Param("eta_massima") Integer etaMassima,
 		                              @Param("distanza_massima") Double distanzaMax);
 	
+<<<<<<< e7qOGVJ7_filtri_preferenze
 	// Visualizza tutti gli utenti trane quello autenticato
 	List<Utente> findByIdNot(Long excludeId);
 	
+=======
+	List<Utente> findByTipoAccount (String tipoAccount);
+>>>>>>> main
 }
 

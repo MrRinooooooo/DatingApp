@@ -1,5 +1,5 @@
 package com.app.services;
-
+import com.app.services.FirebaseService;
 import com.app.entities.Match;
 import com.app.entities.Messaggio;
 import com.app.entities.Utente;
@@ -26,6 +26,9 @@ public class MessaggioService {
     
     @Autowired
     private UtenteRepository utenteRepository;
+    
+    @Autowired
+    private FirebaseService firebaseService;
     
     // ========== GET MESSAGGI PER MATCH ==========
     public List<MessaggioDTO> getMessaggiByMatch(Long matchId, String emailUtente) {
@@ -107,6 +110,13 @@ public class MessaggioService {
             
             messaggioRepository.save(messaggio);
             System.out.println("Messaggio salvato con successo!");
+            
+            // Trovo il destinatario del messaggio
+            Long destinatarioId = match.getUtente1Id().equals(mittente.getId()) ?
+            		match.getUtente2Id() : match.getUtente1Id();
+            
+            // invio notifica Firebase al destinatario
+            firebaseService.inviaNotificaMessaggio(destinatarioId, mittente.getNome(), dto.getContenuto());
             
         } catch (DataAccessException e) {
             throw new RuntimeException("Errore salvataggio messaggio", e);

@@ -9,12 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.app.entities.Abbonamento;
+import com.app.entities.Utente;
 
 @Repository
 public interface AbbonamentoRepository extends JpaRepository <Abbonamento, Long> {
 
-    @Query("SELECT a FROM Abbonamento a WHERE a.utenteId = :utenteId ORDER BY a.dataFine ASC")
-    List<Abbonamento> findByUtenteIdOrderByDataFine(@Param("utenteId") Long utenteId);
+    @Query("SELECT a FROM Abbonamento a WHERE a.utente = :utente ORDER BY a.dataFine DESC")
+    List<Abbonamento> findByUtenteIdOrderByDataFine(@Param("utente") Utente utente);
 	
-    Optional<Abbonamento> findFirstByUtenteIdOrderByDataFineDesc(Long utenteId);
+    Optional<Abbonamento> findFirstByUtenteOrderByDataFineDesc(Utente utente);
 }
