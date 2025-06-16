@@ -86,7 +86,7 @@ public class MessaggioService {
                 .orElseThrow(() -> new EntityNotFoundException("Match non trovato"));
             
             // Verifica che il mittente faccia parte del match
-            if (!match.getUtente1Id().equals(mittente.getId()) && 
+            if (!match.getUtente1Id().equals(mittente.getId()) &&
                 !match.getUtente2Id().equals(mittente.getId())) {
                 throw new IllegalArgumentException("Non sei autorizzato a scrivere in questa chat");
             }

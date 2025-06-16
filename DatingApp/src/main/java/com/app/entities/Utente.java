@@ -9,12 +9,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-<<<<<<< e7qOGVJ7_filtri_preferenze
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-=======
 import jakarta.persistence.FetchType;
->>>>>>> main
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -95,7 +92,6 @@ public class Utente {
 		this.username = email;
 		this.password = password;
 		this.tipoAccount = "STANDARD";
-<<<<<<< e7qOGVJ7_filtri_preferenze
 		this.dataRegistrazione = LocalDate.now();		
 		this.nome="";
 		this.genere= null;
@@ -107,17 +103,7 @@ public class Utente {
 	}
 	
 	//includiamo anche Posizione
-	public Utente(String nome, String email, String password, Genere genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione) {
-=======
-		this.dataRegistrazione = LocalDate.now();
-		this.notificheAttive = true;
-		this.deviceToken = null;
-		this.primoAccesso = true;
-	}
-	
-	//includiamo anche Posizione
-	public Utente(String nome, String email, String password, String genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione, boolean primoAccesso) {
->>>>>>> main
+	public Utente(String nome, String email, String password, Genere genere, LocalDate dataNascita, String bio, String interessi, Posizione posizione, String fotoProfilo, String tipoAccount, LocalDate dataRegistrazione, boolean primoAccesso) {
 		this.nome = nome;
 		this.username = email;
 		this.password = password;
@@ -130,6 +116,8 @@ public class Utente {
 		this.tipoAccount = tipoAccount;
 		this.dataRegistrazione = dataRegistrazione;
 		this.primoAccesso = primoAccesso;
+		this.notificheAttive = true;
+		this.deviceToken = null;
 	}
 
 	public Long getId() {
