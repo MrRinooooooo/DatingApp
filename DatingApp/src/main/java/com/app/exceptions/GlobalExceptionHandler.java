@@ -111,4 +111,22 @@ public class GlobalExceptionHandler {
             .body("Richiesta non valida: " + ex.getMessage());
     }
     
+    
+    /**
+     * Gestisce le eccezioni dei limiti di LIKE e SUPER_LIKE giornalieri
+     */
+    @ExceptionHandler(LimitReachedException.class)
+    public ResponseEntity <Map<String, Object>> handleLimitException(
+    		LimitReachedException ex, WebRequest request) {
+    	
+    	Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.TOO_MANY_REQUESTS.value());
+        response.put("error", "Limit reached exception");
+        response.put("message", ex.getMessage());
+        response.put("path", request.getDescription(false));
+ 
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
+    }
+    
 }

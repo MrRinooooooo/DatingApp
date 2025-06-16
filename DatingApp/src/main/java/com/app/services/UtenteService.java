@@ -188,7 +188,7 @@ public class UtenteService {
 		Utente utente = getCurrentUser();
 		boolean isPremium;
 		
-		if(utente.getTipoAccount()=="PREMIUM") {
+		if(utente.getTipoAccount().equals("PREMIUM")) {
 			isPremium=true;
 			}else {
 				isPremium=false;
