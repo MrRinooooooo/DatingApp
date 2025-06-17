@@ -1,11 +1,9 @@
 package com.app.services;
-import com.app.services.FirebaseService;
 import com.app.entities.Swipe;
 import com.app.entities.Utente;
 import com.app.exceptions.LimitReachedException;
 import com.app.entities.Match;
 import com.app.dto.SwipeDTO;
-import com.app.dto.UtenteDiscoverDTO;
 import com.app.repositories.SwipeRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.repositories.MatchRepository;
@@ -18,9 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SwipeService {
@@ -38,47 +34,8 @@ public class SwipeService {
     private FirebaseService firebaseService;
     
     @Autowired
-    private UtenteService utenteService;
-    
-    // ========== GET PROFILI DA SWIPARE ==========
-    public List<UtenteDiscoverDTO> getProfilDaSwipare(String emailUtente) {
+    private UtenteService utenteService;  
         
-        System.out.println("=== SWIPE SERVICE DISCOVER DEBUG ===");
-        System.out.println("Email utente: " + emailUtente);
-        
-        try {
-            // Trova l'utente che sta cercando profili
-            Utente utente = utenteRepository.findByUsername(emailUtente)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
-            
-            System.out.println("Utente ID: " + utente.getId());
-            
-            // Trova tutti gli utenti già swipati da questo utente
-            List<Long> utentiGiaSwipati = swipeRepository.findUtenteTargetIdsByUtenteSwipeId(utente.getId());
-            
-            System.out.println("Utenti già swipati: " + utentiGiaSwipati.size());
-            
-            // Trova tutti gli utenti disponibili (esclusi: se stesso + già swipati)
-            List<Utente> utentiDisponibili = utenteRepository.findUtentiDaSwipare(
-                utente.getId(), utentiGiaSwipati);
-            
-            
-            
-            //DA IMPLEMENTARE FILTRO PER PREFERENZE
-            
-            
-            System.out.println("Utenti disponibili: " + utentiDisponibili.size());
-            
-            // Converti in DTO
-            return utentiDisponibili.stream()
-                .map(this::convertToDiscoverDTO)
-                .collect(Collectors.toList());
-                
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Errore recupero profili da swipare", e);
-        }
-    }
-    
     // ========== ESEGUI SWIPE ==========
     @Transactional 	// Esegue il salvataggio su database solo se va tutto bene altrimenti
     				// la transazione viene annullata ed il database ripristinato allo stato precedente
@@ -164,10 +121,8 @@ public class SwipeService {
                     firebaseService.inviaNotificaSuperLike(utenteTarget.getId(), utenteSwipe.getNome());
                 }
 
-                return risultato;
+               return risultato;
             }
-
-
             
             // Se lo swipe di tipo LIKE/SUPER_LIKE è reciproco creo un MATCH
             
@@ -256,22 +211,4 @@ public class SwipeService {
         }
     }
     
-    // ========== METODI PRIVATI ==========
-    
-    private UtenteDiscoverDTO convertToDiscoverDTO(Utente utente) {
-        UtenteDiscoverDTO dto = new UtenteDiscoverDTO();
-        dto.setId(utente.getId());
-        dto.setNome(utente.getNome());
-        dto.setBio(utente.getBio());
-        dto.setInteressi(utente.getInteressi());
-        dto.setFotoProfilo(utente.getFotoProfilo());
-        dto.setCitta(utente.getPosizione() != null ? utente.getPosizione().getCitta() : "");
-        
-        // Calcola età dalla data di nascita
-        if (utente.getDataNascita() != null) {
-            dto.setEta(Period.between(utente.getDataNascita(), LocalDateTime.now().toLocalDate()).getYears());
-        }
-        
-        return dto;
-    }
-}
+} 

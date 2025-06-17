@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.CustomUserDto;
 import com.app.dto.SwipeDTO;
 import com.app.dto.UtenteDiscoverDTO;
+import com.app.services.PreferenzeService;
 import com.app.services.SwipeService;
+import com.app.utils.SecurityUtils;
 
 @RestController
 @RequestMapping("/api")
@@ -22,26 +24,18 @@ public class SwipeController {
 
     @Autowired
     private SwipeService swipeService;
+    
+    @Autowired
+    private PreferenzeService preferenzeService;
 
     // GET /api/utenti/discover → Profili da swipare
-    @GetMapping("/utenti/discover")
-    public ResponseEntity<List<UtenteDiscoverDTO>> getProfilDaSwipare(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        
-        System.out.println("=== DISCOVER PROFILI DEBUG ===");
-        System.out.println("User: " + userDetails.getUsername());
-        
-        try {
-            List<UtenteDiscoverDTO> profili = swipeService.getProfilDaSwipare(userDetails.getUsername());
-            return ResponseEntity.ok(profili);
-        } catch (Exception e) {
-            System.err.println("Errore discover profili: " + e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+    @GetMapping("/utenti/discover")    
+	public ResponseEntity<?> listPreferenze() {		
+		String currentUserEmail = SecurityUtils.getCurrentUserEmail();			
+		return preferenzeService.getUtentiByPreferenze(currentUserEmail, 0, 20);		
+	}
 
-    // POST /api/swipe → Esegui swipe
-    
+    // POST /api/swipe → Esegui swipe    
     @PostMapping("/swipe")
     public ResponseEntity<String> eseguiSwipe(@RequestBody SwipeDTO swipeDTO,
                                             @AuthenticationPrincipal CustomUserDto userPrincipal) {
