@@ -36,18 +36,11 @@ public class UtenteService {
 	public Utente createUtente(RegistrazioneDto registrazioneDto) {
 			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
 			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);
-			Preferenze preferenze = new Preferenze();
+			Preferenze preferenze = new Preferenze();	
 			
-			System.out.println("nuovo utente da salvare");
-			System.out.println(nuovoUtente);
+			preferenze.setUtente(nuovoUtente);
 			
 			utenteRepository.save(nuovoUtente);
-			
-			preferenze.setUtente(utenteRepository.findByUsernameSecure(nuovoUtente.getUsername()));
-
-			preferenze.setId(nuovoUtente.getId());
-			System.out.println(preferenze);
-			
 			preferenceRepository.save(preferenze);
 			return nuovoUtente;
 	}

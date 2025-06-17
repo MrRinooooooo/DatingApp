@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,23 @@ public class MessaggioService {
             List<Messaggio> messaggi = messaggioRepository.findByMatchIdOrderByTimestampAsc(matchId);
             
             System.out.println("Messaggi trovati: " + messaggi.size());
+            
+            // SETTIAMO I TUTTI I MESSAGGI RICEVUTI COME LETTI
+            
+            List<Messaggio> messaggiDaAggiornare = new ArrayList<>();
+
+            for (Messaggio m : messaggi) {
+                if (!m.getMittenteId().equals(utente.getId()) && !m.getStato().equals("letto")) {
+                    messaggiDaAggiornare.add(m);
+                }
+            }
+
+            for (Messaggio m : messaggiDaAggiornare) {
+                m.setStato("letto");
+            }
+
+            messaggioRepository.saveAll(messaggiDaAggiornare);
+            
             
             return messaggi.stream()
                 .map(this::convertToDTO)
