@@ -1,11 +1,12 @@
 package com.app.services;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +71,7 @@ public class PreferenzeService {
 			return ResponseEntity.badRequest().body("Età Massima: Inserisci un valore minore di 100 anni");
 		if (nuovePreferenze.getMinEta() != null && nuovePreferenze.getMaxEta() != null && nuovePreferenze.getMinEta() > nuovePreferenze.getMaxEta()) 
 			return ResponseEntity.badRequest().body("L'Età Minima non puàò essere maggire dell'età massima. Inserisci dei valori corretti");
-		if (nuovePreferenze.getDistanzaMax() < 0) 
+		if (nuovePreferenze.getDistanzaMax() != null && nuovePreferenze.getDistanzaMax() < 0) 
 			return ResponseEntity.badRequest().body("Distanza Massima: Inserisci un valore maggiore di zero!");		
 		
 		// Cerca le preferenze esistenti
@@ -98,59 +99,43 @@ public class PreferenzeService {
         // Salva le preferenze (nuove o aggiornate)
     	preferenceRepository.save(preferenze);
     	return ResponseEntity.ok(preferenze);
-    }
+    }    
     
-    // Metodo per visualizzare gli utenti in base alle preferenze
-    public ResponseEntity<?> getUtentiByPreferenze(String username) {
+    // PreferenzeService.java (inside getUtentiByPreferenze)
+    public ResponseEntity<?> getUtentiByPreferenze(String username, int page, int size) {
     	
     	// Recupero l'utente autenticato e le sue preferenze
         Utente utente = utenteRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-        Optional<Preferenze> preferenzeOpt = preferenceRepository.findByUtenteId(utente.getId());
+            .orElseThrow(() -> new RuntimeException("Utente non trovato"));
         
-        // Carico tutti gli utenti tranne quello autenticato
-        List<Utente> utenti = utenteRepository.findByIdNot(utente.getId());
+        // Cerca le preferenze del utente
+        Optional<Preferenze> preferenzeOpt = preferenceRepository.findByUtenteId(utente.getId());       
+        Preferenze preferenze = preferenzeOpt.orElse(null);
         
-        // Se le preferenze sono state create 
-        if (preferenzeOpt.isPresent()) {
-        	// Carico le preferenze
-        	Preferenze preferenze = preferenzeOpt.get();
-        	// Prendo come data di riferimento il primo dell'anno corrente
-            LocalDate dataRiferimento = LocalDate.of(LocalDate.now().getYear(), 1, 1);
-            // Filtro gli utenti in base alle preferenze
-            utenti = utenti.stream()
-        		 .filter(u -> preferenze.getGenerePreferito() == null ||
-                     u.getGenere().equals(preferenze.getGenerePreferito()))
-        		 // Calcolo la data di nascita min in base alla preferenza sull'età max
-        		 .filter(u -> preferenze.getMinEta() == null || 
-                     !u.getDataNascita().isAfter(dataRiferimento.minusYears(preferenze.getMinEta())))
-        		 // Calcolo la data di nascita max in base alla preferenza sull'età min
-        		 .filter(u -> preferenze.getMaxEta() == null ||
-                     !u.getDataNascita().isBefore(dataRiferimento.minusYears(preferenze.getMaxEta())))
-        		 .filter(u -> preferenze.getDistanzaMax() == null ||
-        	        calcolaDistanza(utente, u) <= preferenze.getDistanzaMax())
-        		 .sorted(Comparator
-        			        .comparing((Utente u) -> !"PREMIUM".equalsIgnoreCase(u.getTipoAccount())) // Oridinato in base al tipo Account 
-        			        .thenComparingDouble(u -> calcolaDistanza(utente, u))) // Oridnato in base alla distanza
-        		 .toList();
-        }
+        // Calcola il filtro da applicare al databse in base alle preferenza di età salvate 
+        LocalDate dataRiferimento = LocalDate.of(LocalDate.now().getYear(), 1, 1); // Prendo come data di riferimento il primo giorno dell'anno
+        // Calcolo la data di nascita minima preferita: data di nascita minima = anno corrente - eta minima
+        LocalDate dataMin = preferenze != null && preferenze.getMinEta() != null ? dataRiferimento.minusYears(preferenze.getMinEta()) : null;
+        // Calcolo la data di nascita massima preferita: data di nascita massima = anno corrente - eta massima
+        LocalDate dataMax = preferenze != null && preferenze.getMaxEta() != null ? dataRiferimento.minusYears(preferenze.getMaxEta()) : null;
+
+        // Richiedo l'estrapolazione di una sola pagina con max 20 utenti per non appesantire il programma
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<Utente> utenti = utenteRepository.findUtentiByPreferenze(
+            utente.getId(),
+            preferenze != null ? preferenze.getGenerePreferito().name() : null,
+            preferenze != null ? preferenze.getMinEta() : null,
+            preferenze != null ? preferenze.getMaxEta() : null,
+            dataMin,
+            dataMax,
+            preferenze != null ? preferenze.getDistanzaMax() : null,
+            utente.getPosizione().getLatitudine(),
+            utente.getPosizione().getLongitudine(),
+            pageable
+        );
+
         return ResponseEntity.ok(utenti);
-    }
-    
-    // Metodo per calcolare la distanza in base alla posizione gsp (latitudine e longitudine)
-    private double calcolaDistanza(Utente u1, Utente u2) {
-        double R = 6371.0; // Earth radius in km
-        double lat1 = Math.toRadians(u1.getPosizione().getLatitudine());
-        double lon1 = Math.toRadians(u1.getPosizione().getLatitudine());
-        double lat2 = Math.toRadians(u2.getPosizione().getLatitudine());
-        double lon2 = Math.toRadians(u2.getPosizione().getLatitudine());
-        double dlat = lat2 - lat1;
-        double dlon = lon2 - lon1;
-        double a = Math.sin(dlat / 2) * Math.sin(dlat / 2) +
-                   Math.cos(lat1) * Math.cos(lat2) *
-                   Math.sin(dlon / 2) * Math.sin(dlon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c; // Distance in km
-    }
+    }   
 	
 }

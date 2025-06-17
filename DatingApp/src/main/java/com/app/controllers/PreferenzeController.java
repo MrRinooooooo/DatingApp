@@ -45,13 +45,5 @@ public class PreferenzeController {
 		String currentUserEmail = SecurityUtils.getCurrentUserEmail();
 		return preferenzeService.modificaPreferenze(currentUserEmail, preferenzeDto);		
 	}
-	
-	// Visualizza utenti in base alle mie preferenze
-	@GetMapping("/preferenze")
-	public ResponseEntity<?> listPreferenze() {		
-		String currentUserEmail = SecurityUtils.getCurrentUserEmail();			
-		return preferenzeService.getUtentiByPreferenze(currentUserEmail);		
-	}
-	
 
 }
