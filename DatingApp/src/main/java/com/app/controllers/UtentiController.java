@@ -1,5 +1,6 @@
 package com.app.controllers;
 
+import com.app.dto.ModificaUtenteDTO;
 import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
 import com.app.repositories.SwipeRepository;
@@ -78,9 +79,8 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      */
     
     @PutMapping("/me")
-    public ResponseEntity<?> updateMyProfile(@RequestBody Utente utenteAggiornato) {    	
-    	String currentUserEmail = SecurityUtils.getCurrentUserEmail(); 					// Estraggo la username dell'utente loggato dal JWT token    	
-        return utenteService.updateProfile(currentUserEmail, utenteAggiornato); 		// Aggiorna il profilo dell'utente
+    public ResponseEntity<?> updateMyProfile(@RequestBody ModificaUtenteDTO utenteAggiornatoDto) {    	 	
+        return utenteService.updateProfile(utenteAggiornatoDto); 		// Aggiorna il profilo dell'utente
     }
  
     /**
