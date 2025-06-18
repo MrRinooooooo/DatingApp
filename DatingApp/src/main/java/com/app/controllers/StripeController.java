@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/stripe")
 
-@Tag(name = " StripeController", description = "(Gestione pagamaento dell'abbonamento)")
+@Tag(name = " StripeController", description = "(Gestione pagamento dell'abbonamento)")
 public class StripeController {
 
     @Autowired

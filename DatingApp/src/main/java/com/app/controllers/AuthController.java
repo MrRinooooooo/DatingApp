@@ -48,7 +48,6 @@ public class AuthController {
      * POST /api/auth/register
      */
 
-    
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegistrazioneDto registrazioneDto) {
         try {

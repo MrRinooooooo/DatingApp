@@ -1,0 +1,262 @@
+
+							#CONTROLLERS:
+
+openapi: 3.0.0
+info:
+  title: DatingApp API
+  description: API per l'applicazione di incontri
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /auth/login:
+    post:
+      summary: Effettua il login
+      tags:
+        - Autenticazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login effettuato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenziali non valide
+
+  /auth/register:
+    post:
+      summary: Registra un nuovo utente
+      tags:
+        - Autenticazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Registrazione riuscita
+        '400':
+          description: Dati non validi
+
+  /match/{userId}:
+    post:
+      summary: Effettua un match
+      tags:
+        - Match
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Match creato
+        '404':
+          description: Utente non trovato
+
+  /match:
+    get:
+      summary: Elenca tutti i match
+      tags:
+        - Match
+      responses:
+        '200':
+          description: Lista dei match
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MatchDTO'
+
+  /abbonamenti:
+    get:
+      summary: Restituisce tutti gli abbonamenti
+      tags:
+        - Abbonamenti
+      responses:
+        '200':
+          description: Lista degli abbonamenti
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AbbonamentoDTO'
+
+                  
+  /preferenze:
+    get:
+      summary: Recupera le preferenze dell'utente loggato
+      tags:
+        - Preferenze
+      responses:
+        '200':
+          description: Preferenze trovate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferenzeDTO'
+
+    put:
+      summary: Aggiorna le preferenze dell'utente
+      tags:
+        - Preferenze
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferenzeDTO'
+      responses:
+        '200':
+          description: Preferenze aggiornate
+        '400':
+          description: Dati non validi
+
+  /device-token:
+    post:
+      summary: Registra o aggiorna il token del dispositivo
+      tags:
+        - DeviceToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceTokenDTO'
+      responses:
+        '200':
+          description: Token salvato
+
+    delete:
+      summary: Rimuove il token del dispositivo
+      tags:
+        - DeviceToken
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token eliminato
+        '404':
+          description: Token non trovato
+      
+      
+   # DTO:
+    
+  components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        nome:
+          type: string
+        cognome:
+          type: string
+      required:
+        - email
+        - password
+        - nome
+        - cognome
+
+    MatchDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        utente1Id:
+          type: integer
+        utente2Id:
+          type: integer
+        dataMatch:
+          type: string
+          format: date-time
+
+    MessaggioDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        mittenteId:
+          type: integer
+        destinatarioId:
+          type: integer
+        contenuto:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    PreferenzeDTO:
+      type: object
+      properties:
+        etaMinima:
+          type: integer
+        etaMassima:
+          type: integer
+        distanzaMassimaKm:
+          type: number
+          format: float
+        genere:
+          type: string
+
+    AbbonamentoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        descrizione:
+          type: string
+        prezzo:
+          type: number
+          format: float
+        durataMesi:
+          type: integer
+
+    DeviceTokenDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        token:
+          type: string
+  
+      							
+                 
