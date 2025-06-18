@@ -1,5 +1,5 @@
 package com.app.services;
-
+import com.app.exceptions.UserNotFoundException;
 import com.app.dto.ReportRequestDTO;
 import com.app.dto.ReportResponseDTO;
 import com.app.entities.Report;
@@ -33,12 +33,14 @@ public class ReportService {
 
         validate(dto);
 
-        try {
+      
             Utente segnalante = utenteRepository.findByUsername(emailSegnalante)
-                    .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con email: " + emailSegnalante));
+            		.orElseThrow(() -> new UserNotFoundException("Utente con email " + emailSegnalante + " non trovato"));
+
 
             Utente segnalato = utenteRepository.findById(dto.getSegnalatoId())
-                    .orElseThrow(() -> new IllegalArgumentException("Utente segnalato non esiste"));
+            	    .orElseThrow(() -> new UserNotFoundException("Utente segnalato con ID " + dto.getSegnalatoId() + " non trovato"));
+
 
             if (segnalante.getId().equals(segnalato.getId())) {
                 throw new IllegalArgumentException("Non puoi segnalare te stesso.");
@@ -59,9 +61,7 @@ public class ReportService {
 
             reportRepository.save(report);
 
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Errore durante il salvataggio del report", e);
-        }
+     
     }
 
     // ========== GET TUTTI I REPORT ==========
@@ -79,6 +79,13 @@ public class ReportService {
     // ========== GET REPORTS PER UTENTE ==========
     public List<ReportResponseDTO> getReportsByUtente(Long utenteId) {
         try {
+        	
+        	boolean exists = utenteRepository.existsById(utenteId);
+        	if (!exists) {
+        	    throw new UserNotFoundException("Utente con ID " + utenteId + " non trovato");
+        	}
+
+        	
             List<Report> reports = reportRepository.findBySegnalatoId(utenteId);
             return reports.stream()
                     .map(this::convertToResponseDTO)

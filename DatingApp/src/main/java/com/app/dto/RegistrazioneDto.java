@@ -1,13 +1,24 @@
 package com.app.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RegistrazioneDto {
 
+	
     private String nome;
+    
+    @NotBlank(message = "Email obbligatoria")
+    @Email(message = "Formato email non valido")
     private String email;
+    
+    @NotBlank(message = "Password obbligatoria")
+    @Size(min = 6, message = "La password deve contenere almeno 6 caratteri")
     private String password;
     private String genere;
     @JsonProperty("data_nascita")

@@ -1,4 +1,5 @@
 package com.app.services;
+import com.app.exceptions.UserNotFoundException;
 
 import java.util.Optional;
 
@@ -18,7 +19,8 @@ public class PhotoService {
 	
 	public Utente addPhoto(String email, UtenteDiscoverDTO utentediscoverDTO) {
 		Utente utente = utenteRepository.findByUsername(email)
-				.orElseThrow(() -> new RuntimeException("utente non trovato"));
+				.orElseThrow(() -> new UserNotFoundException("Utente non trovato con email: " + email));
+
 
 		//impostiamo la nuova foto
 		
@@ -30,7 +32,8 @@ public class PhotoService {
 	//modifica foto
 	public Utente updatePhoto(String email, Utente fotoAggiornata) {
 		Utente fotoEsistente = utenteRepository.findByUsername(email)
-				.orElseThrow(() -> new RuntimeException("utente non trovato"));
+				.orElseThrow(() -> new UserNotFoundException("Utente non trovato con email: " + email));
+
 		
 		//aggiornamento foto
 		if (fotoAggiornata.getFotoProfilo() != null && !fotoAggiornata.getFotoProfilo().trim().isEmpty())  {
@@ -44,7 +47,8 @@ public class PhotoService {
 	//visualizza foto
 	public Utente getPhoto(String email) {
 		Utente utente = utenteRepository.findByUsername(email)
-				.orElseThrow(() -> new RuntimeException("utente non trovato"));
+				.orElseThrow(() -> new UserNotFoundException("Utente non trovato con email: " + email));
+
 		
 		Utente visualizzaFoto = new Utente();
 		visualizzaFoto.getFotoProfilo();
@@ -56,7 +60,8 @@ public class PhotoService {
 	
 	public Utente deletePhoto(String email) {
 		Utente utente = utenteRepository.findByUsername(email)
-				.orElseThrow(() -> new RuntimeException("utente non trovato"));
+				.orElseThrow(() -> new UserNotFoundException("Utente non trovato con email: " + email));
+
 		
 		// verifica se la foto è presente
 		utente.setFotoProfilo(null);

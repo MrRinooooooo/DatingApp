@@ -102,14 +102,6 @@
             transform: none;
         }
 
-        .btn-test {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-
-        .btn-debug {
-            background: linear-gradient(135deg, #17a2b8 0%, #6610f2 100%);
-        }
-
         .token-section {
             background: #e9ecef;
             border-radius: 10px;
@@ -135,15 +127,6 @@
             border-radius: 8px;
             padding: 20px;
             margin: 20px 0;
-        }
-
-        .advanced-test {
-            background: #f0f8ff;
-            border: 1px solid #b8daff;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
         }
 
         .logs {
@@ -194,11 +177,6 @@
             color: #0c5460;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -217,6 +195,8 @@
             }
         }
     </style>
+	
+
 </head>
 <body>
     <div class="container">
@@ -278,7 +258,7 @@
 
             <!-- Notification Test Section -->
             <div class="notification-test">
-                <h3>🧪 Test Notifiche Basic</h3>
+                <h3>🧪 Test Notifiche</h3>
                 <p>Una volta ottenuto il token, puoi testare le notifiche direttamente qui:</p>
                 <div style="margin: 15px 0;">
                     <input type="text" id="test-title" placeholder="Titolo notifica" 
@@ -291,21 +271,6 @@
                         📢 Invia Notifica Test
                     </button>
                 </div>
-            </div>
-
-            <!-- Advanced Test Section -->
-            <div class="advanced-test">
-                <h4>🧪 Test Avanzati Cross-Application</h4>
-                <p style="margin-bottom: 15px;">Questi test verificano se le notifiche appaiono anche quando sei su altri siti (come YouTube)</p>
-                <button class="btn btn-test" onclick="testSystemNotifications()">
-                    🎯 Test Cross-App
-                </button>
-                <button class="btn btn-debug" onclick="debugNotificationSystem()">
-                    🔍 Debug Sistema
-                </button>
-                <button class="btn btn-test" onclick="forceTestNotification()">
-                    🔔 Forza Notifica
-                </button>
             </div>
 
             <!-- Guide Section -->
@@ -342,45 +307,25 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js';
 
-        // Configurazione Firebase
+        // Configurazione Firebase (dai tuoi screenshot)
         const firebaseConfig = {
-            apiKey: "AIzaSyDlVkdD6ZmiHSzFpOOQ6dsmDXE1EYfzxsE",
-            authDomain: "datingapp-emiliano-dc9ac.firebaseapp.com",
-            projectId: "datingapp-emiliano-dc9ac",
-            storageBucket: "datingapp-emiliano-dc9ac.appspot.com",
-            messagingSenderId: "495268141226",
-            appId: "1:495268141226:web:cacd2a77327898d06cd8d3"
-        };
+  apiKey: "AIzaSyDlVkdD6ZmiHSzFpOOQ6dsmDXE1EYfzxsE",
+  authDomain: "datingapp-emiliano-dc9ac.firebaseapp.com",
+  projectId: "datingapp-emiliano-dc9ac",
+  storageBucket: "datingapp-emiliano-dc9ac.firebasestorage.app",
+  messagingSenderId: "495268141226",
+  appId: "1:495268141226:web:cacd2a77327898d06cd8d3"
+};
 
-        // VAPID Key corretta
+        // VAPID Key - DEVI OTTENERLA dalla Console Firebase!
+        // Vai su Firebase Console > Progetto > Cloud Messaging > Certificati web push
         const vapidKey = "BBfBESHY-Tw1qDXsN4j4trexzQ-4R-o9uLpDdb4scjdUL_tOnVtM-VFiJQyux6KXHeAKSEtDz4Kcnc1plGKMEqk";
 
         let app;
         let messaging;
         let currentToken = null;
 
-        // Variables per focus detection
-        let isWindowFocused = true;
-        let isDocumentVisible = !document.hidden;
-
-        // Focus detection setup
-        window.addEventListener('focus', () => {
-            isWindowFocused = true;
-            console.log('🎯 Finestra ha acquisito il focus');
-        });
-
-        window.addEventListener('blur', () => {
-            isWindowFocused = false;
-            console.log('😴 Finestra ha perso il focus');
-        });
-
-        document.addEventListener('visibilitychange', () => {
-            isDocumentVisible = !document.hidden;
-            console.log('👁️ Visibilità documento:', isDocumentVisible ? 'visibile' : 'nascosto');
-        });
-
-        // ==================== FUNZIONI PRINCIPALI ====================
-
+        // Funzioni globali
         window.initializeFirebase = async function() {
             try {
                 addLog('Inizializzazione Firebase...', 'info');
@@ -453,15 +398,11 @@
                     document.getElementById('test-notif-btn').disabled = false;
                     document.getElementById('token-btn').disabled = true;
                     
-                    // Setup message listener MIGLIORATO per foreground
+                    // Setup message listener
                     onMessage(messaging, (payload) => {
-                        console.log('📨 Messaggio ricevuto in foreground:', payload);
                         addLog('Messaggio ricevuto: ' + payload.notification.title, 'success');
                         
-                        // IMPORTANTE: Forza notifica di sistema anche in foreground
-                        forceSystemNotification(payload.notification);
-                        
-                        // Mostra anche notifica custom nell'interfaccia (opzionale)
+                        // Mostra notifica custom
                         showCustomNotification(payload.notification.title, payload.notification.body);
                     });
                     
@@ -475,153 +416,6 @@
                 addLog('Errore generazione token: ' + error.message, 'error');
             }
         };
-
-        // ==================== FUNZIONI NOTIFICHE AVANZATE ====================
-
-        // Funzione per forzare notifiche di sistema
-        function forceSystemNotification(notification) {
-            // Controlla se il browser supporta le notifiche
-            if (!("Notification" in window)) {
-                addLog('Browser non supporta notifiche di sistema', 'error');
-                return;
-            }
-            
-            // Controlla permessi
-            if (Notification.permission === 'granted') {
-                // Crea notifica di sistema FORZATA
-                const systemNotification = new Notification(notification.title, {
-                    body: notification.body,
-                    icon: notification.icon || '/firebase-logo.png',
-                    badge: '/firebase-logo.png',
-                    
-                    // Opzioni per forzare la visibilità cross-application
-                    tag: 'dating-app-foreground', // Tag diverso da background
-                    renotify: true, // Ri-notifica sempre
-                    requireInteraction: true, // Rimane visibile finché non viene cliccata
-                    silent: false, // Non silenziosa
-                    
-                    // Timestamp
-                    timestamp: Date.now(),
-                    
-                    // Vibrazione (mobile)
-                    vibrate: [200, 100, 200],
-                    
-                    // Dati personalizzati
-                    data: {
-                        url: '/',
-                        timestamp: Date.now(),
-                        source: 'foreground'
-                    }
-                });
-                
-                // Gestisci click sulla notifica
-                systemNotification.onclick = function(event) {
-                    console.log('🔔 Notifica foreground cliccata');
-                    event.preventDefault();
-                    
-                    // Porta la finestra in primo piano
-                    window.focus();
-                    
-                    // Chiudi la notifica
-                    systemNotification.close();
-                    
-                    addLog('Notifica cliccata - app portata in primo piano', 'success');
-                };
-                
-                // Auto-chiudi dopo 10 secondi se non cliccata
-                setTimeout(() => {
-                    systemNotification.close();
-                }, 10000);
-                
-                addLog('Notifica di sistema forzata creata', 'success');
-                
-            } else if (Notification.permission === 'denied') {
-                addLog('Permessi notifiche negati - non posso mostrare notifiche di sistema', 'error');
-            } else {
-                addLog('Permessi notifiche non richiesti', 'warning');
-            }
-        }
-
-        // ==================== FUNZIONI TEST AVANZATE ====================
-
-        window.testSystemNotifications = function() {
-            addLog('🧪 Test notifiche di sistema avanzato...', 'info');
-            
-            // Test 1: Verifica supporto
-            console.log('🔍 Supporto browser:');
-            console.log('- Notification API:', 'Notification' in window);
-            console.log('- Service Worker:', 'serviceWorker' in navigator);
-            console.log('- Permesso attuale:', Notification.permission);
-            
-            // Test 2: Notifica diretta (dovrebbe apparire anche su YouTube)
-            if (Notification.permission === 'granted') {
-                const testNotification = new Notification('🎯 Test Cross-Application', {
-                    body: 'Se vedi questa notifica mentre sei su YouTube, funziona!',
-                    icon: '/firebase-logo.png',
-                    requireInteraction: true,
-                    tag: 'cross-app-test',
-                    renotify: true,
-                    vibrate: [200, 100, 200]
-                });
-                
-                testNotification.onclick = () => {
-                    window.focus();
-                    testNotification.close();
-                    addLog('✅ Test notifica cross-app riuscito!', 'success');
-                };
-                
-                addLog('Test notifica inviata - controlla se appare su altri siti', 'info');
-            } else {
-                addLog('❌ Permessi mancanti per test', 'error');
-            }
-        };
-
-        window.debugNotificationSystem = function() {
-            console.log('🔍 DEBUG SISTEMA NOTIFICHE');
-            console.log('==========================');
-            
-            // Browser info
-            console.log('Browser:', navigator.userAgent);
-            console.log('Platform:', navigator.platform);
-            console.log('Online:', navigator.onLine);
-            
-            // Notifiche
-            console.log('Notification API:', 'Notification' in window);
-            console.log('Permesso:', Notification.permission);
-            
-            // Service Worker
-            console.log('SW supportato:', 'serviceWorker' in navigator);
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(regs => {
-                    console.log('SW registrati:', regs.length);
-                    regs.forEach((reg, i) => {
-                        console.log(`SW ${i}:`, reg.scope);
-                    });
-                });
-            }
-            
-            // Firebase
-            console.log('Firebase app:', !!app);
-            console.log('Firebase messaging:', !!messaging);
-            console.log('Token corrente:', !!currentToken);
-            
-            // Focus/Visibilità
-            console.log('Document hidden:', document.hidden);
-            console.log('Document visibility:', document.visibilityState);
-            console.log('Window focused:', document.hasFocus());
-            
-            addLog('Debug informazioni stampate nella console', 'info');
-        };
-
-        window.forceTestNotification = function() {
-            forceSystemNotification({
-                title: 'Test Manuale Forzato',
-                body: 'Questa notifica dovrebbe apparire anche su YouTube!',
-                icon: '/firebase-logo.png'
-            });
-        };
-
-        // ==================== FUNZIONI UTILITY ====================
 
         window.copyToken = function() {
             const tokenDisplay = document.getElementById('token-display');
@@ -666,7 +460,6 @@
             const body = document.getElementById('test-body').value || 'Questa è una notifica di test';
             
             showCustomNotification(title, body);
-            forceSystemNotification({title, body});
             addLog(`Notifica test inviata: ${title}`, 'info');
         };
 
@@ -722,6 +515,16 @@
                 notification.remove();
             }, 5000);
         }
+
+        // CSS per animazione
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
 
         // Inizializzazione automatica al caricamento
         addLog('Pagina caricata. Sistema pronto.', 'success');

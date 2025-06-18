@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.entities.Abbonamento;
 import com.app.entities.Utente;
+import com.app.exceptions.UserNotFoundException;
 import com.app.repositories.AbbonamentoRepository;
 import com.app.repositories.UtenteRepository;
 
@@ -26,9 +28,13 @@ public class AbbonamentoService {
 	UtenteRepository utenteRepository;
 	
 	//GET LISTA COMPLETA ABBONAMENTI DI utente_id
-	public List<Abbonamento> getSubscriptionHistoryByUserId(Utente utente) {
-		return abbonamentoRepository.findByUtenteIdOrderByDataFine(utente);
+	public List<Abbonamento> getSubscriptionHistoryByUserId(Long utenteId) {
+		Utente utente = utenteRepository.findById(utenteId)
+			    .orElseThrow((Supplier<RuntimeException>) () -> new UserNotFoundException("Utente con ID " + utenteId + " non trovato"));
+
+	    return abbonamentoRepository.findByUtenteIdOrderByDataFine(utente);
 	}
+
 	
 	//GET ULTIMO ABBONAMENTO DI utente_id
 	public Optional<Abbonamento> getLastSubscriptionByUserId(Utente utente)

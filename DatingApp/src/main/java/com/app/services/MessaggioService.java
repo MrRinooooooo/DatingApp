@@ -3,6 +3,7 @@ import com.app.services.FirebaseService;
 import com.app.entities.Match;
 import com.app.entities.Messaggio;
 import com.app.entities.Utente;
+import com.app.exceptions.UserNotFoundException;
 import com.app.dto.MessaggioDTO;
 import com.app.repositories.MatchRepository;
 import com.app.repositories.MessaggioRepository;
@@ -39,8 +40,9 @@ public class MessaggioService {
         
         try {
             // Trova l'utente che sta facendo la richiesta
-            Utente utente = utenteRepository.findByUsername(emailUtente)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
+        	Utente utente = utenteRepository.findByUsername(emailUtente)
+        		    .orElseThrow(() -> new UserNotFoundException("Utente con email " + emailUtente + " non trovato"));
+
             
             // Trova il match
             Match match = matchRepository.findById(matchId)
@@ -78,8 +80,9 @@ public class MessaggioService {
         
         try {
             // Trova il mittente
-            Utente mittente = utenteRepository.findByUsername(emailMittente)
-                .orElseThrow(() -> new EntityNotFoundException("Utente mittente non trovato"));
+        	Utente mittente = utenteRepository.findByUsername(emailMittente)
+        		    .orElseThrow(() -> new UserNotFoundException("Utente mittente con email " + emailMittente + " non trovato"));
+
             
             // Trova il match
             Match match = matchRepository.findById(matchId)

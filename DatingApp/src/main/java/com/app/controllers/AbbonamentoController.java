@@ -119,7 +119,7 @@ public class AbbonamentoController {
 		try {
 			Utente utente = utenteService.getCurrentUser();
 			
-			return ResponseEntity.ok(abbonamentoService.getSubscriptionHistoryByUserId(utente));
+			return ResponseEntity.ok(abbonamentoService.getSubscriptionHistoryByUserId(utente.getId()));
 			
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(400).body(e.getMessage());

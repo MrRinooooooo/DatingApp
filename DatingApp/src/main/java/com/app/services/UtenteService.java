@@ -1,6 +1,7 @@
 package com.app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import com.app.dto.RegistrazioneDto;
 
 import com.app.entities.Preferenze;
 import com.app.entities.Utente;
+import com.app.exceptions.UserNotFoundException;
 import com.app.repositories.MessaggioRepository;
 import com.app.repositories.PreferenceRepository;
 import com.app.repositories.UtenteRepository;
@@ -59,16 +61,11 @@ public class UtenteService {
 	}
 	
 	//RITORNA UTENTE SE TROVATO PER EMAIL
-	public Utente findByEmail(String email)
-	{
-		Utente utente = new Utente();
-		if(utenteRepository.existsByUsername(email))
-		{
-			utente = utenteRepository.findByUsername(email).get();
-			return utente;
-		}
-		return null;
+	public Utente findByEmail(String email) {
+	    return utenteRepository.findByUsername(email)
+	        .orElseThrow(() -> new UserNotFoundException("Utente non trovato con email: " + email));
 	}
+
 	
 	//UPDATE UTENTE	
 	public ResponseEntity<?> updateProfile(String email, Utente uModificato) {
@@ -79,7 +76,7 @@ public class UtenteService {
 			    return ResponseEntity.badRequest().body("Utente non autenticato"); // Verifico che la username non sia nulla		
 			
 			Utente uLoggato = utenteRepository.findByUsername(email)
-			    .orElseThrow(() -> new RuntimeException("Utente non trovato")); // Trova l'utente esistente			
+				    .orElseThrow(() -> new UserNotFoundException("Utente con email " + email + " non trovato"));// Trova l'utente esistente			
 			  
 			if (uLoggato.getId() != uModificato.getId())
 				return ResponseEntity.badRequest().body("Modifica rifiutata: Id utente non modificabile!"); // Verifico che l'id utente non sia stato modificato  
@@ -133,10 +130,16 @@ public class UtenteService {
 			utenteRepository.save(uLoggato);
 			
 			return ResponseEntity.ok(uLoggato); 
-    	 } catch (Exception e) {
-    		 return ResponseEntity.badRequest().body("Errore nell'aggiornamento del profilo: " + e.getMessage());
-    	 }	    
-	}	
+		} catch (Exception e) {
+			e.printStackTrace(); 
+			System.err.println("ERRORE UPDATE PROFILE – tipo: " + e.getClass().getSimpleName() + ", messaggio: " + e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			                     .body("Errore nell'aggiornamento del profilo: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+			}
+
+	    
+		}
 	
 	/**
 	 * Metodo per verificare che l'email sia corretta.
@@ -155,8 +158,9 @@ public class UtenteService {
 	 * @return profilo pubblico dell'utente
 	 */
 	public Utente getPublicProfile(Long userId) {
-	    Utente utente = utenteRepository.findById(userId)
-	        .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+		Utente utente = utenteRepository.findById(userId)
+			    .orElseThrow(() -> new UserNotFoundException("Utente con ID " + userId + " non trovato"));
+
 	    
 	    // Crea una copia dell'utente con solo le informazioni pubbliche
 	    Utente profiloPubblico = new Utente();
@@ -188,7 +192,8 @@ public class UtenteService {
 		Utente utente = getCurrentUser();
 		boolean isPremium;
 		
-		if(utente.getTipoAccount()=="PREMIUM") {
+		if("PREMIUM".equals(utente.getTipoAccount()))
+ {
 			isPremium=true;
 			}else {
 				isPremium=false;
@@ -200,7 +205,8 @@ public class UtenteService {
 	
 	public void updateDeviceToken(String email, String deviceToken) {
 		Utente utente = utenteRepository.findByUsername(email)
-				.orElseThrow(()-> new RuntimeException("Utente non trovato"));
+		        .orElseThrow(() -> new UserNotFoundException("Utente con email " + email + " non trovato"));
+
 		
 		utente.setDeviceToken(deviceToken);
 		utenteRepository.save(utente);
@@ -208,19 +214,17 @@ public class UtenteService {
 	
 	// Controllo se l'utente ha notifiche attive
 	public boolean hasNotificationsEnabled(Long utenteId) {
-		Utente utente = utenteRepository.findById(utenteId)
-				.orElse(null);
-		
-		return utente != null &&
-				utente.getNotificheAttive() != null &&
-				utente.getNotificheAttive() &&
-				utente.getDeviceToken() != null;
+		return utenteRepository.findById(utenteId)
+			    .map(u -> Boolean.TRUE.equals(u.getNotificheAttive()) && u.getDeviceToken() != null)
+			    .orElse(false);
+
 	}
 	
 	// Abilita o disabilita le notifiche
 	public void toggleNotifications(String email, boolean enabled) {
 		Utente utente = utenteRepository.findByUsername(email)
-				.orElseThrow(() -> new RuntimeException("Utente non trovato"));
+		        .orElseThrow(() -> new UserNotFoundException("Utente con email " + email + " non trovato"));
+
 		
 		utente.setNotificheAttive(enabled);
 		utenteRepository.save(utente);

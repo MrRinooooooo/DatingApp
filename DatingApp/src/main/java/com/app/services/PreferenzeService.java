@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.app.dto.PreferenzeDto;
 import com.app.entities.Preferenze;
 import com.app.entities.Utente;
+import com.app.exceptions.PreferencesNotFoundException;
+import com.app.exceptions.UserNotFoundException;
 import com.app.repositories.PreferenceRepository;
 import com.app.repositories.UtenteRepository;
 
@@ -36,7 +38,9 @@ public class PreferenzeService {
             // Troviamo l'utente nel database e trasformiamo le sue preferenze in
             // PreferenzeDto
 
-            Preferenze preferenze = preferenceRepository.findById(utenteId).get();
+            Preferenze preferenze = preferenceRepository.findById(utenteId)
+            	    .orElseThrow(() -> new PreferencesNotFoundException("Preferenze non trovate per utente ID: " + utenteId));
+
             PreferenzeDto preferenzeDto = new PreferenzeDto(preferenze.getGenerePreferito(), preferenze.getMinEta(), preferenze.getMaxEta(), preferenze.getDistanzaMax());
             return preferenzeDto;
 
@@ -52,11 +56,13 @@ public class PreferenzeService {
 			User springUser = (User) authentication.getPrincipal();
 
 			Utente utente = utenteRepository.findByUsername(springUser.getUsername())
-					.orElseThrow(() -> new RuntimeException("Utente non trovato"));
+				    .orElseThrow(() -> new UserNotFoundException("Utente non trovato con email: " + springUser.getUsername()));
+
 			
 
 			Preferenze modificaPreferenze = preferenceRepository.findByUtenteId(utente.getId())
-			        .orElseThrow(() -> new RuntimeException("Preferenze non trovate"));
+				    .orElseThrow(() -> new PreferencesNotFoundException("Preferenze non trovate per utente ID: " + utente.getId()));
+
 			modificaPreferenze.setGenerePreferito(preferenzeDto.getGenerePreferito());
 			modificaPreferenze.setMinEta(preferenzeDto.getEtaMinima());
 			modificaPreferenze.setMaxEta(preferenzeDto.getEtaMassima());

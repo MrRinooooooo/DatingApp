@@ -85,9 +85,10 @@ public class SecurityConfig {
                     "/v3/api-docs/**",     // OpenAPI docs
                     "/swagger-resources/**", // Risorse Swagger
                     "/webjars/**",         // Dipendenze web
-                    //"/api/report/**" ,       Report pubblici
+                    //"/api/report" ,       Report pubblici solo lettura GET
                     "/index.html",
-                    "/firebase-messaging-sw.js"
+                    "/firebase-messaging-sw.js",
+                    "/api/chat/**"
                 ).permitAll()
                 
                 // Endpoint che richiedono ruolo PREMIUM

@@ -28,15 +28,10 @@ public class ReportController {
             return ResponseEntity.status(401).body("Utente non autenticato");
         }
 
-        try {
+        
             reportService.creaReport(dto, userDetails.getUsername());
             return ResponseEntity.ok("Report inviato con successo");
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(500).body("Errore interno del server");
-        }
+       
     }
 
     // ===== GET: Tutte le segnalazioni ricevute da un utente =====
