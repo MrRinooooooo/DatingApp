@@ -1,12 +1,13 @@
 package com.app.repositories;
 
 import com.app.entities.Swipe;
+import com.app.entities.Utente;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +39,12 @@ public interface SwipeRepository extends JpaRepository<Swipe, Long> {
                                                                 @Param("tipi") List<String> tipi);
 
     /**
-     * Trova tutti gli swipe di tipo LIKE o SUPER_LIKE ricevuti da un utente
-     * METODO NUOVO - necessario per SwipeService
+     * Trova tutti gli Utenti che hanno swipato un utenteId
      */
-    @Query("SELECT s FROM Swipe s WHERE s.utenteTargetSwipe.id = :utenteId AND s.tipo IN ('LIKE', 'SUPER_LIKE') ORDER BY s.timestamp DESC")
-    List<Swipe> findLikesByUtenteTargetId(@Param("utenteId") Long utenteId);
 
+    @Query("SELECT s.utenteSwipe FROM Swipe s WHERE s.utenteTargetSwipe.id = :utenteId AND s.tipo IN ('LIKE', 'SUPER_LIKE') ORDER BY s.timestamp DESC")
+    List<Utente> findUtentiWhoLikedMe(@Param("utenteId") Long utenteId);
+    
     /**
      * Trova uno swipe specifico tra due utenti
      */
@@ -78,17 +79,4 @@ public interface SwipeRepository extends JpaRepository<Swipe, Long> {
         @Param("end") LocalDateTime end
     );
     
-    // ========== METODI LEGACY (compatibilità) ==========
-    
-    /**
-     * Metodi legacy - mantieni se li usi altrove
-     * NOTA: Questi hanno la sintassi con underscore
-     */
-    //boolean existsByUtenteSwipe_IdAndUtenteTargetSwipe_Id(Long utenteSwipeId, Long utenteTargetId);
-    
-    //boolean existsByUtenteSwipe_IdAndUtenteTargetSwipe_IdAndTipoIn(Long utenteSwipeId, Long utenteTargetId, List<String> tipi);
-    
-    //List<Swipe> findByUtenteSwipe_Id(Long utenteId);
-    
-    //List<Swipe> findByUtenteTargetSwipe_Id(Long utenteId);
 }

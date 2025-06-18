@@ -1,13 +1,16 @@
 package com.app.controllers;
 
+import com.app.dto.ModificaUtenteDTO;
 import com.app.dto.UtenteDiscoverDTO;
 import com.app.entities.Utente;
 import com.app.repositories.SwipeRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.services.PhotoService;
+import com.app.services.SwipeService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ public class UtentiController {
     
     @Autowired
     private SwipeRepository swipeRepository;
+    
+    @Autowired
+    private SwipeService swipeService;
  
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
@@ -73,9 +79,8 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
      */
     
     @PutMapping("/me")
-    public ResponseEntity<?> updateMyProfile(@RequestBody Utente utenteAggiornato) {    	
-    	String currentUserEmail = SecurityUtils.getCurrentUserEmail(); 					// Estraggo la username dell'utente loggato dal JWT token    	
-        return utenteService.updateProfile(currentUserEmail, utenteAggiornato); 		// Aggiorna il profilo dell'utente
+    public ResponseEntity<?> updateMyProfile(@RequestBody ModificaUtenteDTO utenteAggiornatoDto) {    	 	
+        return utenteService.updateProfile(utenteAggiornatoDto); 		// Aggiorna il profilo dell'utente
     }
  
     /**
@@ -112,33 +117,13 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     @PreAuthorize("hasRole('PREMIUM')") // Annotation per verificare il ruolo
     public ResponseEntity<?> whoLikedMe() {
         try {
-        	
         	Utente utente = utenteService.getCurrentUser();
-            return ResponseEntity.ok(swipeRepository.findLikesByUtenteTargetId(utente.getId()));
- 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
-        }
-    }
- 
-    /**
-     * Esempio di endpoint che verifica manualmente i permessi
-     * GET /api/utenti/premium/boost-profile
-     */
-    
-    @GetMapping("/premium/boost-profile")
-    public ResponseEntity<?> boostProfile() {
-        try {
-            // Verifica manuale se l'utente è premium
-            if (!SecurityUtils.isPremiumUser()) {
-                return ResponseEntity.status(403).body("Funzionalità disponibile solo per utenti Premium");
-            }
- 
-            																			// String currentUserEmail = SecurityUtils.getCurrentUserEmail();
-            																			//System.out.println(currentUserEmail);
-            // Logica per il boost del profilo - Da implementare
- 
-            return ResponseEntity.ok("Profilo boostato con successo - Funzionalità Premium");
+        	
+        	// Restituisce solo gli utenti che hanno fatto like a questo utente
+            List<Utente> utentiWhoLikesMe = swipeRepository.findUtentiWhoLikedMe(utente.getId());
+            List<UtenteDiscoverDTO> utentiWhoLikesMeDTO = swipeService.getUtentiCheMiHannoLikato(utentiWhoLikesMe);
+
+            return ResponseEntity.ok(utentiWhoLikesMeDTO);
  
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
