@@ -120,30 +120,6 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
         }
     }
- 
-    /**
-     * Esempio di endpoint che verifica manualmente i permessi
-     * GET /api/utenti/premium/boost-profile
-     */
-    
-    @GetMapping("/premium/boost-profile")
-    public ResponseEntity<?> boostProfile() {
-        try {
-            // Verifica manuale se l'utente è premium
-            if (!SecurityUtils.isPremiumUser()) {
-                return ResponseEntity.status(403).body("Funzionalità disponibile solo per utenti Premium");
-            }
- 
-            																			// String currentUserEmail = SecurityUtils.getCurrentUserEmail();
-            																			//System.out.println(currentUserEmail);
-            // Logica per il boost del profilo - Da implementare
- 
-            return ResponseEntity.ok("Profilo boostato con successo - Funzionalità Premium");
- 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
-        }
-    }
     
     /**
      * Endpoint per aggiungere una foto profilo dell'utente
