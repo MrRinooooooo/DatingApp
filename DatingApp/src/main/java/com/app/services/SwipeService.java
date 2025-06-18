@@ -4,6 +4,7 @@ import com.app.entities.Utente;
 import com.app.exceptions.LimitReachedException;
 import com.app.entities.Match;
 import com.app.dto.SwipeDTO;
+import com.app.dto.UtenteDiscoverDTO;
 import com.app.repositories.SwipeRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.repositories.MatchRepository;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SwipeService {
@@ -194,14 +196,23 @@ public class SwipeService {
     }
     
     /**
-     * Ottieni tutti gli utenti che hanno fatto like all'utente corrente
+     * Ottieni tutti gli utenti che hanno fatto like all'utente corrente in formato UtenteDiscoverDTO (senza dati sensibili)
      */
-    public List<Swipe> getUtentiCheMiHannoLikato(String emailUtente) {
+
+    public List<UtenteDiscoverDTO> getUtentiCheMiHannoLikato(List<Utente> utentiWhoLikesMe) {
         try {
-            Utente utente = utenteRepository.findByUsername(emailUtente)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
-            return swipeRepository.findLikesByUtenteTargetId(utente.getId());
+        	return utentiWhoLikesMe.stream()
+                    .map(u -> new UtenteDiscoverDTO(
+                            u.getId(),
+                            u.getNome(),
+                            u.getBio(),
+                            u.getInteressi(),
+                            u.getFotoProfilo(),
+                            u.getPosizione() != null ? u.getPosizione().getCitta() : null,
+                            utenteService.calcolaEta(u.getDataNascita())
+                    ))
+                    .collect(Collectors.toList());
             
         } catch (Exception e) {
             throw new RuntimeException("Errore nel recupero dei likes ricevuti", e);

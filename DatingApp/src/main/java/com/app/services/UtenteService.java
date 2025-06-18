@@ -1,5 +1,8 @@
 package com.app.services;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -218,4 +221,15 @@ public class UtenteService {
 		utente.setNotificheAttive(enabled);
 		utenteRepository.save(utente);
 	}
+	
+	//CALCOLA ETA
+	public int calcolaEta(LocalDate dataNascita) {
+		if (dataNascita == null) {
+			System.out.println("===CALCOLA ETA DEBUG===");
+			System.out.println("CAMPO ETA VUOTO");
+			return 0;
+	    }
+	        return Period.between(dataNascita, LocalDate.now()).getYears();
+	}
+	
 }

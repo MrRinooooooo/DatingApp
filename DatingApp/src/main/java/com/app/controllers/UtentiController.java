@@ -5,9 +5,11 @@ import com.app.entities.Utente;
 import com.app.repositories.SwipeRepository;
 import com.app.repositories.UtenteRepository;
 import com.app.services.PhotoService;
+import com.app.services.SwipeService;
 import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class UtentiController {
     
     @Autowired
     private SwipeRepository swipeRepository;
+    
+    @Autowired
+    private SwipeService swipeService;
  
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
@@ -112,9 +117,13 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     @PreAuthorize("hasRole('PREMIUM')") // Annotation per verificare il ruolo
     public ResponseEntity<?> whoLikedMe() {
         try {
-        	
         	Utente utente = utenteService.getCurrentUser();
-            return ResponseEntity.ok(swipeRepository.findLikesByUtenteTargetId(utente.getId()));
+        	
+        	// Restituisce solo gli utenti che hanno fatto like a questo utente
+            List<Utente> utentiWhoLikesMe = swipeRepository.findUtentiWhoLikedMe(utente.getId());
+            List<UtenteDiscoverDTO> utentiWhoLikesMeDTO = swipeService.getUtentiCheMiHannoLikato(utentiWhoLikesMe);
+
+            return ResponseEntity.ok(utentiWhoLikesMeDTO);
  
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Errore: " + e.getMessage());
