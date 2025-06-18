@@ -51,7 +51,7 @@ build/
 *.DS_Store
 
 # File di configurazione sensibili
-
+application.properties
 
 # Esempio di file di configurazione (da includere nel repo)
 !application.properties.example
