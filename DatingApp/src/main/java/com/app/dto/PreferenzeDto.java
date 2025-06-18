@@ -1,12 +1,18 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.app.enums.Genere;
 
 public class PreferenzeDto {
-
+	@Schema(description = "preferenza di genere", example = "MASCHIO/FEMMINA")	
 	private Genere generePreferito;
+	
+	@Schema(description = "preferenza età minima", example = "18")	
 	private Integer minEta;
+	
+	@Schema(description = "preferenza etàmassima", example = "75")	
 	private Integer maxEta;
+	
+	@Schema(description = "distanza massima", example = "25.2")	
 	private Double distanzaMax;
 	
 	public PreferenzeDto() {

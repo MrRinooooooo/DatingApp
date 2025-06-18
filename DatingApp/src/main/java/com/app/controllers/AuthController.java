@@ -18,13 +18,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
- 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * Controller per gestire autenticazione e registrazione degli utenti.
  */
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*") // Permette richieste da qualsiasi origine (per sviluppo)
+
+@Tag(name = "AuthController", description = "(Registrazione, login, validazione token)")
 public class AuthController {
  
     @Autowired

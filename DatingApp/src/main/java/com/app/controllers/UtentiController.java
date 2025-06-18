@@ -16,13 +16,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
- 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * Controller per la gestione degli utenti.
  * Esempi di utilizzo dell'autenticazione JWT.
  */
 @RestController
 @RequestMapping("/api/utenti")
+
+@Tag(name = "UtentiController", description = "(Gestione profilo user, foto)")
 public class UtentiController {
  
     @Autowired

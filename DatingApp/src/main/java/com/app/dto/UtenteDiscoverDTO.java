@@ -1,13 +1,25 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 public class UtenteDiscoverDTO {
-    
+	@Schema(description = "ID eta dell'user", example = "12")
     private Long id;
+	
+	@Schema(description = "nome dell'user", example = "marco")
     private String nome;
+	
+	@Schema(description = "bio dell'user", example = "......")
     private String bio;
+	
+	@Schema(description = "interessi dell'user", example = "informatica")
     private String interessi;
+	
+	@Schema(description = "foto dell'user", example = "")
     private String fotoProfilo;
+	
+	@Schema(description = "eta dell'user", example = "Roma")
     private String citta;
+	
+	@Schema(description = "eta dell'user", example = "19")
     private Integer eta;  // Calcolata dall'età
     
     // ========== COSTRUTTORI ==========

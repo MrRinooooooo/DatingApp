@@ -18,9 +18,12 @@ import com.app.dto.MessaggioDTO;
 import com.app.entities.Match;
 import com.app.services.MessaggioService;
 import com.app.services.MatchService;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api")
+
+@Tag(name = "MatchController", description = "(Gestione relazione tra users)")
 public class MatchController {
 
     @Autowired

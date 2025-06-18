@@ -1,14 +1,25 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 public class MessaggioDTO {
-    
+	
+	@Schema(description = "ID dell'utente", example = "1")
     private Long id;
+        
+	@Schema(description = "ID del match", example = "1")
     private Long matchId;
+    
+	@Schema(description = "ID del mittente", example = "1")
     private Long mittenteId;
+    
+	@Schema(description = "messaggio inviato dall'user", example = " Ciao bambola!!!!!!!")
     private String contenuto;
+    
+	@Schema(description = "data corrente ", example = " 2025/12/12")
     private LocalDateTime timestamp;
+    
+	@Schema(description = "stato del messaggio", example = "visualizzato/non visualizzato")
     private String stato;
     
     // ========== COSTRUTTORI ==========

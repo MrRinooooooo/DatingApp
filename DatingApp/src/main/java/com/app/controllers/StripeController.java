@@ -15,9 +15,12 @@ import com.app.enums.TipoAbbonamento;
 import com.app.services.StripeService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/stripe")
+
+@Tag(name = " StripeController", description = "(Gestione pagamaento dell'abbonamento)")
 public class StripeController {
 
     @Autowired

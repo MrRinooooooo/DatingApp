@@ -1,13 +1,21 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 public class ReportDTO {
-
+	@Schema(description = "ID del report", example = "13")
     private Long id; // ID report (per admin)
+	
+	@Schema(description = "ID dellìuser segnalato", example = "12")
     private Long segnalatoId; // Chi viene segnalato
+    
+	@Schema(description = "ID dell'user segnalato", example = "12")
     private Long segnalanteId; // Chi ha segnalato (per admin)
+	
+	@Schema(description = "motivo del report", example = "pedofilia")
     private String motivo; // Motivo segnalazione
+    
+	@Schema(description = "data odierna", example = "2025/06/12")
     private LocalDateTime timestamp; // Data segnalazione (per admin)
 
     // ========== COSTRUTTORI ==========

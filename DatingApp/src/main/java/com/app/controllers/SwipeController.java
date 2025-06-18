@@ -17,9 +17,12 @@ import com.app.dto.UtenteDiscoverDTO;
 import com.app.services.PreferenzeService;
 import com.app.services.SwipeService;
 import com.app.utils.SecurityUtils;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api")
+
+@Tag(name = " SwipeController", description = "(Gestione like/superlike)")
 public class SwipeController {
 
     @Autowired

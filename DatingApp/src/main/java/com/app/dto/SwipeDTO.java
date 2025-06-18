@@ -1,8 +1,11 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 public class SwipeDTO {
-    
+	
+	@Schema(description = "utente swappato", example = "giovanna")
     private Long utenteTargetId;  // ID dell'utente su cui fai swipe
+	
+	@Schema(description = "tipo swipe", example = "like")
     private String tipo;          // "LIKE", "PASS", "SUPER_LIKE"
     
     // ========== COSTRUTTORI ==========

@@ -17,10 +17,13 @@ import com.app.services.UtenteService;
 import com.app.utils.SecurityUtils;
 
 import org.springframework.web.bind.annotation.RequestBody;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/preferenze")
+
+@Tag(name = "PreferenzeController", description = "(Gestione preferenze dell'user)")
 public class PreferenzeController {
 
 	@Autowired

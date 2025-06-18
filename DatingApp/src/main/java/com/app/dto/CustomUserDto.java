@@ -1,5 +1,5 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +10,7 @@ public class CustomUserDto extends User {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Schema(description = "ID dell'utente", example = "13")
 	Long userId;
 
 	public CustomUserDto(Long userId, String username, String password, boolean enabled, boolean accountNonExpired,

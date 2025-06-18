@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.ReportDTO;
 import com.app.services.ReportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = " ReportController", description = "(Gestione invio/lettura(Admin) report users)")
 public class ReportController {
 
     @Autowired

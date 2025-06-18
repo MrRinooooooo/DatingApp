@@ -19,9 +19,12 @@ import com.app.services.StripeService;
 import com.app.services.UtenteService;
 import com.stripe.model.checkout.Session;
 
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/premium")
+
+@Tag(name = "AbbonamentoController", description = "(Gestione abbonamenti)")
 public class AbbonamentoController {
 
 	@Autowired

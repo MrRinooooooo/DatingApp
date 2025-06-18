@@ -8,9 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/device")
+
+@Tag(name = "DeviceTokenController", description = "(Gestione notifiche push, implementazione Firebase)")
 public class DeviceTokenController {
 
     @Autowired

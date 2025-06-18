@@ -1,17 +1,33 @@
 package com.app.dto;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 public class MatchDTO {
-    
+	
+	@Schema(description = "ID del MATCH", example = "1")
     private Long id;
+	 
+	@Schema(description = "ID dell'utente", example = "1")
     private Long utente1Id;
-    private String utente1Nome;
+    
+	 @Schema(description = "Nome dell'utente1", example = "Mario")
+    private String utente1Nome;    
+	 
+	 @Schema(description = "email dell'utente1", example = "Mario_verdi@gmail.com")
     private String utente1Email;
+    
+	 @Schema(description = "ID dell'utente2", example = "2") 
     private Long utente2Id;
+    
+	 @Schema(description = "Nome dell'utente1", example = "Mario") 
     private String utente2Nome;
+    
+	 @Schema(description = "email dell'utente2", example = "Valentina_bianchi@gmail.com") 
     private String utente2Email;
+    
+	 @Schema(description = "data corrente", example = "2025/06/12") 
     private LocalDateTime timestamp;
+    
     
     // Costruttori
     public MatchDTO() {}
