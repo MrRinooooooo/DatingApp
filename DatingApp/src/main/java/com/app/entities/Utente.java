@@ -25,7 +25,7 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table (name = "utente")
 
-public class Utente {	
+public class Utente {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,6 +100,7 @@ public class Utente {
 		this.interessi="";
 		this.posizione = null;
 		this.fotoProfilo="";
+		this.notificheAttive = true;
 	}
 	
 	//includiamo anche Posizione

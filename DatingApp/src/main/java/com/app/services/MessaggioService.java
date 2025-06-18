@@ -48,15 +48,15 @@ public class MessaggioService {
                 .orElseThrow(() -> new EntityNotFoundException("Match non trovato"));
             
             // Verifica che l'utente faccia parte del match
-            if (!match.getUtente1Id().equals(utente.getId()) && 
-                !match.getUtente2Id().equals(utente.getId())) {
+            if (!match.getUtente1().equals(utente) && 
+                !match.getUtente2().equals(utente)) {
                 throw new IllegalArgumentException("Non sei autorizzato a vedere questa chat");
             }
             
             System.out.println("Utente autorizzato: " + utente.getId());
             
             // Recupera tutti i messaggi del match ordinati per timestamp
-            List<Messaggio> messaggi = messaggioRepository.findByMatchIdOrderByTimestampAsc(matchId);
+            List<Messaggio> messaggi = messaggioRepository.findByMatchOrderByTimestampAsc(match);
             
             System.out.println("Messaggi trovati: " + messaggi.size());
             
@@ -65,7 +65,7 @@ public class MessaggioService {
             List<Messaggio> messaggiDaAggiornare = new ArrayList<>();
 
             for (Messaggio m : messaggi) {
-                if (!m.getMittenteId().equals(utente.getId()) && !m.getStato().equals("letto")) {
+                if (!m.getMittente().equals(utente) && !m.getStato().equals("letto")) {
                     messaggiDaAggiornare.add(m);
                 }
             }
@@ -104,8 +104,8 @@ public class MessaggioService {
                 .orElseThrow(() -> new EntityNotFoundException("Match non trovato"));
             
             // Verifica che il mittente faccia parte del match
-            if (!match.getUtente1Id().equals(mittente.getId()) &&
-                !match.getUtente2Id().equals(mittente.getId())) {
+            if (!match.getUtente1().equals(mittente) &&
+                !match.getUtente2().equals(mittente)) {
                 throw new IllegalArgumentException("Non sei autorizzato a scrivere in questa chat");
             }
             
@@ -120,8 +120,8 @@ public class MessaggioService {
             
             // Crea il messaggio
             Messaggio messaggio = new Messaggio();
-            messaggio.setMatchId(matchId);
-            messaggio.setMittenteId(mittente.getId());
+            messaggio.setMatch(match);
+            messaggio.setMittente(mittente);
             messaggio.setContenuto(dto.getContenuto().trim());
             messaggio.setTimestamp(LocalDateTime.now());
             messaggio.setStato("inviato");
@@ -130,8 +130,8 @@ public class MessaggioService {
             System.out.println("Messaggio salvato con successo!");
             
             // Trovo il destinatario del messaggio
-            Long destinatarioId = match.getUtente1Id().equals(mittente.getId()) ?
-            		match.getUtente2Id() : match.getUtente1Id();
+            Long destinatarioId = match.getUtente1().getId().equals(mittente) ?
+            		match.getUtente2().getId() : match.getUtente1().getId();
             
             // invio notifica Firebase al destinatario
             firebaseService.inviaNotificaMessaggio(destinatarioId, mittente.getNome(), dto.getContenuto());
@@ -146,8 +146,8 @@ public class MessaggioService {
     private MessaggioDTO convertToDTO(Messaggio entity) {
         MessaggioDTO dto = new MessaggioDTO();
         dto.setId(entity.getId());
-        dto.setMatchId(entity.getMatchId());
-        dto.setMittenteId(entity.getMittenteId());
+        dto.setMatchId(entity.getMatch().getId());
+        dto.setMittenteId(entity.getMittente().getId());
         dto.setContenuto(entity.getContenuto());
         dto.setTimestamp(entity.getTimestamp());
         dto.setStato(entity.getStato());

@@ -68,29 +68,7 @@ public class MatchController {
             return ResponseEntity.internalServerError().body("Errore: " + e.getMessage());
         }
     }
-    
-    // DELETE /api/match/{id} → elimina un match (unmatch)
-    @DeleteMapping("/match/{matchId}")
-    public ResponseEntity<?> deleteMatch(@PathVariable Long matchId,
-                                        @AuthenticationPrincipal UserDetails userDetails) {
-        
-        System.out.println("=== DELETE MATCH DEBUG ===");
-        System.out.println("Match ID: " + matchId);
-        System.out.println("User: " + userDetails.getUsername());
-        
-        try {
-            boolean deleted = matchService.deleteMatch(matchId, userDetails.getUsername());
-            if (deleted) {
-                return ResponseEntity.ok("Match eliminato con successo");
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            System.err.println("Errore eliminazione match: " + e.getMessage());
-            return ResponseEntity.internalServerError().body("Errore: " + e.getMessage());
-        }
-    }
-    
+  
     // ========== ENDPOINT MESSAGGI ==========
     
     // GET /api/match/{id}/messaggi → legge chat con un match

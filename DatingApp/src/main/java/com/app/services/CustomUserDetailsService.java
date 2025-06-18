@@ -63,17 +63,24 @@ public class CustomUserDetailsService implements UserDetailsService {
     
     private List<SimpleGrantedAuthority> getAuthorities(Utente utente) {
     	
-        // Tutti gli utenti hanno il ruolo USER    	
-        if ("PREMIUM".equals(utente.getTipoAccount())) {
-            // Gli utenti premium hanno entrambi i ruoli
+    	if("ADMIN".equals(utente.getTipoAccount())) {
+    		// Gli utenti premium hanno entrambi i ruoli
             return Arrays.asList(
                 new SimpleGrantedAuthority("ROLE_USER"),
-                new SimpleGrantedAuthority("ROLE_PREMIUM")
-            );
-        } else {
-            // Gli utenti standard hanno solo il ruolo USER
-            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-        }
+                new SimpleGrantedAuthority("ROLE_PREMIUM"),
+                new SimpleGrantedAuthority("ROLE_ADMIN")
+                );
+    	}
+	    	else if ("PREMIUM".equals(utente.getTipoAccount())) {
+	             // Gli utenti premium hanno entrambi i ruoli
+	             return Arrays.asList(
+	                 new SimpleGrantedAuthority("ROLE_USER"),
+	                 new SimpleGrantedAuthority("ROLE_PREMIUM")
+	             );
+	         } else {
+	             // Gli utenti standard hanno solo il ruolo USER
+	             return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+	         }
         
     }
 	    

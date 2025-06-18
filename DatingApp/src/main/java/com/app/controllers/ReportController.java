@@ -62,20 +62,20 @@ public class ReportController {
     public ResponseEntity<String> segnalaUtente(@RequestBody ReportDTO reportDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-if (userDetails == null) {
-return ResponseEntity.status(401).body("Utente non autenticato");
-}
+    	if (userDetails == null) {
+			return ResponseEntity.status(401).body("Utente non autenticato");
+		}
 
-try {
-reportService.creaReport(reportDTO, userDetails.getUsername());
-return ResponseEntity.ok("Report inviato con successo");
-} catch (IllegalArgumentException ex) {
-return ResponseEntity.badRequest().body(ex.getMessage());  // messaggio specifico
-} catch (Exception ex) {
-ex.printStackTrace();
-return ResponseEntity.status(500).body("Errore interno del server");
-}
-}    
+		try {
+			reportService.creaReport(reportDTO, userDetails.getUsername());
+			return ResponseEntity.ok("Report inviato con successo");
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(ex.getMessage());  // messaggio specifico
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		return ResponseEntity.status(500).body("Errore interno del server");
+		}
+	}    
     
     @GetMapping("/admin/report")
     @PreAuthorize("hasRole('ADMIN')")
@@ -89,7 +89,6 @@ return ResponseEntity.status(500).body("Errore interno del server");
         }
     }
     
-    
     @GetMapping("/admin/report/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReportDTO>> getAllReports() {
@@ -101,7 +100,5 @@ return ResponseEntity.status(500).body("Errore interno del server");
             return ResponseEntity.internalServerError().build();
         }
     }
-    
-    
     
 }

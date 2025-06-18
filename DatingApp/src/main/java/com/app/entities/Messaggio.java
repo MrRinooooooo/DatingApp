@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
-	@Entity
+@Entity
 @Table(name = "messaggio")
 	
 public class Messaggio {
@@ -12,11 +12,13 @@ public class Messaggio {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long  id;
 	
-	@Column(name = "match_Id", columnDefinition="bigint(11)")
-	private Long matchId;
-	
-	@Column(name = "mittente_Id", columnDefinition = "bigint(11)")
-	private Long mittenteId;
+	@ManyToOne
+	@JoinColumn(name = "match_id", nullable = false)
+	private Match match;
+
+	@ManyToOne
+	@JoinColumn(name = "mittente_id", nullable = false)
+	private Utente mittente;
 	
 	@Column(name = "contenuto", columnDefinition = "varchar(255)")
 	private String contenuto;
@@ -35,18 +37,18 @@ public class Messaggio {
 		this.id = id;
 	}
 	
-	public  Long getMatchId() {
-		return matchId;
+	public  Match getMatch() {
+		return match;
 	}
-	public void setMatchId( Long matchId) {
-		this.matchId = matchId;
+	public void setMatch( Match match) {
+		this.match = match;
 	}
 	
-	public  Long getMittenteId() {
-		return mittenteId;
+	public  Utente getMittente() {
+		return mittente;
 	}
-	public void setMittenteId( Long mittenteId) {
-		this.mittenteId =mittenteId;
+	public void setMittente( Utente mittente) {
+		this.mittente =mittente;
 	}
 	
 	public String getContenuto() {
