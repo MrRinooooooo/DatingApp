@@ -51,16 +51,16 @@ public class ReportService {
             }
             
             // Controllo che non abbia già segnalato questo utente
-            boolean giaSegnalato = reportRepository.existsBySegnalanteIdAndSegnalatoId(
-                segnalante.getId(), segnalato.getId());
+            boolean giaSegnalato = reportRepository.existsBySegnalanteAndSegnalato(
+                segnalante, segnalato);
             if (giaSegnalato) {
                 throw new IllegalArgumentException("Hai già segnalato questo utente");
             }
             
             // Creo il report
             Report report = new Report();
-            report.setSegnalatoId(segnalato.getId());        
-            report.setSegnalanteId(segnalante.getId());      
+            report.setSegnalato(segnalato);        
+            report.setSegnalante(segnalante);      
             report.setMotivo(dto.getMotivo());
             report.setTimestamp(LocalDateTime.now());
             
@@ -101,8 +101,8 @@ public class ReportService {
             }
             
             // Controllo che non abbia già segnalato questo utente
-            boolean giaSegnalato = reportRepository.existsBySegnalanteIdAndSegnalatoId(
-                segnalante.getId(), segnalato.getId());
+            boolean giaSegnalato = reportRepository.existsBySegnalanteAndSegnalato(
+                segnalante, segnalato);
             if (giaSegnalato) {
                 throw new IllegalArgumentException("Hai già segnalato questo utente");
             }
@@ -110,8 +110,8 @@ public class ReportService {
             
             // Creo il report
             Report report = new Report();
-            report.setSegnalatoId(segnalato.getId());        
-            report.setSegnalanteId(segnalante.getId());      
+            report.setSegnalato(segnalato);        
+            report.setSegnalante(segnalante);      
             report.setMotivo(dto.getMotivo());
             report.setTimestamp(LocalDateTime.now());
             
@@ -164,8 +164,8 @@ public class ReportService {
     private ReportDTO convertToDTO(Report entity) {
         ReportDTO dto = new ReportDTO();
         dto.setId(entity.getId());
-        dto.setSegnalatoId(entity.getSegnalatoId());      
-        dto.setSegnalanteId(entity.getSegnalanteId());    
+        dto.setSegnalatoId(entity.getSegnalato().getId());      
+        dto.setSegnalanteId(entity.getSegnalante().getId());
         dto.setMotivo(entity.getMotivo());
         dto.setTimestamp(entity.getTimestamp());
         return dto;

@@ -10,11 +10,13 @@ public class Match {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "utente1_id", columnDefinition = "bigint(11)")
-	private Long utente1Id;
+	@ManyToOne
+	@JoinColumn(name = "utente1_id", nullable = false)
+	private Utente utente1;
 
-	@Column(name = "utente2_id", columnDefinition = "bigint(11)")
-	private Long utente2Id;
+	@ManyToOne
+	@JoinColumn(name = "utente2_id", nullable = false)
+	private Utente utente2;
 
 	@Column(name = "timestamp", columnDefinition = "datetime")
 	private LocalDateTime timestamp;
@@ -24,9 +26,9 @@ public class Match {
 		// Costruttore vuoto per JPA
 	}
 
-	public Match(Long utente1Id, Long utente2Id) {
-		this.utente1Id = utente1Id;
-		this.utente2Id = utente2Id;
+	public Match(Utente utente1, Utente utente2) {
+		this.utente1 = utente1;
+		this.utente2 = utente2;
 		this.timestamp = LocalDateTime.now();
 	}
 
@@ -39,20 +41,20 @@ public class Match {
 		this.id = id;
 	}
 
-	public Long getUtente1Id() {
-		return utente1Id;
+	public Utente getUtente1() {
+		return utente1;
 	}
 
-	public void setUtente1Id(Long utente1Id) {
-		this.utente1Id = utente1Id;
+	public void setUtente1(Utente utente1) {
+		this.utente1 = utente1;
 	}
 
-	public Long getUtente2Id() {
-		return utente2Id;
+	public Utente getUtente2() {
+		return utente2;
 	}
 
-	public void setUtente2Id(Long utente2Id) {
-		this.utente2Id = utente2Id;
+	public void setUtente2(Utente utente2) {
+		this.utente2 = utente2;
 	}
 
 	public LocalDateTime getTimestamp() {

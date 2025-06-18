@@ -104,8 +104,8 @@ public class SwipeService {
         
             // Crea il nuovo swipe
             Swipe swipe = new Swipe();
-            swipe.setUtenteSwipeId(utenteSwipe.getId());
-            swipe.setUtenteTargetSwipeId(utenteTarget.getId());
+            swipe.setUtenteSwipe(utenteSwipe);
+            swipe.setUtenteTargetSwipe(utenteTarget);
             swipe.setTipo(dto.getTipo());
             swipe.setTimestamp(LocalDateTime.now());
             
@@ -114,7 +114,7 @@ public class SwipeService {
             
             // Se è un LIKE, controlla se c'è reciprocità
             if ("LIKE".equals(dto.getTipo()) || "SUPER_LIKE".equals(dto.getTipo())) {
-                String risultato = dto.getTipo() + controllaMatch(utenteSwipe.getId(), utenteTarget.getId());
+                String risultato = dto.getTipo() + controllaMatch(utenteSwipe, utenteTarget);
 
                 // Se NON è un match ma è un SUPER_LIKE, invia una notifica al target
                 if ("SUPER_LIKE".equals(dto.getTipo()) && !risultato.startsWith("È UN MATCH")) {
@@ -137,38 +137,35 @@ public class SwipeService {
     
     // ========== CONTROLLA MATCH ==========
     @Transactional
-    private String controllaMatch(Long utente1Id, Long utente2Id) {
-    	
-    	Utente utente2 = utenteRepository.findById(utente2Id).get();
+    private String controllaMatch(Utente utente1, Utente utente2) {
         
         System.out.println("=== CONTROLLO MATCH ===");
-        System.out.println("Utente1: " + utente1Id + " -> Utente2: " + utente2Id);
+        System.out.println("Utente1: " + utente1.getId() + " -> Utente2: " + utente2.getId());
         
         // Usa il metodo aggiornato del SwipeRepository
         boolean matchReciprico = swipeRepository.existsByUtenteSwipeIdAndUtenteTargetSwipeIdAndTipoIn(
-            utente2Id, utente1Id, List.of("LIKE", "SUPER_LIKE"));
+            utente2.getId(), utente1.getId(), List.of("LIKE", "SUPER_LIKE"));
         
         if (matchReciprico) {
             System.out.println("MATCH TROVATO! Creazione match...");
             
             // Usa il metodo aggiornato del MatchRepository
             boolean matchEsiste = matchRepository.existsMatchBetweenUsers(
-                utente1Id, utente2Id);
+                utente1, utente2);
             
             if (!matchEsiste) {
                 // Crea il match
                 Match match = new Match();
-                match.setUtente1Id(utente1Id);
-                match.setUtente2Id(utente2Id);
+                match.setUtente1(utente1);
+                match.setUtente2(utente2);
                 match.setTimestamp(LocalDateTime.now());
                 
                 Match savedMatch = matchRepository.save(match);
                 System.out.println("Match creato con ID: " + savedMatch.getId());
                 
                 // invio notifiche Firebase ai due utenti
-                Utente utente1 = utenteRepository.findById(utente2Id).get();
-                firebaseService.inviaNotificaMatch(utente1Id, utente2.getNome());
-                firebaseService.inviaNotificaMatch(utente2Id, utente1.getNome());
+                firebaseService.inviaNotificaMatch(utente1.getId(), utente2.getNome());
+                firebaseService.inviaNotificaMatch(utente2.getId(), utente1.getNome());
                 
                 return "È UN MATCH! Ora puoi chattare con " + utente2.getNome();
             } else {
@@ -189,7 +186,7 @@ public class SwipeService {
             Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
-            return matchRepository.findMatchesByUtenteId(utente.getId());
+            return matchRepository.findMatchesByUtente(utente);
             
         } catch (Exception e) {
             throw new RuntimeException("Errore nel recupero dei match", e);

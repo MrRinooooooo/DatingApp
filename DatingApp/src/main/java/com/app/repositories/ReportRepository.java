@@ -1,6 +1,8 @@
 package com.app.repositories;
 
 import com.app.entities.Report;
+import com.app.entities.Utente;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     
     // Verifica se esiste già una segnalazione tra due utenti
-    boolean existsBySegnalanteIdAndSegnalatoId(Long segnalanteId, Long segnalatoId);
+    boolean existsBySegnalanteAndSegnalato(Utente segnalante, Utente segnalato);
     
     // Trova tutte le segnalazioni ricevute da un utente
     List<Report> findBySegnalatoId(Long segnalatoId);

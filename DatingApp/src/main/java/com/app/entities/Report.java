@@ -11,11 +11,13 @@ public class Report {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;	
 	
-	@Column(name = "segnalato_id", columnDefinition = "bigint(11)")
-	private  Long segnalatoId;
+	@ManyToOne
+	@JoinColumn(name = "segnalato_id", nullable = false)
+	private Utente segnalato;
 
-	@Column(name = "segnalante_id", columnDefinition = "bigint(11)")
-	private  Long segnalanteId;
+	@ManyToOne
+	@JoinColumn(name = "segnalante_id", nullable = false)
+	private Utente segnalante;
 		
 	@Column(name = "motivo", columnDefinition = "Text")
 	private String motivo;	
@@ -28,12 +30,11 @@ public class Report {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Report(Long segnalatoId, Long segnalanteId, String motivo, LocalDateTime timestamp) {
-		super();
-		this.segnalatoId = segnalatoId;
-		this.segnalanteId = segnalanteId;
-		this.motivo = motivo;
-		this.timestamp = timestamp;
+	public Report(Utente segnalato, Utente segnalante, String motivo, LocalDateTime timestamp) {
+	    this.segnalato = segnalato;
+	    this.segnalante = segnalante;
+	    this.motivo = motivo;
+	    this.timestamp = timestamp;
 	}
 	
 	public Long getId() {
@@ -42,19 +43,21 @@ public class Report {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getSegnalatoId() {
-		return segnalatoId;
-	}
-	public void setSegnalatoId(Long segnalato) {
-		this.segnalatoId = segnalato;
-	}
-	public Long getSegnalanteId() {
-		return segnalanteId;
-	}
-	public void setSegnalanteId(Long segnalante) {
-		this.segnalanteId = segnalante;
+	public Utente getSegnalato() {
+	    return segnalato;
 	}
 
+	public void setSegnalato(Utente segnalato) {
+	    this.segnalato = segnalato;
+	}
+
+	public Utente getSegnalante() {
+	    return segnalante;
+	}
+
+	public void setSegnalante(Utente segnalante) {
+	    this.segnalante = segnalante;
+	}
 	public String getMotivo() {
 		return motivo;
 	}

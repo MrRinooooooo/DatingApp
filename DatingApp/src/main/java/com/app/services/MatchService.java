@@ -39,7 +39,7 @@ public class MatchService {
             System.out.println("Utente ID: " + utente.getId());
             
             // Trova tutti i match dell'utente
-            List<Match> matches = matchRepository.findMatchesByUtenteId(utente.getId());
+            List<Match> matches = matchRepository.findMatchesByUtente(utente);
             
             System.out.println("Matches trovati: " + matches.size());
             
@@ -78,8 +78,8 @@ public class MatchService {
             
             if (match != null) {
                 // Verifica che l'utente sia coinvolto nel match
-                boolean isUserInMatch = match.getUtente1Id().equals(utente.getId()) || 
-                                       match.getUtente2Id().equals(utente.getId());
+                boolean isUserInMatch = match.getUtente1().equals(utente) || 
+                                       match.getUtente2().equals(utente);
                 
                 if (isUserInMatch) {
                     System.out.println("Match trovato e autorizzato");
@@ -101,13 +101,13 @@ public class MatchService {
     /**
      * Verifica se un match esiste tra due utenti
      */
-    public boolean existsMatchBetweenUsers(Long utente1Id, Long utente2Id) {
+    public boolean existsMatchBetweenUsers(Utente utente1, Utente utente2) {
         
         System.out.println("=== MATCH SERVICE - CHECK MATCH EXISTS ===");
-        System.out.println("Utente1 ID: " + utente1Id + " - Utente2 ID: " + utente2Id);
+        System.out.println("Utente1 ID: " + utente1.getId() + " - Utente2 ID: " + utente2.getId());
         
         try {
-            boolean exists = matchRepository.existsMatchBetweenUsers(utente1Id, utente2Id);
+            boolean exists = matchRepository.existsMatchBetweenUsers(utente1, utente2);
             System.out.println("Match esiste: " + exists);
             return exists;
             
@@ -127,7 +127,7 @@ public class MatchService {
         
         try {
             // Verifica che non esista già un match
-            boolean matchExists = existsMatchBetweenUsers(utente1.getId(), utente2.getId());
+            boolean matchExists = existsMatchBetweenUsers(utente1, utente2);
             
             if (matchExists) {
                 System.out.println("Match già esistente!");
@@ -136,8 +136,8 @@ public class MatchService {
             
             // Crea il nuovo match
             Match match = new Match();
-            match.setUtente1Id(utente1.getId());
-            match.setUtente2Id(utente2.getId());
+            match.setUtente1(utente1);
+            match.setUtente2(utente2);
             match.setTimestamp(java.time.LocalDateTime.now());
             
             Match savedMatch = matchRepository.save(match);
@@ -148,47 +148,6 @@ public class MatchService {
             
         } catch (DataAccessException e) {
             throw new RuntimeException("Errore nella creazione del match", e);
-        }
-    }
-    
-    /**
-     * Elimina un match (unmatch)
-     */
-    @Transactional
-    public boolean deleteMatch(Long matchId, String emailUtente) {
-        
-        System.out.println("=== MATCH SERVICE - DELETE MATCH ===");
-        System.out.println("Match ID: " + matchId);
-        System.out.println("Email utente: " + emailUtente);
-        
-        try {
-            // Trova l'utente
-            Utente utente = utenteRepository.findByUsername(emailUtente)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
-            
-            // Trova il match
-            Match match = matchRepository.findById(matchId).orElse(null);
-            
-            if (match != null) {
-                // Verifica che l'utente sia coinvolto nel match
-                boolean isUserInMatch = match.getUtente1Id().equals(utente.getId()) || 
-                                       match.getUtente2Id().equals(utente.getId());
-                
-                if (isUserInMatch) {
-                    matchRepository.delete(match);
-                    System.out.println("Match eliminato con successo");
-                    return true;
-                } else {
-                    System.out.println("Utente non autorizzato per eliminare questo match");
-                    return false;
-                }
-            } else {
-                System.out.println("Match non trovato");
-                return false;
-            }
-            
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Errore nell'eliminazione del match", e);
         }
     }
     
@@ -204,7 +163,7 @@ public class MatchService {
             Utente utente = utenteRepository.findByUsername(emailUtente)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
             
-            Long count = matchRepository.countMatchesByUtenteId(utente.getId());
+            Long count = matchRepository.countMatchesByUtente(utente);
             
             System.out.println("Match totali: " + count);
             
@@ -222,25 +181,24 @@ public class MatchService {
      */
     private MatchDTO convertToDTO(Match match) {
     	
-    	
-    	
         MatchDTO dto = new MatchDTO();
         dto.setId(match.getId());
         dto.setTimestamp(match.getTimestamp());
         
         // Dati utente 1
-        if (match.getUtente1Id() != null) {
-        	Utente utente1 = utenteRepository.findById(match.getUtente1Id()).get();
+        if (match.getUtente1() != null) {
+        	//Utente utente1 = utenteRepository.findById(match.getUtente1().getId()).get();
+        	Utente utente1 = match.getUtente1();
         	
-            dto.setUtente1Id(match.getUtente1Id());
+            dto.setUtente1Id(match.getUtente1().getId());
             dto.setUtente1Nome(utente1.getNome());
             dto.setUtente1Email(utente1.getUsername());
         }
         
         // Dati utente 2
-        if (match.getUtente2Id() != null) {
-        	Utente utente2 = utenteRepository.findById(match.getUtente2Id()).get();
-            dto.setUtente2Id(match.getUtente2Id());
+        if (match.getUtente2() != null) {
+        	Utente utente2 = match.getUtente2();
+            dto.setUtente2Id(match.getUtente2().getId());
             dto.setUtente2Nome(utente2.getNome());
             dto.setUtente2Email(utente2.getUsername());
         }
