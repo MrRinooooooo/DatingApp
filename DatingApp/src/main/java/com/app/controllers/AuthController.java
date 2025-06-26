@@ -2,7 +2,6 @@ package com.app.controllers;
 
 import com.app.dto.LoginRequest;
 import com.app.dto.LoginResponse;
-import com.app.dto.RegisterRequest;
 import com.app.dto.RegistrazioneDto;
 import com.app.entities.Utente;
 import com.app.security.JwtUtil;

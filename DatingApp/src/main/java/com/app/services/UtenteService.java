@@ -135,6 +135,17 @@ public class UtenteService {
 	    	 }	    
 		}
 		
+	//UPDATE COORDINATE
+	public ResponseEntity<?> updateLocation(double latitudine, double longitudine){
+		
+		Utente utente = getCurrentUser();
+		utente.getPosizione().setLatitudine(latitudine);
+		utente.getPosizione().setLongitudine(longitudine);
+		utenteRepository.save(utente);
+		
+		return ResponseEntity.ok("posizione aggiornata");
+	}
+		
 	
 	/**
 	 * Metodo per verificare che l'email sia corretta.
