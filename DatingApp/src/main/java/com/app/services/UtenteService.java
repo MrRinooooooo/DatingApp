@@ -2,6 +2,7 @@ package com.app.services;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,11 @@ import com.app.dto.RegistrazioneDto;
 import com.app.entities.Posizione;
 import com.app.entities.Preferenze;
 import com.app.entities.Utente;
+import com.app.models.VerificationToken;
 import com.app.repositories.MessaggioRepository;
 import com.app.repositories.PreferenceRepository;
 import com.app.repositories.UtenteRepository;
+import com.app.repositories.VerificationTokenRepository;
 import com.app.utils.SecurityUtils;
 
 @Service
@@ -28,6 +31,12 @@ public class UtenteService {
 	
 	@Autowired 
 	private PreferenceRepository preferenceRepository;
+	
+	@Autowired
+    private VerificationTokenRepository tokenRepository;
+	
+	@Autowired
+    private EmailService emailService;
 
     UtenteService(MessaggioRepository messaggioRepository) {
         this.messaggioRepository = messaggioRepository;
@@ -40,12 +49,20 @@ public class UtenteService {
 	public Utente createUtente(RegistrazioneDto registrazioneDto) {
 			String encodedPassword = this.passwordEncoder.encode(registrazioneDto.getPassword().trim());
 			Utente nuovoUtente = new Utente(registrazioneDto.getEmail(), encodedPassword);
-			Preferenze preferenze = new Preferenze();	
+			Preferenze preferenze = new Preferenze();
 			
 			preferenze.setUtente(nuovoUtente);
 			
 			utenteRepository.save(nuovoUtente);
 			preferenceRepository.save(preferenze);
+			
+			//CREAZIONE ED INVIO TOKEN DI CONFERMA
+	        String token = UUID.randomUUID().toString();
+	        VerificationToken verificationToken = new VerificationToken(token, nuovoUtente);
+	        tokenRepository.save(verificationToken);
+
+	        emailService.sendConfirmationEmail(nuovoUtente.getUsername(), token);
+			
 			return nuovoUtente;
 	}
 	
@@ -100,8 +117,10 @@ public class UtenteService {
 				// SE MODIFICO USERNAME O PASSWORD IL TOKEN NON E' PIU' VALIDO. DOBBIAMO GENERARNE UNO NUOVO TRAMITE IL LOGIN
 				
 				// Aggiorna solo i campi che possono essere modificati dall'utente
-
+				
+				if (!passwordEncoder.matches(uModificato.getPassword(), uLoggato.getPassword()))
 				uLoggato.setPassword(passwordEncoder.encode(uModificato.getPassword().trim()));
+				
 				uLoggato.setUsername(uModificato.getUsername().trim());
 				
 				if (uModificato.getNome() == null) uModificato.setNome("");
@@ -118,11 +137,15 @@ public class UtenteService {
 				if (uModificato.getInteressi() == (null)) uModificato.setInteressi("");
 					uLoggato.setInteressi(uModificato.getInteressi().trim());
 					
-					uLoggato.getPosizione().setCitta(uModificato.getCittà());
+				if (uLoggato.getPosizione() == null) 
+					uLoggato.setPosizione(new Posizione());
+						
+				uLoggato.getPosizione().setCitta(uModificato.getCittà());
 				
 				if (uModificato.getFotoProfilo() == (null)) uModificato.setFotoProfilo("");
 					uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
-			
+				
+				if (uModificato.getNotificheAttive()!=null)
 				uLoggato.setNotificheAttive(uModificato.getNotificheAttive());
 				
 				uLoggato.setPrimoAccesso(false);
