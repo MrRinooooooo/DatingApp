@@ -117,8 +117,10 @@ public class UtenteService {
 				// SE MODIFICO USERNAME O PASSWORD IL TOKEN NON E' PIU' VALIDO. DOBBIAMO GENERARNE UNO NUOVO TRAMITE IL LOGIN
 				
 				// Aggiorna solo i campi che possono essere modificati dall'utente
-
+				
+				if (!passwordEncoder.matches(uModificato.getPassword(), uLoggato.getPassword()))
 				uLoggato.setPassword(passwordEncoder.encode(uModificato.getPassword().trim()));
+				
 				uLoggato.setUsername(uModificato.getUsername().trim());
 				
 				if (uModificato.getNome() == null) uModificato.setNome("");
@@ -135,11 +137,15 @@ public class UtenteService {
 				if (uModificato.getInteressi() == (null)) uModificato.setInteressi("");
 					uLoggato.setInteressi(uModificato.getInteressi().trim());
 					
-					uLoggato.getPosizione().setCitta(uModificato.getCittà());
+				if (uLoggato.getPosizione() == null) 
+					uLoggato.setPosizione(new Posizione());
+						
+				uLoggato.getPosizione().setCitta(uModificato.getCittà());
 				
 				if (uModificato.getFotoProfilo() == (null)) uModificato.setFotoProfilo("");
 					uLoggato.setFotoProfilo(uModificato.getFotoProfilo().trim());
-			
+				
+				if (uModificato.getNotificheAttive()!=null)
 				uLoggato.setNotificheAttive(uModificato.getNotificheAttive());
 				
 				uLoggato.setPrimoAccesso(false);

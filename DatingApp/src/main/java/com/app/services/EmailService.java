@@ -20,8 +20,19 @@ public class EmailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
-        message.setFrom("tuoaccount@gmail.com");
-
+        
         mailSender.send(message);
     }
+    
+    public void sendPremiumSubscriptionReminder(String to, String name) {
+        String subject = "Abbonamento PREMIUM in scadenza";
+        String body = "Ciao " + name + "!\nIl tuo abbonamento è in scadenza, ricordati di rinnovare per non perdere l'accesso alle funzionalità PREMIUM! ;)";
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        
+        mailSender.send(message);
+    }
+    
 }

@@ -7,14 +7,14 @@ public class Posizione {
 
 	private Double latitudine;
 	private Double longitudine;
-	private String citta;
+	private String città;
 
 	public Posizione() {
 
 	}
 
 	public Posizione(String citta, Double latitudine, Double longitudine) {
-		this.citta = citta;
+		this.città = citta;
 		this.latitudine = latitudine;
 		this.longitudine = longitudine;
 	}
@@ -36,11 +36,11 @@ public class Posizione {
 	}
 
 	public String getCitta() {
-		return citta;
+		return città;
 	}
 
 	public void setCitta(String citta) {
-		this.citta = citta;
+		this.città = citta;
 	}
 
 }
