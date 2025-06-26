@@ -4,10 +4,15 @@ import com.app.dto.LoginRequest;
 import com.app.dto.LoginResponse;
 import com.app.dto.RegistrazioneDto;
 import com.app.entities.Utente;
+import com.app.models.VerificationToken;
+import com.app.repositories.UtenteRepository;
+import com.app.repositories.VerificationTokenRepository;
 import com.app.security.JwtUtil;
 import com.app.services.UtenteService;
 
 import jakarta.validation.Valid;
+
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +36,16 @@ public class AuthController {
  
     @Autowired
     private UserDetailsService userDetailsService;
+    
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
  
     @Autowired
+    private UtenteRepository utenteRepository;
+    
+    @Autowired
     private JwtUtil jwtUtil;
+
  
     @Autowired
     private UtenteService utenteService;
@@ -144,5 +156,21 @@ public class AuthController {
             return ResponseEntity.badRequest()
                 .body(new LoginResponse(null, "Errore nella validazione del token", null, null));
         }
+    }
+    
+    //ENDPOINT CONFERMA REGISTRAZIONE
+    @GetMapping("/confirm")
+    public ResponseEntity<String> confirmUser(@RequestParam("token") String token) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+
+        if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Token non valido o scaduto.");
+        }
+
+        Utente utente = verificationToken.getUtente();
+        utente.setAttivo(true);
+        utenteRepository.save(utente);
+
+        return ResponseEntity.ok("Email confermata! Ora puoi accedere.");
     }
 }

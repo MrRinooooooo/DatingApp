@@ -77,6 +77,9 @@ public class Utente {
 	@Column(name = "primo_accesso", nullable = false)
 	private boolean primoAccesso;
 	
+	@Column(name = "attivo", nullable = false)
+	private boolean attivo;
+	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preferenze_id", referencedColumnName = "id")
     private Preferenze preferenze;
@@ -101,6 +104,7 @@ public class Utente {
 		this.posizione = null;
 		this.fotoProfilo="";
 		this.notificheAttive = true;
+		this.attivo = false;
 	}
 	
 	//includiamo anche Posizione
@@ -119,6 +123,7 @@ public class Utente {
 		this.primoAccesso = primoAccesso;
 		this.notificheAttive = true;
 		this.deviceToken = null;
+		this.attivo = false;
 	}
 
 	public Long getId() {
@@ -243,6 +248,14 @@ public class Utente {
 
 	public void setPrimoAccesso(boolean primoAccesso) {
 		this.primoAccesso = primoAccesso;
+	}
+	
+	public boolean isAttivo() {
+		return attivo;
+	}
+
+	public void setAttivo(boolean attivo) {
+		this.attivo = attivo;
 	}
 	
 	public List<Abbonamento> getAbbonamenti() {
