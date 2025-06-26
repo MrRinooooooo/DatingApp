@@ -82,6 +82,13 @@ Authentication authentication = SecurityContextHolder.getContext().getAuthentica
     public ResponseEntity<?> updateMyProfile(@RequestBody ModificaUtenteDTO utenteAggiornatoDto) {    	 	
         return utenteService.updateProfile(utenteAggiornatoDto); 		// Aggiorna il profilo dell'utente
     }
+    
+    @PostMapping("/updateLocation")
+    public ResponseEntity<?> updateLocation(@RequestParam double latitudine, @RequestParam double longitudine) {
+        System.out.println("Ricevute coordinate: " + latitudine + ", " + longitudine );
+        
+        return utenteService.updateLocation(latitudine, longitudine);
+    }
  
     /**
      * Endpoint per visualizzare il profilo pubblico di un altro utente.
